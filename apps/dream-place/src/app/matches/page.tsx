@@ -1,0 +1,151 @@
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import { Button } from "@dreamhub/ui";
+import { cn } from "@dreamhub/ui";
+import { MatchScoreRing } from "@/components/discover/MatchScoreRing";
+import { useDreamStore } from "@/store/useDreamStore";
+import type { MatchResult } from "@/types";
+
+type TabKey = "accepted" | "pending";
+
+export default function MatchesPage() {
+  const matches = useDreamStore((s) => s.matches);
+  const acceptMatch = useDreamStore((s) => s.acceptMatch);
+  const declineMatch = useDreamStore((s) => s.declineMatch);
+  const [activeTab, setActiveTab] = useState<TabKey>("accepted");
+
+  const accepted = matches.filter((m) => m.status === "accepted");
+  const pending = matches.filter((m) => m.status === "pending");
+  const displayedMatches = activeTab === "accepted" ? accepted : pending;
+
+  return (
+    <div className="mx-auto max-w-lg px-4 py-6">
+      <h1 className="mb-1 text-2xl font-bold text-gray-900 dark:text-gray-100">
+        My Matches
+      </h1>
+      <p className="mb-6 text-sm text-gray-500 dark:text-gray-400">
+        People who share your dream vision
+      </p>
+
+      {/* Tabs */}
+      <div className="mb-6 flex rounded-[8px] border border-gray-200 p-1 dark:border-gray-700">
+        {(["accepted", "pending"] as TabKey[]).map((tab) => (
+          <button
+            key={tab}
+            onClick={() => setActiveTab(tab)}
+            className={cn(
+              "flex-1 rounded-[6px] py-2 text-sm font-medium transition-colors",
+              activeTab === tab
+                ? "bg-brand-600 text-white"
+                : "text-gray-500 hover:text-gray-700 dark:text-gray-400"
+            )}
+          >
+            {tab === "accepted"
+              ? `Connected (${accepted.length})`
+              : `Pending (${pending.length})`}
+          </button>
+        ))}
+      </div>
+
+      {/* Match list */}
+      <div className="space-y-3">
+        {displayedMatches.map((match) => (
+          <MatchListItem
+            key={match.id}
+            match={match}
+            onAccept={acceptMatch}
+            onDecline={declineMatch}
+          />
+        ))}
+      </div>
+
+      {displayedMatches.length === 0 && (
+        <div className="py-16 text-center">
+          <p className="text-gray-400 dark:text-gray-500">
+            {activeTab === "accepted"
+              ? "No connections yet. Start discovering dreamers!"
+              : "No pending requests"}
+          </p>
+          <Link href="/discover">
+            <Button className="mt-4" variant="outline">
+              Discover Dreamers
+            </Button>
+          </Link>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function MatchListItem({
+  match,
+  onAccept,
+  onDecline,
+}: {
+  match: MatchResult;
+  onAccept: (id: string) => void;
+  onDecline: (id: string) => void;
+}) {
+  const { profile, matchScore, complementarySkills } = match;
+  const isAccepted = match.status === "accepted";
+  const isPending = match.status === "pending";
+
+  return (
+    <div className="rounded-card border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-950">
+      <Link href={isAccepted ? `/messages/${match.id}` : `/matches/${match.id}`}>
+        <div className="flex items-center gap-4 p-4 transition-colors hover:bg-gray-50 dark:hover:bg-gray-900">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand-400 to-blue-500 text-lg font-bold text-white">
+            {profile.name.charAt(0)}
+          </div>
+
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-2">
+              <h3 className="font-medium text-gray-900 dark:text-gray-100">
+                {profile.name}
+              </h3>
+              {isAccepted && (
+                <span className="rounded-full bg-green-50 px-2 py-0.5 text-xs font-medium text-green-600 dark:bg-green-900/20 dark:text-green-400">
+                  Connected
+                </span>
+              )}
+            </div>
+            <p className="truncate text-sm text-gray-500 dark:text-gray-400">
+              {profile.dreamHeadline}
+            </p>
+            {complementarySkills.length > 0 && (
+              <p className="mt-0.5 text-xs text-green-600 dark:text-green-400">
+                +{complementarySkills.length} complementary skill
+                {complementarySkills.length > 1 ? "s" : ""}
+              </p>
+            )}
+          </div>
+
+          <MatchScoreRing score={matchScore} size={44} strokeWidth={3} />
+        </div>
+      </Link>
+
+      {/* Accept / Decline for pending */}
+      {isPending && (
+        <div className="flex gap-2 border-t border-gray-100 px-4 py-3 dark:border-gray-800">
+          <Button
+            variant="outline"
+            size="sm"
+            className="flex-1"
+            onClick={() => onDecline(match.id)}
+          >
+            Decline
+          </Button>
+          <Button
+            size="sm"
+            className="flex-1"
+            onClick={() => onAccept(match.id)}
+          >
+            Accept
+          </Button>
+        </div>
+      )}
+    </div>
+  );
+}
