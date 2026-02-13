@@ -152,7 +152,7 @@ export function BrainGraph({ thoughts, connections }: BrainGraphProps) {
 
   if (thoughts.length === 0) {
     return (
-      <div className="flex h-full items-center justify-center" style={{ minHeight: "calc(100vh - 140px)" }}>
+      <div className="flex items-center justify-center" style={{ height: "calc(100vh - 140px)" }}>
         <div className="text-center">
           <p className="text-sm text-gray-500">No thoughts yet</p>
           <p className="mt-1 text-xs text-gray-600">Capture your first thought to see your brain map</p>
@@ -162,7 +162,7 @@ export function BrainGraph({ thoughts, connections }: BrainGraphProps) {
   }
 
   return (
-    <div className="h-full w-full" style={{ minHeight: "calc(100vh - 140px)" }}>
+    <div className="w-full" style={{ height: "calc(100vh - 140px)" }}>
       <ReactFlow
         nodes={nodes}
         edges={edges}

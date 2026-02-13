@@ -141,8 +141,8 @@ export function BrainGraph3D({ thoughts, connections }: BrainGraph3DProps) {
   if (thoughts.length === 0) {
     return (
       <div
-        className="flex h-full items-center justify-center"
-        style={{ minHeight: "calc(100vh - 140px)" }}
+        className="flex items-center justify-center"
+        style={{ height: "calc(100vh - 140px)" }}
       >
         <div className="text-center">
           <p className="text-sm text-gray-500">No thoughts yet</p>
@@ -157,8 +157,8 @@ export function BrainGraph3D({ thoughts, connections }: BrainGraph3DProps) {
   return (
     <div
       ref={containerRef}
-      className="h-full w-full"
-      style={{ minHeight: "calc(100vh - 140px)" }}
+      className="w-full"
+      style={{ height: "calc(100vh - 140px)" }}
     />
   );
 }

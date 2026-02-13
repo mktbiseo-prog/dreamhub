@@ -13,7 +13,7 @@ const BrainGraph3D = dynamic(
     loading: () => (
       <div
         className="flex items-center justify-center"
-        style={{ minHeight: "calc(100vh - 140px)" }}
+        style={{ height: "calc(100vh - 140px)" }}
       >
         <Loader2 className="h-8 w-8 animate-spin text-brand-400" />
       </div>
