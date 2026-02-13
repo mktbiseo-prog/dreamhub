@@ -13,6 +13,8 @@ export async function createDreamStory(input: {
   impactStatement?: string;
   creatorStage?: string;
   videoUrl?: string;
+  coverImage?: string;
+  processImages?: string[];
   status?: "ACTIVE" | "PREVIEW";
   milestones: { title: string; targetDate: string }[];
 }) {
@@ -28,6 +30,8 @@ export async function createDreamStory(input: {
       impactStatement: parsed.impactStatement || null,
       creatorStage: parsed.creatorStage || "early",
       videoUrl: parsed.videoUrl || null,
+      coverImage: parsed.coverImage || null,
+      processImages: parsed.processImages || [],
       status: parsed.status || "ACTIVE",
       milestones: {
         createMany: {
@@ -79,13 +83,14 @@ export async function updateDreamStory(
     impactStatement?: string;
     creatorStage?: string;
     videoUrl?: string;
+    coverImage?: string;
+    processImages?: string[];
     milestones: { title: string; targetDate: string }[];
   }
 ) {
   const parsed = updateDreamStorySchema.parse(input);
   const userId = await getCurrentUserId();
 
-  // Check ownership
   const existing = await prisma.dreamStory.findUnique({
     where: { id: storyId },
   });
@@ -94,7 +99,6 @@ export async function updateDreamStory(
     throw new Error("Dream story not found or access denied");
   }
 
-  // Update story and replace milestones in a transaction
   await prisma.$transaction(async (tx) => {
     await tx.dreamStory.update({
       where: { id: storyId },
@@ -105,10 +109,11 @@ export async function updateDreamStory(
         impactStatement: parsed.impactStatement || null,
         creatorStage: parsed.creatorStage || "early",
         videoUrl: parsed.videoUrl || null,
+        coverImage: parsed.coverImage || null,
+        processImages: parsed.processImages || [],
       },
     });
 
-    // Delete existing milestones and recreate
     await tx.milestone.deleteMany({
       where: { dreamStoryId: storyId },
     });
@@ -131,7 +136,6 @@ export async function updateDreamStory(
 export async function deleteDreamStory(storyId: string) {
   const userId = await getCurrentUserId();
 
-  // Check ownership
   const existing = await prisma.dreamStory.findUnique({
     where: { id: storyId },
   });
@@ -140,7 +144,6 @@ export async function deleteDreamStory(storyId: string) {
     throw new Error("Dream story not found or access denied");
   }
 
-  // Cascade delete is handled by Prisma schema relations
   await prisma.dreamStory.delete({
     where: { id: storyId },
   });

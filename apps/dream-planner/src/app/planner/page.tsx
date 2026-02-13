@@ -7,6 +7,7 @@ import { Button, cn } from "@dreamhub/ui";
 import { usePlannerStore, type PlannerData } from "@/lib/store";
 import { getEarnedBadges, getHighestTitle, BADGE_ICONS } from "@/lib/gamification";
 import { ExportButton } from "@/components/planner/ExportButton";
+import { VersionHistory } from "@/components/planner/VersionHistory";
 import { PART1_ACTIVITIES } from "@/types/planner";
 import { PART2_ACTIVITIES } from "@/types/part2";
 import { PART3_ACTIVITIES } from "@/types/part3";
@@ -762,6 +763,13 @@ export default function DashboardPage() {
               </div>
             </div>
           </Link>
+        </div>
+      )}
+
+      {/* Growth Timeline / Version History */}
+      {data.versionHistory.length > 0 && (
+        <div className="mt-8">
+          <VersionHistory />
         </div>
       )}
 

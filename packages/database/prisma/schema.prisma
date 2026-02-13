@@ -648,6 +648,9 @@ model PlannerSession {
   // AI-generated insights cache
   aiInsights       Json     @default("[]")
 
+  // Version history snapshots for growth tracking
+  versionHistory   Json     @default("[]")
+
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 

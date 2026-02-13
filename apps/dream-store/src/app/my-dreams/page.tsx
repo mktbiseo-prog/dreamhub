@@ -5,6 +5,8 @@ import { Button } from "@dreamhub/ui";
 import { getCurrentUser } from "@/lib/auth";
 import { getSupporterDashboard, getUserBookmarks, formatPrice } from "@/lib/queries";
 import { DreamCard } from "@/components/DreamCard";
+import { OrderEscrowCard } from "@/components/OrderEscrowCard";
+import { getOrdersWithEscrow } from "@/lib/actions/escrow";
 
 export const metadata: Metadata = {
   title: "My Supported Dreams | Dream Store",
@@ -15,9 +17,10 @@ export default async function MyDreamsPage() {
   const user = await getCurrentUser();
   if (!user?.id) redirect("/auth/sign-in?callbackUrl=/my-dreams");
 
-  const [data, bookmarkedStories] = await Promise.all([
+  const [data, bookmarkedStories, escrowOrders] = await Promise.all([
     getSupporterDashboard(user.id),
     getUserBookmarks(user.id),
+    getOrdersWithEscrow("buyer"),
   ]);
 
   return (
@@ -160,6 +163,25 @@ export default async function MyDreamsPage() {
             </div>
           )}
         </section>
+
+        {/* Active Orders with Escrow */}
+        {escrowOrders.filter((o) => o.escrowStatus === "HELD").length > 0 && (
+          <section className="mb-12">
+            <h2 className="mb-4 text-xl font-bold text-gray-900 dark:text-white">
+              Active Orders
+            </h2>
+            <p className="mb-4 text-sm text-gray-500">
+              Your payment is held securely until you confirm receipt. Click &quot;Confirm Received&quot; when your order arrives.
+            </p>
+            <div className="space-y-3">
+              {escrowOrders
+                .filter((o) => o.escrowStatus === "HELD")
+                .map((order) => (
+                  <OrderEscrowCard key={order.id} order={order} role="buyer" />
+                ))}
+            </div>
+          </section>
+        )}
 
         {/* Order History */}
         <section>

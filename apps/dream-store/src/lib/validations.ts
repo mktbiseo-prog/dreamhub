@@ -36,6 +36,8 @@ export const createDreamStorySchema = z.object({
     .url("Please enter a valid URL")
     .optional()
     .or(z.literal("")),
+  coverImage: z.string().optional().or(z.literal("")),
+  processImages: z.array(z.string()).optional().default([]),
   status: z
     .enum(["ACTIVE", "PREVIEW"])
     .optional()
@@ -72,6 +74,11 @@ export const createProductSchema = z.object({
     .optional()
     .or(z.literal("")),
   category: z.string().min(1, "Category is required"),
+  images: z.array(z.string()).optional().default([]),
+  productType: z.string().optional().default("Physical Product"),
+  shippingWeight: z.number().optional(),
+  shippingCost: z.string().optional().or(z.literal("")),
+  isDigital: z.boolean().optional().default(false),
 });
 
 export type CreateProductInput = z.infer<typeof createProductSchema>;
@@ -92,3 +99,25 @@ export const createReviewSchema = z.object({
 });
 
 export type CreateReviewInput = z.infer<typeof createReviewSchema>;
+
+// Shipping address schema
+export const shippingAddressSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  line1: z.string().min(1, "Address is required"),
+  line2: z.string().optional().or(z.literal("")),
+  city: z.string().min(1, "City is required"),
+  state: z.string().min(1, "State is required"),
+  zip: z.string().min(1, "ZIP code is required"),
+  country: z.string().min(1, "Country is required").default("US"),
+});
+
+export type ShippingAddress = z.infer<typeof shippingAddressSchema>;
+
+// Dispute schema
+export const createDisputeSchema = z.object({
+  orderId: z.string().min(1),
+  reason: z.enum(["not_received", "not_as_described", "damaged", "other"]),
+  description: z.string().min(10, "Please describe the issue in detail").max(2000),
+});
+
+export type CreateDisputeInput = z.infer<typeof createDisputeSchema>;

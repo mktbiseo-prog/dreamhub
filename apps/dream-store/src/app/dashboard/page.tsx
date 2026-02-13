@@ -6,6 +6,12 @@ import { getCurrentUser } from "@/lib/auth";
 import { getCreatorDashboard, formatPrice } from "@/lib/queries";
 import RevenueChart from "./RevenueChart";
 import StripeConnectCard from "./StripeConnectCard";
+import { KycVerification } from "@/components/KycVerification";
+import { DisputeResolver } from "@/components/DisputeResolver";
+import { OrderEscrowCard } from "@/components/OrderEscrowCard";
+import { getKycStatus } from "@/lib/actions/kyc";
+import { getMyDisputes } from "@/lib/actions/disputes";
+import { getOrdersWithEscrow } from "@/lib/actions/escrow";
 
 export const metadata: Metadata = {
   title: "Creator Dashboard | Dream Store",
@@ -16,7 +22,12 @@ export default async function CreatorDashboardPage() {
   const user = await getCurrentUser();
   if (!user?.id) redirect("/auth/sign-in?callbackUrl=/dashboard");
 
-  const data = await getCreatorDashboard(user.id);
+  const [data, kycStatus, disputes, escrowOrders] = await Promise.all([
+    getCreatorDashboard(user.id),
+    getKycStatus(),
+    getMyDisputes(),
+    getOrdersWithEscrow("seller"),
+  ]);
 
   return (
     <main className="min-h-screen">
@@ -243,6 +254,49 @@ export default async function CreatorDashboardPage() {
             stripeConnectId={data?.stripeConnectId ?? null}
           />
         </section>
+
+        {/* Identity Verification */}
+        <section className="mb-12">
+          <h2 className="mb-6 text-xl font-bold text-gray-900 dark:text-white">
+            Identity Verification
+          </h2>
+          <KycVerification
+            status={kycStatus.status}
+            submittedAt={"submittedAt" in kycStatus ? kycStatus.submittedAt : null}
+            verifiedAt={"verifiedAt" in kycStatus ? kycStatus.verifiedAt : null}
+          />
+        </section>
+
+        {/* Escrow Management */}
+        {escrowOrders.length > 0 && (
+          <section className="mb-12">
+            <h2 className="mb-6 text-xl font-bold text-gray-900 dark:text-white">
+              Order Escrow Status
+            </h2>
+            <p className="mb-4 text-sm text-gray-500">
+              Payments are held in escrow until the buyer confirms receipt. This protects both parties.
+            </p>
+            <div className="space-y-3">
+              {escrowOrders.slice(0, 10).map((order) => (
+                <OrderEscrowCard key={order.id} order={order} role="seller" />
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Disputes */}
+        {disputes.length > 0 && (
+          <section className="mb-12">
+            <h2 className="mb-6 text-xl font-bold text-gray-900 dark:text-white">
+              Disputes
+            </h2>
+            <div className="space-y-3">
+              {disputes.map((dispute) => (
+                <DisputeResolver key={dispute.id} dispute={dispute} />
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* My Dreams */}
         <section className="mb-12">

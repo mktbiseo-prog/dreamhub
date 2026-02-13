@@ -139,9 +139,28 @@ export function getSupporterBadge(orderCount: number, supportedAt: string): Supp
   return null;
 }
 
-export function getCreatorBadge(stats: { orderCount: number; followerCount: number }): string | null {
+export function getCreatorBadge(stats: {
+  orderCount: number;
+  followerCount: number;
+  kycVerified?: boolean;
+}): string | null {
   if (stats.orderCount >= 100 && stats.followerCount >= 50) return "Star Maker";
   if (stats.orderCount >= 25) return "Rising Maker";
-  if (stats.orderCount >= 5) return "Verified Maker";
+  if (stats.kycVerified && stats.orderCount >= 5) return "Verified Maker";
+  if (stats.kycVerified) return "Verified Creator";
+  if (stats.orderCount >= 5) return "Active Maker";
   return null;
+}
+
+export type TrustLevel = "none" | "basic" | "verified" | "premium";
+
+export function getTrustLevel(stats: {
+  kycVerified: boolean;
+  orderCount: number;
+  disputeRate: number;
+}): TrustLevel {
+  if (stats.kycVerified && stats.orderCount >= 25 && stats.disputeRate < 0.02) return "premium";
+  if (stats.kycVerified && stats.orderCount >= 5) return "verified";
+  if (stats.orderCount >= 1) return "basic";
+  return "none";
 }

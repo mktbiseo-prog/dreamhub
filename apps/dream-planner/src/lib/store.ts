@@ -9,6 +9,7 @@ import type {
   TimeBlock,
   ExpenseItem,
   CurrentStateCard,
+  VersionSnapshot,
 } from "@/types/planner";
 import {
   RESOURCE_DEFAULTS,
@@ -60,6 +61,9 @@ export interface PlannerData {
 
   // AI Coach
   recentInsights: CoachInsight[];
+
+  // Version History
+  versionHistory: VersionSnapshot[];
 }
 
 const DEFAULT_DATA: PlannerData = {
@@ -82,6 +86,7 @@ const DEFAULT_DATA: PlannerData = {
   part3: { ...DEFAULT_PART3_DATA },
   part4: { ...DEFAULT_PART4_DATA },
   recentInsights: [],
+  versionHistory: [],
 };
 
 const STORAGE_KEY = "dream-planner-data";
@@ -298,12 +303,13 @@ class PlannerStore {
     this.emit();
   }
 
-  markActivityComplete(id: number) {
+  markActivityComplete(id: number, activityLabel?: string) {
     if (!this.data.completedActivities.includes(id)) {
       this.data = {
         ...this.data,
         completedActivities: [...this.data.completedActivities, id],
       };
+      this.createSnapshot(activityLabel ? `Completed: ${activityLabel}` : `Completed Activity ${id}`);
       this.emit();
     }
   }
@@ -338,6 +344,61 @@ class PlannerStore {
   addInsight(insight: CoachInsight) {
     const insights = [insight, ...this.data.recentInsights].slice(0, 10);
     this.data = { ...this.data, recentInsights: insights };
+    this.emit();
+  }
+
+  // ── Version History ──
+  createSnapshot(label: string) {
+    const d = this.data;
+    const snapshot: VersionSnapshot = {
+      id: crypto.randomUUID(),
+      timestamp: new Date().toISOString(),
+      label,
+      metrics: {
+        skillCount: d.skills.length,
+        resourceAvg: d.resources.reduce((s, r) => s + r.score, 0) / Math.max(d.resources.length, 1),
+        productiveHours: d.timeBlocks.filter((t) => t.type === "productive").reduce((s, t) => s + t.duration, 0),
+        consumptionHours: d.timeBlocks.filter((t) => t.type === "consumption").reduce((s, t) => s + t.duration, 0),
+        totalExpenses: d.expenses.reduce((s, e) => s + e.amount, 0),
+        lowSatExpenses: d.expenses.filter((e) => e.satisfaction === "low").reduce((s, e) => s + e.amount, 0),
+        completedActivities:
+          d.completedActivities.length +
+          d.part2.completedActivities.length +
+          d.part3.completedActivities.length +
+          d.part4.completedActivities.length,
+        dreamStatement: d.dreamStatement,
+        streak: d.streak,
+        mindMapNodes: d.part2.mindMapNodes.length,
+        failureEntries: d.part2.failureEntries.length,
+        strengthsCount: d.part2.strengths.filter(Boolean).length,
+        whyStatement: d.part2.whyWhatBridge.why,
+        selectedIdea: d.part2.whyWhatBridge.selectedIndex >= 0 ? d.part2.whyWhatBridge.ideas[d.part2.whyWhatBridge.selectedIndex] || "" : "",
+        finalProposal: d.part3.oneLineProposal.finalProposal,
+        hypothesesTested: d.part3.hypotheses.filter((h) => h.status !== "pending").length,
+        hypothesesSucceeded: d.part3.hypotheses.filter((h) => h.status === "success").length,
+        mvpProgress: d.part3.mvpPlan.steps.length > 0 ? Math.round((d.part3.mvpPlan.steps.filter((s) => s.done).length / d.part3.mvpPlan.steps.length) * 100) : 0,
+        valueLadderFilled: d.part3.valueLadder.filter((v) => v.productName.trim()).length,
+        fanCandidates: d.part4.fanCandidates.length,
+        fansConverted: d.part4.fanCandidates.filter((f) => f.stage === "fan").length,
+        dream5Members: d.part4.dream5Network.members.length,
+        rejectionsCompleted: d.part4.rejectionChallenges.filter((r) => r.completed).length,
+        sustainabilityScore: (() => {
+          const qs = d.part4.sustainabilityChecklist.questions;
+          const yesCount = qs.filter((q) => q.answer === "yes").length;
+          return qs.length > 0 ? Math.round((yesCount / qs.length) * 100) : 0;
+        })(),
+      },
+    };
+    const history = [snapshot, ...this.data.versionHistory].slice(0, 30);
+    this.data = { ...this.data, versionHistory: history };
+    this.emit();
+  }
+
+  deleteSnapshot(id: string) {
+    this.data = {
+      ...this.data,
+      versionHistory: this.data.versionHistory.filter((s) => s.id !== id),
+    };
     this.emit();
   }
 

@@ -18,9 +18,11 @@ export function Part3Shell() {
 
   const handleNext = () => {
     if (!p3.completedActivities.includes(p3.currentActivity)) {
+      const meta = PART3_ACTIVITIES.find((a) => a.id === p3.currentActivity);
       store.setPart3Data({
         completedActivities: [...p3.completedActivities, p3.currentActivity],
       });
+      store.createSnapshot(meta ? `Completed: ${meta.title}` : `Completed Activity ${p3.currentActivity}`);
     }
     const idx = PART3_ACTIVITIES.findIndex((a) => a.id === p3.currentActivity);
     if (idx < PART3_ACTIVITIES.length - 1) {

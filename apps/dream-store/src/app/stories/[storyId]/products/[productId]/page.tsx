@@ -8,6 +8,8 @@ import { SupportButton } from "./SupportButton";
 import { ImageGallery } from "./ImageGallery";
 import { ReviewForm } from "./ReviewForm";
 import { ReviewList } from "./ReviewList";
+import { BuyerProtection } from "@/components/BuyerProtection";
+import { getCreatorBadge } from "@/lib/types";
 
 interface PageProps {
   params: Promise<{ storyId: string; productId: string }>;
@@ -37,6 +39,10 @@ export default async function ProductDetailPage({ params }: PageProps) {
   ]);
   const recentSupporters = supporters.slice(0, 5);
   const isOwner = currentUserId === story.userId;
+  const creatorBadge = getCreatorBadge({
+    orderCount: story.supporterCount,
+    followerCount: story.followerCount,
+  });
 
   return (
     <main className="min-h-screen">
@@ -146,19 +152,27 @@ export default async function ProductDetailPage({ params }: PageProps) {
               price={product.price}
             />
 
-            {/* Trust Badges — Section 6 */}
-            <div className="mt-4 flex flex-wrap items-center gap-3 text-xs text-gray-500">
+            {/* Buyer Protection */}
+            <div className="mt-4">
+              <BuyerProtection
+                sellerVerified={story.supporterCount >= 5}
+                sellerBadge={creatorBadge}
+              />
+            </div>
+
+            {/* Trust Badges */}
+            <div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-gray-500">
               <span className="flex items-center gap-1">
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
                 </svg>
-                Secure Checkout
+                Escrow Payment
               </span>
               <span className="flex items-center gap-1">
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z" />
                 </svg>
-                Visa, Mastercard, PayPal
+                Secure Checkout
               </span>
               <span className="flex items-center gap-1">
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">

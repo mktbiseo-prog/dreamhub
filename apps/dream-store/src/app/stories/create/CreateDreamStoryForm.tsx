@@ -14,6 +14,8 @@ import {
 } from "@dreamhub/ui";
 import { createDreamStorySchema } from "@/lib/validations";
 import { createDreamStory } from "@/lib/actions/stories";
+import { SingleImageUpload, ImageUpload } from "@/components/ImageUpload";
+import { AiStoryAssistant } from "@/components/AiStoryAssistant";
 
 interface MilestoneField {
   title: string;
@@ -54,6 +56,8 @@ export function CreateDreamStoryForm() {
     { title: "", targetDate: "" },
     { title: "", targetDate: "" },
   ]);
+  const [coverImage, setCoverImage] = useState("");
+  const [processImages, setProcessImages] = useState<string[]>([]);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isPending, startTransition] = useTransition();
 
@@ -83,7 +87,7 @@ export function CreateDreamStoryForm() {
     e.preventDefault();
     setErrors({});
 
-    const data = { title, statement, originStory, impactStatement, creatorStage, videoUrl, status, milestones };
+    const data = { title, statement, originStory, impactStatement, creatorStage, videoUrl, status, milestones, coverImage, processImages };
     const result = createDreamStorySchema.safeParse(data);
     if (!result.success) {
       const fieldErrors: Record<string, string> = {};
@@ -172,6 +176,12 @@ export function CreateDreamStoryForm() {
                 ))}
               </div>
             </div>
+            <SingleImageUpload
+              value={coverImage}
+              onChange={setCoverImage}
+              label="Cover Image"
+              hint="This will be the hero image for your dream page"
+            />
             <div className="space-y-2">
               <Label htmlFor="videoUrl">Video URL (optional)</Label>
               <Input
@@ -213,10 +223,22 @@ export function CreateDreamStoryForm() {
                 maxLength={3000}
                 className="resize-y text-base leading-relaxed"
               />
-              <div className="flex justify-end text-xs text-gray-400">
+              <div className="flex justify-between text-xs text-gray-400">
+                <AiStoryAssistant
+                  context={{ title, statement, creatorStage }}
+                  field="originStory"
+                  onSuggestion={(text) => setOriginStory(text)}
+                />
                 <span>{originStory.length}/3,000</span>
               </div>
             </div>
+            <ImageUpload
+              value={processImages}
+              onChange={setProcessImages}
+              max={5}
+              label="Behind-the-Scenes Photos (optional)"
+              hint="Show your creative process — 3 to 5 photos recommended"
+            />
           </CardContent>
         </Card>
       )}
@@ -284,7 +306,12 @@ export function CreateDreamStoryForm() {
                 maxLength={1000}
                 className="resize-y text-base leading-relaxed"
               />
-              <div className="flex justify-end text-xs text-gray-400">
+              <div className="flex justify-between text-xs text-gray-400">
+                <AiStoryAssistant
+                  context={{ title, statement, creatorStage }}
+                  field="impactStatement"
+                  onSuggestion={(text) => setImpactStatement(text)}
+                />
                 <span>{impactStatement.length}/1,000</span>
               </div>
             </div>
@@ -335,6 +362,22 @@ export function CreateDreamStoryForm() {
                 <p className="text-xs font-medium text-gray-500">Creator Stage</p>
                 <p className="text-sm capitalize text-gray-700 dark:text-gray-300">{creatorStage}</p>
               </div>
+              {coverImage && (
+                <div>
+                  <p className="text-xs font-medium text-gray-500">Cover Image</p>
+                  <img src={coverImage} alt="Cover" className="mt-1 h-32 w-48 rounded-lg object-cover" />
+                </div>
+              )}
+              {processImages.length > 0 && (
+                <div>
+                  <p className="text-xs font-medium text-gray-500">Process Images</p>
+                  <div className="mt-1 flex gap-2">
+                    {processImages.map((img, i) => (
+                      <img key={i} src={img} alt={`Process ${i + 1}`} className="h-16 w-16 rounded-lg object-cover" />
+                    ))}
+                  </div>
+                </div>
+              )}
               {videoUrl && (
                 <div>
                   <p className="text-xs font-medium text-gray-500">Video URL</p>

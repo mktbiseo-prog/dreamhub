@@ -15,6 +15,7 @@ import { PollForm } from "./PollForm";
 import { PollCard } from "./PollCard";
 import { VideoButton } from "./VideoButton";
 import { LaunchButton } from "./LaunchButton";
+import { EngagementTracker } from "@/components/EngagementTracker";
 
 interface PageProps {
   params: Promise<{ storyId: string }>;
@@ -60,6 +61,9 @@ export default async function DreamStoryPage({ params }: PageProps) {
 
   return (
     <main className="min-h-screen">
+      {/* Engagement tracking */}
+      <EngagementTracker storyId={storyId} type="view" />
+
       {/* Hero */}
       <section className="relative h-[50vh] min-h-[400px]">
         <img
@@ -455,7 +459,7 @@ export default async function DreamStoryPage({ params }: PageProps) {
         </section>
 
         {/* Supporter Wall */}
-        <section>
+        <section data-read-complete>
           <h2 className="mb-6 text-sm font-semibold uppercase tracking-wider text-brand-600">
             Supporter Wall
           </h2>

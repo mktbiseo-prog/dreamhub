@@ -16,7 +16,8 @@ export function PlannerShell() {
   const completedSet = new Set(data.completedActivities);
 
   const handleNext = () => {
-    store.markActivityComplete(data.currentActivity);
+    const meta = PART1_ACTIVITIES.find((a) => a.id === data.currentActivity);
+    store.markActivityComplete(data.currentActivity, meta?.title);
     if (data.currentActivity < 5) {
       store.setCurrentActivity(data.currentActivity + 1);
     } else {

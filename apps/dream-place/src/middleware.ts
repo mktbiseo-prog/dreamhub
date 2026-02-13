@@ -8,10 +8,11 @@ const PROTECTED_ROUTES = [
   "/matches",
   "/messages",
   "/profile",
+  "/cafe",
 ];
 
 // Routes that are always public
-const PUBLIC_ROUTES = ["/", "/api/auth"];
+const PUBLIC_ROUTES = ["/", "/api/auth", "/api/cafe", "/doorbell-display"];
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;

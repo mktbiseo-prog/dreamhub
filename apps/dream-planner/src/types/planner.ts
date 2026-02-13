@@ -178,6 +178,40 @@ export const CURRENT_STATE_DEFAULTS: CurrentStateCard[] = [
   },
 ];
 
+// ── Version History ──
+export interface VersionSnapshot {
+  id: string;
+  timestamp: string;
+  label: string; // e.g. "Completed Activity 3: Time Log"
+  metrics: {
+    skillCount: number;
+    resourceAvg: number;
+    productiveHours: number;
+    consumptionHours: number;
+    totalExpenses: number;
+    lowSatExpenses: number;
+    completedActivities: number;
+    dreamStatement: string;
+    streak: number;
+    // PART 2-4 metrics
+    mindMapNodes: number;
+    failureEntries: number;
+    strengthsCount: number;
+    whyStatement: string;
+    selectedIdea: string;
+    finalProposal: string;
+    hypothesesTested: number;
+    hypothesesSucceeded: number;
+    mvpProgress: number;
+    valueLadderFilled: number;
+    fanCandidates: number;
+    fansConverted: number;
+    dream5Members: number;
+    rejectionsCompleted: number;
+    sustainabilityScore: number;
+  };
+}
+
 // ── Reflection ──
 export interface ReflectionAnswer {
   question: string;

@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { CATEGORIES, PRODUCT_TYPES, CREATOR_STAGES } from "@/lib/types";
-import { getStories, searchStories } from "@/lib/queries";
+import { getStories, searchStories, getRecommendedStories, getWeeklyDream, getMostInspiringDreams } from "@/lib/queries";
+import { getCurrentUser } from "@/lib/auth";
 import { DreamCard } from "@/components/DreamCard";
+import { CommunityVoteButton } from "@/components/CommunityVoteButton";
 import { CategoryFilter } from "./CategoryFilter";
 import { SearchBar } from "./SearchBar";
 
@@ -111,6 +113,14 @@ export default async function DiscoverPage({ searchParams }: PageProps) {
     activeCategory !== "All" ||
     activeProductType !== "All Types" ||
     activeCreatorStage !== "All Stages";
+
+  // Recommendation & curation data
+  const currentUser = await getCurrentUser();
+  const [recommended, weeklyDream, inspiringDreams] = await Promise.all([
+    getRecommendedStories(currentUser?.id, 6),
+    getWeeklyDream(),
+    getMostInspiringDreams(currentUser?.id, 6),
+  ]);
 
   return (
     <main className="min-h-screen">
@@ -325,6 +335,126 @@ export default async function DiscoverPage({ searchParams }: PageProps) {
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
                 {risingDreams.map((story) => (
                   <DreamCard key={story.id} story={story} />
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* Dream of the Week */}
+          {weeklyDream && !hasFilters && (
+            <section className="bg-gradient-to-r from-brand-50 to-orange-50 px-4 py-16 dark:from-brand-950/30 dark:to-orange-950/30 sm:px-6 lg:px-8">
+              <div className="mx-auto max-w-7xl">
+                <div className="mb-6 flex items-center gap-3">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-100 dark:bg-brand-900/30">
+                    <svg className="h-4 w-4 text-brand-600 dark:text-brand-400" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
+                    </svg>
+                  </span>
+                  <div>
+                    <h2 className="text-xl font-bold text-gray-900 dark:text-white">Dream of the Week</h2>
+                    <p className="text-sm text-gray-500">This week&apos;s most inspiring dream story</p>
+                  </div>
+                </div>
+                <Link
+                  href={`/stories/${weeklyDream.id}`}
+                  className="group block overflow-hidden rounded-card border border-brand-200 bg-white shadow-md transition-all hover:shadow-xl dark:border-brand-800 dark:bg-gray-950"
+                >
+                  <div className="grid md:grid-cols-5">
+                    <div className="relative h-64 md:col-span-2 md:h-auto">
+                      <img
+                        src={weeklyDream.coverImage}
+                        alt={weeklyDream.title}
+                        className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      />
+                      <span className="absolute left-4 top-4 rounded-full bg-gradient-to-r from-brand-600 to-orange-500 px-3 py-1 text-xs font-bold text-white shadow">
+                        Dream of the Week
+                      </span>
+                    </div>
+                    <div className="flex flex-col justify-center p-8 md:col-span-3 lg:p-10">
+                      <div className="mb-3 flex items-center gap-3">
+                        <img
+                          src={weeklyDream.creatorAvatar}
+                          alt={weeklyDream.creatorName}
+                          className="h-10 w-10 rounded-full border-2 border-brand-200 object-cover"
+                        />
+                        <div>
+                          <p className="text-sm font-medium text-gray-900 dark:text-white">{weeklyDream.creatorName}</p>
+                          <p className="text-xs text-gray-500">{weeklyDream.supporterCount} supporters</p>
+                        </div>
+                      </div>
+                      <h3 className="mb-2 text-2xl font-bold text-gray-900 group-hover:text-brand-600 dark:text-white">
+                        {weeklyDream.title}
+                      </h3>
+                      <p className="mb-4 line-clamp-3 text-sm leading-relaxed text-gray-600 dark:text-gray-400">
+                        {weeklyDream.statement}
+                      </p>
+                      <div className="flex items-center gap-3">
+                        <span className="rounded-full bg-brand-100 px-3 py-1 text-xs font-medium text-brand-700 dark:bg-brand-900/30 dark:text-brand-400">
+                          {weeklyDream.category}
+                        </span>
+                        <span className="text-xs text-gray-500">
+                          {weeklyDream.products.length} product{weeklyDream.products.length !== 1 ? "s" : ""}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              </div>
+            </section>
+          )}
+
+          {/* Recommended for You */}
+          {recommended.length > 0 && !hasFilters && (
+            <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+              <div className="mb-6 flex items-center gap-3">
+                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-purple-100 dark:bg-purple-900/30">
+                  <svg className="h-4 w-4 text-purple-600 dark:text-purple-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 00-2.455 2.456z" />
+                  </svg>
+                </span>
+                <div>
+                  <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+                    {currentUser ? "Recommended for You" : "Top Dreams"}
+                  </h2>
+                  <p className="text-sm text-gray-500">
+                    {currentUser ? "Personalized picks based on your interests" : "Highest-rated dreams by our community"}
+                  </p>
+                </div>
+              </div>
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {recommended.map((story) => (
+                  <DreamCard key={story.id} story={story} />
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* Most Inspiring Dreams */}
+          {inspiringDreams.length > 0 && !hasFilters && (
+            <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+              <div className="mb-6 flex items-center gap-3">
+                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-rose-100 dark:bg-rose-900/30">
+                  <svg className="h-4 w-4 text-rose-600 dark:text-rose-400" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                  </svg>
+                </span>
+                <div>
+                  <h2 className="text-xl font-bold text-gray-900 dark:text-white">Most Inspiring</h2>
+                  <p className="text-sm text-gray-500">Voted most inspiring by the Dream Store community</p>
+                </div>
+              </div>
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {inspiringDreams.map((story) => (
+                  <div key={story.id} className="relative">
+                    <DreamCard story={story} />
+                    <div className="absolute right-3 top-3 z-10">
+                      <CommunityVoteButton
+                        storyId={story.id}
+                        voteCount={story.voteCount}
+                        hasVoted={story.hasVoted}
+                      />
+                    </div>
+                  </div>
                 ))}
               </div>
             </section>

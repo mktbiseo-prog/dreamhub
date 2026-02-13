@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Button } from "@dreamhub/ui";
 import { ThemeToggle } from "./ThemeToggle";
 import { UserMenu } from "./UserMenu";
+import { CartDrawer } from "./cart/CartDrawer";
 import { getCurrentUser } from "@/lib/auth";
 
 export async function Navbar() {
@@ -18,6 +19,7 @@ export async function Navbar() {
 
         <div className="flex items-center gap-3">
           <ThemeToggle />
+          <CartDrawer />
           <Link href="/stories/create">
             <Button variant="outline" size="sm">
               Start Your Dream

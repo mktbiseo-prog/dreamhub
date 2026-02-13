@@ -698,3 +698,203 @@ export async function getSupporterDashboard(userId: string) {
     return null;
   }
 }
+
+// ─── Recommendation & Curation ──────────────────────────────
+
+export async function getRecommendedStories(
+  userId?: string,
+  limit = 8
+): Promise<DreamStory[]> {
+  try {
+    // Engagement-weighted scoring algorithm
+    const stories = await prisma.dreamStory.findMany({
+      where: { status: "ACTIVE" },
+      include: {
+        ...storyInclude,
+        _count: {
+          select: {
+            orders: true,
+            followers: true,
+            engagements: true,
+            communityVotes: true,
+          },
+        },
+        engagements: {
+          select: { type: true },
+        },
+      },
+      orderBy: { createdAt: "desc" },
+      take: 50,
+    });
+
+    // Score each story
+    const scored = stories.map((story) => {
+      let score = 0;
+
+      // 1. Supporter count (strongest signal)
+      score += (story._count.orders || 0) * 10;
+
+      // 2. Follower count
+      score += (story._count.followers || 0) * 5;
+
+      // 3. Engagement signals
+      const readCompletes = story.engagements.filter(
+        (e) => e.type === "read_complete"
+      ).length;
+      const views = story.engagements.filter(
+        (e) => e.type === "view"
+      ).length;
+      const conversionRate =
+        views > 0 ? story._count.orders / views : 0;
+      score += readCompletes * 3;
+      score += conversionRate * 50;
+
+      // 4. Community votes
+      score += (story._count.communityVotes || 0) * 8;
+
+      // 5. Freshness boost (new stories get a boost)
+      const ageInDays =
+        (Date.now() - new Date(story.createdAt).getTime()) /
+        (1000 * 60 * 60 * 24);
+      if (ageInDays < 7) score += 20;
+      else if (ageInDays < 14) score += 10;
+      else if (ageInDays < 30) score += 5;
+
+      // 6. Staff pick / featured boost
+      if (story.isStaffPick) score += 15;
+      if (story.isFeatured) score += 10;
+
+      // 7. Milestone progress (active progress is interesting)
+      const milestoneProgress =
+        story.milestones.length > 0
+          ? story.milestones.filter((m) => m.completed).length /
+            story.milestones.length
+          : 0;
+      if (milestoneProgress > 0 && milestoneProgress < 1) {
+        score += 10; // In-progress dreams are more engaging
+      }
+
+      return { story, score };
+    });
+
+    // Sort by score and take top N
+    scored.sort((a, b) => b.score - a.score);
+
+    // If user is logged in, exclude stories they've already bought
+    let results = scored;
+    if (userId && userId !== "demo-user") {
+      try {
+        const boughtStoryIds = await prisma.order.findMany({
+          where: { buyerId: userId, status: "COMPLETED" },
+          select: { dreamStoryId: true },
+          distinct: ["dreamStoryId"],
+        });
+        const boughtSet = new Set(
+          boughtStoryIds.map((o) => o.dreamStoryId)
+        );
+        results = scored.filter((s) => !boughtSet.has(s.story.id));
+      } catch {
+        // Ignore
+      }
+    }
+
+    return results.slice(0, limit).map((s) => mapDbStoryToView(s.story));
+  } catch {
+    return MOCK_STORIES.slice(0, limit);
+  }
+}
+
+export async function getWeeklyDream(): Promise<DreamStory | null> {
+  try {
+    const now = new Date();
+    const weekStart = new Date(now);
+    weekStart.setDate(now.getDate() - now.getDay()); // Start of week (Sunday)
+    weekStart.setHours(0, 0, 0, 0);
+
+    const weekly = await prisma.weeklyDream.findFirst({
+      where: {
+        weekStart: { lte: now },
+        weekEnd: { gte: now },
+      },
+      include: {
+        dreamStory: {
+          include: storyInclude,
+        },
+      },
+    });
+
+    if (weekly) {
+      return mapDbStoryToView(weekly.dreamStory);
+    }
+
+    // Auto-select: pick highest scored active story this week
+    const topStory = await prisma.dreamStory.findFirst({
+      where: { status: "ACTIVE", isFeatured: true },
+      include: storyInclude,
+      orderBy: { createdAt: "desc" },
+    });
+
+    if (topStory) return mapDbStoryToView(topStory);
+    return null;
+  } catch {
+    return MOCK_STORIES[0] || null;
+  }
+}
+
+export async function getMostInspiringDreams(
+  userId?: string,
+  limit = 6
+): Promise<Array<DreamStory & { voteCount: number; hasVoted: boolean }>> {
+  try {
+    const stories = await prisma.dreamStory.findMany({
+      where: { status: "ACTIVE" },
+      include: {
+        ...storyInclude,
+        communityVotes: true,
+        _count: {
+          select: { orders: true, followers: true, communityVotes: true },
+        },
+      },
+      orderBy: { createdAt: "desc" },
+      take: 50,
+    });
+
+    // Sort by vote count
+    const sorted = stories
+      .map((s) => ({
+        story: s,
+        voteCount: s._count.communityVotes,
+        hasVoted: userId
+          ? s.communityVotes.some((v) => v.userId === userId)
+          : false,
+      }))
+      .sort((a, b) => b.voteCount - a.voteCount)
+      .slice(0, limit);
+
+    return sorted.map((s) => ({
+      ...mapDbStoryToView(s.story),
+      voteCount: s.voteCount,
+      hasVoted: s.hasVoted,
+    }));
+  } catch {
+    return MOCK_STORIES.slice(0, limit).map((s) => ({
+      ...s,
+      voteCount: 0,
+      hasVoted: false,
+    }));
+  }
+}
+
+export async function hasVoted(
+  userId: string,
+  dreamStoryId: string
+): Promise<boolean> {
+  try {
+    const vote = await prisma.communityVote.findUnique({
+      where: { userId_dreamStoryId: { userId, dreamStoryId } },
+    });
+    return !!vote;
+  } catch {
+    return false;
+  }
+}

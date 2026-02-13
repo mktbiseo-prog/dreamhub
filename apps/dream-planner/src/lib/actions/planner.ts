@@ -61,6 +61,7 @@ export async function loadPlannerData(): Promise<PlannerData | null> {
         reflectionAnswers: session.part4Reflections,
       } as PlannerData["part4"],
       recentInsights: jsonAs<PlannerData["recentInsights"]>(session.aiInsights, []),
+      versionHistory: jsonAs<PlannerData["versionHistory"]>(session.versionHistory ?? null, []),
     };
   } catch (error) {
     console.error("[loadPlannerData] Error:", error);
@@ -107,6 +108,7 @@ export async function savePlannerData(data: PlannerData): Promise<boolean> {
       part3Reflections: data.part3.reflectionAnswers,
       part4Reflections: data.part4.reflectionAnswers,
       aiInsights: toJson(data.recentInsights),
+      versionHistory: toJson(data.versionHistory),
     };
 
     await prisma.plannerSession.upsert({

@@ -14,12 +14,16 @@ export async function createProduct(
     price: string;
     whyIMadeThis?: string;
     category: string;
+    images?: string[];
+    productType?: string;
+    shippingWeight?: number;
+    shippingCost?: string;
+    isDigital?: boolean;
   }
 ) {
   const parsed = createProductSchema.parse(input);
   const userId = await getCurrentUserId();
 
-  // Check story ownership
   const story = await prisma.dreamStory.findUnique({
     where: { id: storyId },
   });
@@ -36,6 +40,11 @@ export async function createProduct(
       price: Math.round(Number(parsed.price) * 100),
       whyIMadeThis: parsed.whyIMadeThis || null,
       category: parsed.category,
+      images: parsed.images || [],
+      productType: parsed.productType || "Physical Product",
+      shippingWeight: parsed.shippingWeight || null,
+      shippingCost: parsed.shippingCost ? Math.round(Number(parsed.shippingCost) * 100) : 0,
+      isDigital: parsed.isDigital || false,
     },
   });
 
@@ -52,12 +61,16 @@ export async function updateProduct(
     price: string;
     whyIMadeThis?: string;
     category: string;
+    images?: string[];
+    productType?: string;
+    shippingWeight?: number;
+    shippingCost?: string;
+    isDigital?: boolean;
   }
 ) {
   const parsed = updateProductSchema.parse(input);
   const userId = await getCurrentUserId();
 
-  // Check story ownership
   const story = await prisma.dreamStory.findUnique({
     where: { id: storyId },
   });
@@ -66,7 +79,6 @@ export async function updateProduct(
     throw new Error("Dream story not found or access denied");
   }
 
-  // Check product belongs to the story
   const existing = await prisma.product.findUnique({
     where: { id: productId },
   });
@@ -83,6 +95,11 @@ export async function updateProduct(
       price: Math.round(Number(parsed.price) * 100),
       whyIMadeThis: parsed.whyIMadeThis || null,
       category: parsed.category,
+      images: parsed.images || [],
+      productType: parsed.productType || "Physical Product",
+      shippingWeight: parsed.shippingWeight || null,
+      shippingCost: parsed.shippingCost ? Math.round(Number(parsed.shippingCost) * 100) : 0,
+      isDigital: parsed.isDigital || false,
     },
   });
 
@@ -94,7 +111,6 @@ export async function updateProduct(
 export async function deleteProduct(productId: string, storyId: string) {
   const userId = await getCurrentUserId();
 
-  // Check story ownership
   const story = await prisma.dreamStory.findUnique({
     where: { id: storyId },
   });
@@ -103,7 +119,6 @@ export async function deleteProduct(productId: string, storyId: string) {
     throw new Error("Dream story not found or access denied");
   }
 
-  // Check product belongs to the story
   const existing = await prisma.product.findUnique({
     where: { id: productId },
   });
@@ -112,7 +127,6 @@ export async function deleteProduct(productId: string, storyId: string) {
     throw new Error("Product not found or access denied");
   }
 
-  // Cascade delete is handled by Prisma schema relations
   await prisma.product.delete({
     where: { id: productId },
   });

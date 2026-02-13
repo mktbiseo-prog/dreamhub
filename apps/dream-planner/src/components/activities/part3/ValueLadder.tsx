@@ -6,6 +6,8 @@ import { usePlannerStore } from "@/lib/store";
 import { CrossPartRef } from "@/components/planner/CrossPartRef";
 import { LADDER_TIERS } from "@/types/part3";
 
+import type { PlannerData } from "@/lib/store";
+
 interface ValueLadderItem {
   tier: string;
   productName: string;
@@ -154,6 +156,264 @@ function RevenueSimulator({ ladder }: { ladder: ValueLadderItem[] }) {
           Adjust the sliders above to see different scenarios. Total customers: {lowCustomers + midCustomers + highCustomers}/mo
         </p>
       </div>
+    </div>
+  );
+}
+
+function CustomerJourneyFlow({ ladder }: { ladder: ValueLadderItem[] }) {
+  const stages = [
+    { label: "Discover", icon: "eye", color: "#6b7280", description: "Finds you via social media, search, or referral" },
+    { label: "Freebie", icon: "gift", color: "#22c55e", product: ladder[0] },
+    { label: "Low Tier", icon: "ticket", color: "#3b82f6", product: ladder[1] },
+    { label: "Mid Tier", icon: "star", color: "#8b5cf6", product: ladder[2] },
+    { label: "High Tier", icon: "crown", color: "#f59e0b", product: ladder[3] },
+    { label: "Fan", icon: "heart", color: "#ef4444", description: "Becomes an advocate and refers others" },
+  ];
+
+  const stageIcons: Record<string, React.ReactNode> = {
+    eye: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>,
+    gift: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 010-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 000-5C13 2 12 7 12 7z"/></svg>,
+    ticket: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 9a3 3 0 013-3h14a3 3 0 013 3M2 9v6a3 3 0 003 3h14a3 3 0 003-3V9M2 9l2.5 3L2 15M22 9l-2.5 3L22 15"/></svg>,
+    star: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>,
+    crown: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7z"/><path d="M3 20h18"/></svg>,
+    heart: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>,
+  };
+
+  return (
+    <div className="mb-6 rounded-card border border-emerald-200 bg-gradient-to-r from-emerald-50 to-teal-50 p-4 dark:border-emerald-800 dark:from-emerald-950 dark:to-teal-950">
+      <div className="mb-3 flex items-center gap-2">
+        <span className="rounded-md bg-emerald-100 px-1.5 py-0.5 text-[10px] font-bold text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300">JOURNEY</span>
+        <span className="text-xs font-medium text-emerald-700 dark:text-emerald-300">Customer Journey Flow</span>
+      </div>
+      <p className="mb-4 text-xs text-gray-500 dark:text-gray-400">
+        How a stranger becomes your biggest fan through your value ladder.
+      </p>
+
+      {/* Flow Visualization */}
+      <div className="flex items-start gap-1 overflow-x-auto pb-2">
+        {stages.map((stage, i) => (
+          <div key={stage.label} className="flex shrink-0 items-center">
+            <div className="flex w-24 flex-col items-center text-center">
+              {/* Icon Circle */}
+              <div
+                className="mb-2 flex h-10 w-10 items-center justify-center rounded-full text-white"
+                style={{ backgroundColor: stage.color }}
+              >
+                {stageIcons[stage.icon]}
+              </div>
+              {/* Label */}
+              <p className="text-[10px] font-bold text-gray-700 dark:text-gray-300">{stage.label}</p>
+              {/* Product name or description */}
+              {"product" in stage && stage.product ? (
+                <p className="mt-0.5 text-[9px] text-gray-500">
+                  {stage.product.productName || "—"}
+                  {stage.product.price > 0 && ` ($${stage.product.price})`}
+                </p>
+              ) : (
+                <p className="mt-0.5 text-[9px] text-gray-400">{stage.description}</p>
+              )}
+            </div>
+            {/* Arrow */}
+            {i < stages.length - 1 && (
+              <svg width="20" height="16" viewBox="0 0 20 16" fill="none" className="shrink-0 text-gray-300 dark:text-gray-600">
+                <path d="M2 8h14M12 3l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            )}
+          </div>
+        ))}
+      </div>
+
+      {/* Key insight */}
+      <div className="mt-3 rounded-[8px] bg-white/70 p-3 dark:bg-gray-800/70">
+        <p className="text-[10px] font-semibold text-emerald-700 dark:text-emerald-400">The Ladder Principle</p>
+        <p className="mt-1 text-xs text-gray-600 dark:text-gray-400">
+          {ladder[0].productName
+            ? `Your freebie "${ladder[0].productName}" attracts leads. Each tier builds trust and delivers more value, guiding customers naturally to your premium "${ladder[3].productName || "high-tier"}" offering.`
+            : "Name your freebie above to see the full journey. Each tier should solve a progressively bigger problem and build trust with your audience."
+          }
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function AiPricingCoach({ ladder, data }: { ladder: ValueLadderItem[]; data: PlannerData }) {
+  const [expanded, setExpanded] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [aiAdvice, setAiAdvice] = useState<{ strategy: string; tips: string[]; benchmarks: string[] } | null>(null);
+
+  const filledTiers = ladder.filter((s) => s.productName.trim());
+  const hasData = filledTiers.length >= 2;
+
+  // Generate mock pricing strategy advice based on current data
+  const mockAdvice = useMemo(() => {
+    const tips: string[] = [];
+    const benchmarks: string[] = [];
+    let strategy = "";
+
+    const freebie = ladder[0];
+    const low = ladder[1];
+    const mid = ladder[2];
+    const high = ladder[3];
+
+    // Strategy based on pricing pattern
+    if (high.price > 0 && low.price > 0) {
+      const ratio = high.price / low.price;
+      if (ratio > 20) {
+        strategy = "Your high-to-low price ratio is " + Math.round(ratio) + "x. This is a premium strategy — make sure each tier jump includes a clear transformation upgrade, not just more features.";
+      } else if (ratio >= 5) {
+        strategy = "Solid price ratio across tiers. Your ladder follows a healthy 5-10x progression, similar to successful SaaS and coaching businesses.";
+      } else {
+        strategy = "Your tiers are closely priced. Consider widening the gap between mid and high tier by adding exclusive 1-on-1 access, community, or done-for-you services.";
+      }
+    } else if (filledTiers.length < 2) {
+      strategy = "Fill in at least 2 tier prices to get personalized pricing strategy advice.";
+    }
+
+    // Tips based on data
+    if (freebie.productName && !freebie.customerValue) {
+      tips.push("Add a customer value for your freebie. The clearer the value, the more leads it attracts.");
+    }
+    if (low.price > 0 && low.price < 10) {
+      tips.push(`$${low.price} is quite low. Consider whether your audience would pay $${Math.round(low.price * 2)}-$${Math.round(low.price * 3)} — many creators undercharge at the low tier.`);
+    }
+    if (mid.price > 0 && !mid.customerValue) {
+      tips.push(`Your mid tier "${mid.productName || "product"}" needs a clear value statement. Mid tier is where most revenue comes from.`);
+    }
+    if (high.price > 500) {
+      tips.push("For premium pricing above $500, consider adding a discovery call, guarantee, or payment plan to reduce friction.");
+    }
+    if (high.price > 0 && high.price < 100) {
+      tips.push("Your high tier is under $100. Premium doesn't mean expensive, but consider what a VIP experience would look like.");
+    }
+
+    // Cross-reference with other parts
+    const proposal = data.part3.oneLineProposal.finalProposal;
+    if (proposal) {
+      tips.push(`Ensure each tier connects to your proposal: "${proposal.slice(0, 60)}${proposal.length > 60 ? "..." : ""}". The freebie should solve the smallest version of the same problem.`);
+    }
+
+    const fanCount = data.part4.fanCandidates.length;
+    if (fanCount > 0) {
+      tips.push(`With ${fanCount} fan candidates in PART 4, consider pricing your low tier as a "no-brainer" impulse buy to convert leads quickly.`);
+    }
+
+    // Benchmarks
+    if (low.price > 0) {
+      benchmarks.push(`Low tier ($${low.price}): Digital products in this range typically see 5-15% conversion from free leads.`);
+    }
+    if (mid.price > 0) {
+      benchmarks.push(`Mid tier ($${mid.price}): Group coaching or course bundles at this price point see 1-5% conversion.`);
+    }
+    if (high.price > 0) {
+      benchmarks.push(`High tier ($${high.price}): Premium 1-on-1 or done-for-you services typically convert 0.5-2% of qualified leads.`);
+    }
+
+    return { strategy, tips, benchmarks };
+  }, [ladder, data.part3.oneLineProposal.finalProposal, data.part4.fanCandidates.length, filledTiers.length]);
+
+  const fetchAiAdvice = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch("/api/insights", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ activityId: 14, data }),
+      });
+      if (res.ok) {
+        const result = await res.json();
+        setAiAdvice({
+          strategy: result.insights?.[0] || mockAdvice.strategy,
+          tips: result.suggestions || mockAdvice.tips,
+          benchmarks: mockAdvice.benchmarks,
+        });
+      } else {
+        // Fallback to mock
+        setAiAdvice(mockAdvice);
+      }
+    } catch {
+      setAiAdvice(mockAdvice);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const displayAdvice = aiAdvice || mockAdvice;
+
+  if (!hasData) return null;
+
+  return (
+    <div className="mb-6 rounded-card border border-purple-200 bg-gradient-to-r from-purple-50 to-pink-50 p-4 dark:border-purple-800 dark:from-purple-950 dark:to-pink-950">
+      <div className="mb-3 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <span className="rounded-md bg-purple-100 px-1.5 py-0.5 text-[10px] font-bold text-purple-700 dark:bg-purple-900 dark:text-purple-300">AI</span>
+          <span className="text-xs font-medium text-purple-700 dark:text-purple-300">Pricing Strategy Coach</span>
+        </div>
+        <button
+          type="button"
+          onClick={fetchAiAdvice}
+          disabled={loading}
+          className="flex items-center gap-1 rounded-full bg-purple-100 px-2.5 py-1 text-[10px] font-semibold text-purple-700 transition-colors hover:bg-purple-200 disabled:opacity-50 dark:bg-purple-900 dark:text-purple-300"
+        >
+          {loading ? (
+            <>
+              <svg className="h-3 w-3 animate-spin" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" className="opacity-25"/><path d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" fill="currentColor" className="opacity-75"/></svg>
+              Analyzing...
+            </>
+          ) : (
+            <>
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/></svg>
+              Get AI Advice
+            </>
+          )}
+        </button>
+      </div>
+
+      {/* Strategy */}
+      {displayAdvice.strategy && (
+        <div className="mb-3 rounded-[8px] bg-white p-3 dark:bg-gray-800">
+          <p className="text-xs font-semibold text-purple-600 dark:text-purple-400">Strategy Assessment</p>
+          <p className="mt-1 text-xs text-gray-600 dark:text-gray-400">{displayAdvice.strategy}</p>
+        </div>
+      )}
+
+      {/* Tips */}
+      {displayAdvice.tips.length > 0 && (
+        <div className="mb-3 rounded-[8px] bg-white p-3 dark:bg-gray-800">
+          <p className="mb-2 text-xs font-semibold text-purple-600 dark:text-purple-400">Pricing Tips</p>
+          <div className="space-y-1.5">
+            {displayAdvice.tips.slice(0, expanded ? undefined : 3).map((tip, i) => (
+              <div key={i} className="flex items-start gap-2">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="mt-0.5 shrink-0 text-purple-400">
+                  <path d="M9 18l6-6-6-6" />
+                </svg>
+                <p className="text-xs text-gray-600 dark:text-gray-400">{tip}</p>
+              </div>
+            ))}
+          </div>
+          {displayAdvice.tips.length > 3 && (
+            <button
+              type="button"
+              onClick={() => setExpanded(!expanded)}
+              className="mt-2 text-[10px] font-medium text-purple-500 hover:text-purple-600"
+            >
+              {expanded ? "Show Less" : `+${displayAdvice.tips.length - 3} more tips`}
+            </button>
+          )}
+        </div>
+      )}
+
+      {/* Benchmarks */}
+      {displayAdvice.benchmarks.length > 0 && (
+        <div className="rounded-[8px] bg-white p-3 dark:bg-gray-800">
+          <p className="mb-2 text-xs font-semibold text-purple-600 dark:text-purple-400">Industry Benchmarks</p>
+          <div className="space-y-1.5">
+            {displayAdvice.benchmarks.map((b, i) => (
+              <p key={i} className="text-xs text-gray-500 dark:text-gray-400">{b}</p>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -335,10 +595,18 @@ export function ValueLadder({ onNext }: { onNext: () => void }) {
         })}
       </div>
 
+      {/* Customer Journey Flow */}
+      {ladder.some((s) => s.productName.trim()) && (
+        <CustomerJourneyFlow ladder={ladder} />
+      )}
+
       {/* Revenue Simulation */}
       {ladder.some((s) => s.price > 0) && (
         <RevenueSimulator ladder={ladder} />
       )}
+
+      {/* AI Pricing Strategy Coach */}
+      <AiPricingCoach ladder={ladder} data={data} />
 
       <div className="flex justify-end">
         <Button onClick={onNext} className="gap-2">
