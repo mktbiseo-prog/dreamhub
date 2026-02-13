@@ -6,12 +6,12 @@ import { Calendar } from "lucide-react";
 import { SearchBar } from "./SearchBar";
 import { CategoryFilter } from "./CategoryFilter";
 import { categories, type CategoryId } from "@/lib/categories";
-import { mockThoughts, type Thought } from "@/lib/mock-data";
+import type { ThoughtData } from "@/lib/data";
 
 interface DayGroup {
   label: string;
   date: string;
-  thoughts: Thought[];
+  thoughts: ThoughtData[];
 }
 
 function formatDayLabel(dateStr: string): string {
@@ -38,8 +38,8 @@ function formatTime(dateStr: string): string {
   });
 }
 
-function groupByDay(thoughts: Thought[]): DayGroup[] {
-  const groups: Record<string, Thought[]> = {};
+function groupByDay(thoughts: ThoughtData[]): DayGroup[] {
+  const groups: Record<string, ThoughtData[]> = {};
 
   for (const thought of thoughts) {
     const dayKey = new Date(thought.createdAt).toDateString();
@@ -58,12 +58,16 @@ function groupByDay(thoughts: Thought[]): DayGroup[] {
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 }
 
-export function TimelineView() {
+interface TimelineViewProps {
+  initialThoughts: ThoughtData[];
+}
+
+export function TimelineView({ initialThoughts }: TimelineViewProps) {
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<CategoryId | null>(null);
 
   const filtered = useMemo(() => {
-    return mockThoughts.filter((t) => {
+    return initialThoughts.filter((t) => {
       if (selectedCategory && t.category !== selectedCategory) return false;
       if (search) {
         const q = search.toLowerCase();

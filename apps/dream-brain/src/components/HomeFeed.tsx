@@ -5,7 +5,7 @@ import { Sparkles } from "lucide-react";
 import { SearchBar } from "./SearchBar";
 import { CategoryFilter } from "./CategoryFilter";
 import { ThoughtCard } from "./ThoughtCard";
-import { mockThoughts } from "@/lib/mock-data";
+import type { ThoughtData } from "@/lib/data";
 import type { CategoryId } from "@/lib/categories";
 
 const dailyPrompts = [
@@ -15,14 +15,18 @@ const dailyPrompts = [
   "What challenge are you facing?",
 ];
 
-export function HomeFeed() {
+interface HomeFeedProps {
+  initialThoughts: ThoughtData[];
+}
+
+export function HomeFeed({ initialThoughts }: HomeFeedProps) {
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<CategoryId | null>(null);
 
   const prompt = dailyPrompts[Math.floor(Date.now() / 86400000) % dailyPrompts.length];
 
   const filteredThoughts = useMemo(() => {
-    return mockThoughts.filter((thought) => {
+    return initialThoughts.filter((thought) => {
       if (selectedCategory && thought.category !== selectedCategory) return false;
       if (search) {
         const q = search.toLowerCase();
@@ -34,7 +38,7 @@ export function HomeFeed() {
       }
       return true;
     });
-  }, [search, selectedCategory]);
+  }, [search, selectedCategory, initialThoughts]);
 
   return (
     <div className="flex flex-col gap-5">

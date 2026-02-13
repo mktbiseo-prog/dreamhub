@@ -15,9 +15,8 @@ import {
   useEdgesState,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
-import { categories } from "@/lib/categories";
-import { mockThoughts, mockConnections } from "@/lib/mock-data";
-import type { CategoryId } from "@/lib/categories";
+import { categories, type CategoryId } from "@/lib/categories";
+import type { ThoughtData, ConnectionData } from "@/lib/data";
 
 const categoryColors: Record<string, string> = {
   work: "#60a5fa",
@@ -70,7 +69,6 @@ function ThoughtNode({ data }: { data: ThoughtNodeData }) {
           {data.shortTitle}
         </span>
       </div>
-      {/* Tooltip */}
       <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md bg-gray-800 px-2 py-1 text-[10px] text-gray-300 opacity-0 transition-opacity group-hover:opacity-100 pointer-events-none border border-white/10 z-10">
         {data.label}
       </div>
@@ -83,14 +81,18 @@ const nodeTypes: NodeTypes = {
   thought: ThoughtNode as NodeTypes[string],
 };
 
-function buildGraphData() {
-  // Position nodes in a circle layout
+interface BrainGraphProps {
+  thoughts: ThoughtData[];
+  connections: ConnectionData[];
+}
+
+function buildGraphData(thoughts: ThoughtData[], connections: ConnectionData[]) {
   const centerX = 400;
   const centerY = 300;
   const radius = 250;
 
-  const nodes: Node[] = mockThoughts.map((thought, i) => {
-    const angle = (i / mockThoughts.length) * 2 * Math.PI - Math.PI / 2;
+  const nodes: Node[] = thoughts.map((thought, i) => {
+    const angle = (i / thoughts.length) * 2 * Math.PI - Math.PI / 2;
     const size = 50 + thought.importance * 12;
     const shortTitle =
       thought.title.length > 12
@@ -114,13 +116,15 @@ function buildGraphData() {
     };
   });
 
-  const edges: Edge[] = mockConnections.map((conn, i) => ({
+  const thoughtMap = new Map(thoughts.map((t) => [t.id, t]));
+
+  const edges: Edge[] = connections.map((conn, i) => ({
     id: `e-${i}`,
     source: conn.sourceId,
     target: conn.targetId,
     animated: conn.score > 0.85,
     style: {
-      stroke: categoryColors[mockThoughts.find((t) => t.id === conn.sourceId)?.category || "ideas"] || "#8b5cf6",
+      stroke: categoryColors[thoughtMap.get(conn.sourceId)?.category || "ideas"] || "#8b5cf6",
       strokeWidth: Math.max(1, conn.score * 3),
       opacity: 0.3 + conn.score * 0.4,
     },
@@ -129,11 +133,11 @@ function buildGraphData() {
   return { nodes, edges };
 }
 
-export function BrainGraph() {
+export function BrainGraph({ thoughts, connections }: BrainGraphProps) {
   const router = useRouter();
   const { nodes: initialNodes, edges: initialEdges } = useMemo(
-    () => buildGraphData(),
-    []
+    () => buildGraphData(thoughts, connections),
+    [thoughts, connections]
   );
 
   const [nodes, , onNodesChange] = useNodesState(initialNodes);
@@ -145,6 +149,17 @@ export function BrainGraph() {
     },
     [router]
   );
+
+  if (thoughts.length === 0) {
+    return (
+      <div className="flex h-full items-center justify-center" style={{ minHeight: "calc(100vh - 140px)" }}>
+        <div className="text-center">
+          <p className="text-sm text-gray-500">No thoughts yet</p>
+          <p className="mt-1 text-xs text-gray-600">Capture your first thought to see your brain map</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="h-full w-full" style={{ minHeight: "calc(100vh - 140px)" }}>

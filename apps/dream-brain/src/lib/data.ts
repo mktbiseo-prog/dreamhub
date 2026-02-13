@@ -15,6 +15,8 @@ export interface ThoughtData {
   createdAt: string;
   isFavorite: boolean;
   importance: number;
+  inputMethod?: "TEXT" | "VOICE";
+  voiceDurationSeconds?: number;
 }
 
 export interface ConnectionData {

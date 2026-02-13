@@ -1,10 +1,9 @@
 "use server";
 
-import { prisma } from "@dreamhub/database";
-import { analyzeThought } from "@dreamhub/ai";
+import { prisma, type ThoughtCategory } from "@dreamhub/database";
+import { analyzeThought, generateEmbedding, cosineSimilarity } from "@dreamhub/ai";
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
-import type { ThoughtCategory } from "@prisma/client";
 
 // ── Validation ──────────────────────────────────────────────
 
@@ -32,16 +31,17 @@ const ListThoughtsSchema = z.object({
   cursor: z.string().optional(),
 });
 
-// ── Temp user ID (until auth is wired up) ───────────────────
+// ── Auth ────────────────────────────────────────────────────
 
-const TEMP_USER_ID = "demo-user";
+import { getCurrentUserId } from "@/lib/auth";
 
 async function ensureDemoUser() {
-  const existing = await prisma.user.findUnique({ where: { id: TEMP_USER_ID } });
+  const id = "demo-user";
+  const existing = await prisma.user.findUnique({ where: { id } });
   if (!existing) {
     await prisma.user.create({
       data: {
-        id: TEMP_USER_ID,
+        id,
         email: "demo@dreambrain.app",
         name: "Demo User",
       },
@@ -54,14 +54,16 @@ async function ensureDemoUser() {
 export async function createThought(input: { title?: string; body: string }) {
   const parsed = CreateThoughtSchema.parse(input);
 
-  await ensureDemoUser();
+  const userId = await getCurrentUserId();
+  if (userId === "demo-user") await ensureDemoUser();
 
-  // AI analysis
+  // AI analysis + embedding
   const analysis = await analyzeThought(parsed.body, parsed.title);
+  const embedding = await generateEmbedding(`${analysis.title}. ${parsed.body}`);
 
   const thought = await prisma.thought.create({
     data: {
-      userId: TEMP_USER_ID,
+      userId,
       title: analysis.title,
       body: parsed.body,
       summary: analysis.summary,
@@ -70,11 +72,12 @@ export async function createThought(input: { title?: string; body: string }) {
       keywords: analysis.keywords,
       importance: analysis.importance,
       inputMethod: "TEXT",
+      embedding,
     },
   });
 
   // Find and create connections to related thoughts
-  await findAndCreateConnections(thought.id, thought.tags, thought.keywords, thought.category);
+  await findAndCreateConnections(userId, thought.id, thought.tags, thought.keywords, thought.category, embedding);
 
   revalidatePath("/");
   revalidatePath("/timeline");
@@ -91,10 +94,11 @@ export async function getThoughts(input?: {
 }) {
   const parsed = ListThoughtsSchema.parse(input || {});
 
-  await ensureDemoUser();
+  const userId = await getCurrentUserId();
+  if (userId === "demo-user") await ensureDemoUser();
 
   const where: Record<string, unknown> = {
-    userId: TEMP_USER_ID,
+    userId,
     isArchived: false,
   };
 
@@ -158,10 +162,30 @@ export async function updateThought(input: {
   const parsed = UpdateThoughtSchema.parse(input);
   const { id, ...data } = parsed;
 
+  // Ownership check
+  const userId = await getCurrentUserId();
+  const existing = await prisma.thought.findUnique({ where: { id } });
+  if (!existing || existing.userId !== userId) {
+    throw new Error("Thought not found or access denied");
+  }
+
+  // Regenerate embedding if body changed
+  const updateData = data as Record<string, unknown>;
+  if (data.body) {
+    const title = data.title || existing.title;
+    updateData.embedding = await generateEmbedding(`${title}. ${data.body}`);
+  }
+
   const thought = await prisma.thought.update({
     where: { id },
-    data: data as Record<string, unknown>,
+    data: updateData,
   });
+
+  // Recalculate connections if body changed
+  if (data.body) {
+    await prisma.thoughtConnection.deleteMany({ where: { sourceThoughtId: id } });
+    await findAndCreateConnections(userId, id, thought.tags, thought.keywords, thought.category, thought.embedding);
+  }
 
   revalidatePath("/");
   revalidatePath("/timeline");
@@ -171,11 +195,60 @@ export async function updateThought(input: {
 }
 
 export async function deleteThought(id: string) {
+  // Ownership check
+  const userId = await getCurrentUserId();
+  const existing = await prisma.thought.findUnique({ where: { id } });
+  if (!existing || existing.userId !== userId) {
+    throw new Error("Thought not found or access denied");
+  }
+
   await prisma.thought.delete({ where: { id } });
 
   revalidatePath("/");
   revalidatePath("/timeline");
   revalidatePath("/brain");
+}
+
+export async function createVoiceThought(input: {
+  body: string;
+  voiceDurationSeconds: number;
+}) {
+  const parsed = z
+    .object({
+      body: z.string().min(1).max(10000),
+      voiceDurationSeconds: z.number().min(0).max(300),
+    })
+    .parse(input);
+
+  const userId = await getCurrentUserId();
+  if (userId === "demo-user") await ensureDemoUser();
+
+  const analysis = await analyzeThought(parsed.body);
+  const embedding = await generateEmbedding(`${analysis.title}. ${parsed.body}`);
+
+  const thought = await prisma.thought.create({
+    data: {
+      userId,
+      title: analysis.title,
+      body: parsed.body,
+      summary: analysis.summary,
+      category: analysis.category as ThoughtCategory,
+      tags: analysis.tags,
+      keywords: analysis.keywords,
+      importance: analysis.importance,
+      inputMethod: "VOICE",
+      voiceDurationSeconds: parsed.voiceDurationSeconds,
+      embedding,
+    },
+  });
+
+  await findAndCreateConnections(userId, thought.id, thought.tags, thought.keywords, thought.category, embedding);
+
+  revalidatePath("/");
+  revalidatePath("/timeline");
+  revalidatePath("/brain");
+
+  return thought;
 }
 
 export async function toggleFavorite(id: string) {
@@ -192,10 +265,11 @@ export async function toggleFavorite(id: string) {
 }
 
 export async function getGraphData() {
-  await ensureDemoUser();
+  const userId = await getCurrentUserId();
+  if (userId === "demo-user") await ensureDemoUser();
 
   const thoughts = await prisma.thought.findMany({
-    where: { userId: TEMP_USER_ID, isArchived: false },
+    where: { userId, isArchived: false },
     orderBy: { createdAt: "desc" },
     take: 50,
   });
@@ -215,21 +289,24 @@ export async function getGraphData() {
 // ── Helpers ─────────────────────────────────────────────────
 
 async function findAndCreateConnections(
+  userId: string,
   thoughtId: string,
   tags: string[],
   keywords: string[],
-  category: ThoughtCategory
+  category: ThoughtCategory,
+  embedding: number[] = []
 ) {
-  // Simple tag/keyword-based similarity (MVP — replace with vector similarity later)
   const existingThoughts = await prisma.thought.findMany({
     where: {
-      userId: TEMP_USER_ID,
+      userId,
       id: { not: thoughtId },
       isArchived: false,
     },
     take: 50,
     orderBy: { createdAt: "desc" },
   });
+
+  const hasEmbedding = embedding.length > 0;
 
   for (const existing of existingThoughts) {
     const sharedTags = tags.filter((t) => existing.tags.includes(t));
@@ -240,9 +317,22 @@ async function findAndCreateConnections(
     const keywordScore = keywords.length > 0 ? sharedKeywords.length / keywords.length : 0;
     const categoryBonus = sameCategory ? 0.15 : 0;
 
-    const score = tagScore * 0.4 + keywordScore * 0.35 + categoryBonus + Math.random() * 0.1;
+    let score: number;
+    let threshold: number;
 
-    if (score >= 0.3) {
+    if (hasEmbedding && existing.embedding.length > 0) {
+      // Vector mode: 60% vector + 25% tag/keyword + 15% category
+      const vectorScore = Math.max(0, cosineSimilarity(embedding, existing.embedding));
+      const tagKeywordScore = tagScore * 0.6 + keywordScore * 0.4;
+      score = vectorScore * 0.6 + tagKeywordScore * 0.25 + categoryBonus;
+      threshold = 0.25;
+    } else {
+      // Fallback: 40% tag + 35% keyword + 15% category + 10% random
+      score = tagScore * 0.4 + keywordScore * 0.35 + categoryBonus + Math.random() * 0.1;
+      threshold = 0.3;
+    }
+
+    if (score >= threshold) {
       const reason = [
         sharedTags.length > 0 ? `Shared tags: ${sharedTags.join(", ")}` : "",
         sharedKeywords.length > 0 ? `Shared topics: ${sharedKeywords.join(", ")}` : "",

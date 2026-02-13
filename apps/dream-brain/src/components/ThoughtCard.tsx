@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { categories } from "@/lib/categories";
-import type { Thought } from "@/lib/mock-data";
+import type { ThoughtData } from "@/lib/data";
 
 function formatRelativeTime(dateStr: string): string {
   const now = new Date();
@@ -18,7 +18,7 @@ function formatRelativeTime(dateStr: string): string {
 }
 
 interface ThoughtCardProps {
-  thought: Thought;
+  thought: ThoughtData;
 }
 
 export function ThoughtCard({ thought }: ThoughtCardProps) {

@@ -8,9 +8,17 @@ import { CaptureModal } from "./CaptureModal";
 export function FabButton() {
   const [expanded, setExpanded] = useState(false);
   const [captureOpen, setCaptureOpen] = useState(false);
+  const [captureMode, setCaptureMode] = useState<"text" | "voice">("text");
 
   function handleTextCapture() {
     setExpanded(false);
+    setCaptureMode("text");
+    setCaptureOpen(true);
+  }
+
+  function handleVoiceCapture() {
+    setExpanded(false);
+    setCaptureMode("voice");
     setCaptureOpen(true);
   }
 
@@ -43,14 +51,11 @@ export function FabButton() {
         </button>
         <button
           type="button"
-          disabled
-          className="flex items-center gap-2 rounded-full bg-gray-800 border border-white/10 px-4 py-2.5 text-sm text-gray-500 shadow-xl cursor-not-allowed"
+          onClick={handleVoiceCapture}
+          className="flex items-center gap-2 rounded-full bg-gray-800 border border-white/10 px-4 py-2.5 text-sm text-gray-200 shadow-xl transition-colors hover:bg-gray-700"
         >
-          <Mic className="h-4 w-4" />
+          <Mic className="h-4 w-4 text-red-400" />
           Voice recording
-          <span className="rounded bg-white/10 px-1.5 py-0.5 text-[10px]">
-            Soon
-          </span>
         </button>
       </div>
 
@@ -73,7 +78,11 @@ export function FabButton() {
         )}
       </button>
 
-      <CaptureModal open={captureOpen} onClose={() => setCaptureOpen(false)} />
+      <CaptureModal
+        open={captureOpen}
+        onClose={() => setCaptureOpen(false)}
+        initialMode={captureMode}
+      />
     </>
   );
 }
