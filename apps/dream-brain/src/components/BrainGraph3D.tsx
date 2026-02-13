@@ -2,9 +2,25 @@
 
 import { useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import * as THREE from "three";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import type { CategoryId } from "@/lib/categories";
 import type { ThoughtData, ConnectionData } from "@/lib/data";
 
-const categoryColors: Record<string, string> = {
+// ─── Category colors ───────────────────────────────────────────────
+const categoryColors: Record<string, number> = {
+  work: 0x60a5fa,
+  ideas: 0xfacc15,
+  emotions: 0xf472b6,
+  daily: 0xfb923c,
+  learning: 0x34d399,
+  relationships: 0xa78bfa,
+  health: 0x4ade80,
+  finance: 0xfbbf24,
+  dreams: 0xc084fc,
+};
+
+const categoryColorStrings: Record<string, string> = {
   work: "#60a5fa",
   ideas: "#facc15",
   emotions: "#f472b6",
@@ -16,18 +32,199 @@ const categoryColors: Record<string, string> = {
   dreams: "#c084fc",
 };
 
-interface GraphNode {
-  id: string;
-  name: string;
-  category: string;
-  val: number;
-  color: string;
+// ─── Category → brain-region mapping ───────────────────────────────
+interface BrainRegion {
+  position: THREE.Vector3;
+  radius: number;
+  label: string;
 }
 
-interface GraphLink {
-  source: string;
-  target: string;
-  score: number;
+const brainRegions: Record<CategoryId, BrainRegion> = {
+  work: {
+    position: new THREE.Vector3(0, 3.0, 4.5),
+    radius: 1.8,
+    label: "Prefrontal Cortex",
+  },
+  finance: {
+    position: new THREE.Vector3(-3.0, 2.5, 3.5),
+    radius: 1.5,
+    label: "Left Prefrontal",
+  },
+  relationships: {
+    position: new THREE.Vector3(3.0, 2.5, 3.5),
+    radius: 1.5,
+    label: "Right Frontal",
+  },
+  learning: {
+    position: new THREE.Vector3(-4.0, 0, 0),
+    radius: 1.8,
+    label: "Left Temporal",
+  },
+  ideas: {
+    position: new THREE.Vector3(4.0, 0, 0),
+    radius: 1.8,
+    label: "Right Temporal",
+  },
+  daily: {
+    position: new THREE.Vector3(0, 4.5, 0),
+    radius: 1.5,
+    label: "Motor Cortex",
+  },
+  health: {
+    position: new THREE.Vector3(0, 3.0, -2.5),
+    radius: 1.5,
+    label: "Parietal Lobe",
+  },
+  dreams: {
+    position: new THREE.Vector3(0, 1.5, -5.0),
+    radius: 1.8,
+    label: "Occipital Lobe",
+  },
+  emotions: {
+    position: new THREE.Vector3(0, -0.5, 1.0),
+    radius: 1.5,
+    label: "Limbic System",
+  },
+};
+
+// ─── Fibonacci sphere distribution ─────────────────────────────────
+function fibonacciSphere(index: number, total: number, radius: number): THREE.Vector3 {
+  if (total === 1) return new THREE.Vector3(0, 0, 0);
+  const goldenAngle = Math.PI * (3 - Math.sqrt(5));
+  const y = 1 - (index / (total - 1)) * 2;
+  const radiusAtY = Math.sqrt(1 - y * y);
+  const theta = goldenAngle * index;
+  return new THREE.Vector3(
+    Math.cos(theta) * radiusAtY * radius,
+    y * radius,
+    Math.sin(theta) * radiusAtY * radius
+  );
+}
+
+// ─── Create glow texture ───────────────────────────────────────────
+function createGlowTexture(): THREE.Texture {
+  const size = 64;
+  const canvas = document.createElement("canvas");
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext("2d")!;
+  const gradient = ctx.createRadialGradient(
+    size / 2, size / 2, 0,
+    size / 2, size / 2, size / 2
+  );
+  gradient.addColorStop(0, "rgba(255,255,255,0.6)");
+  gradient.addColorStop(0.3, "rgba(255,255,255,0.2)");
+  gradient.addColorStop(1, "rgba(255,255,255,0)");
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, size, size);
+  const texture = new THREE.CanvasTexture(canvas);
+  return texture;
+}
+
+// ─── Create text sprite for region labels ──────────────────────────
+function createTextSprite(text: string): THREE.Sprite {
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d")!;
+  canvas.width = 256;
+  canvas.height = 64;
+
+  ctx.font = "bold 24px Inter, system-ui, sans-serif";
+  ctx.fillStyle = "rgba(180, 170, 210, 0.7)";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(text, 128, 32);
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.minFilter = THREE.LinearFilter;
+  const material = new THREE.SpriteMaterial({
+    map: texture,
+    transparent: true,
+    depthWrite: false,
+  });
+  const sprite = new THREE.Sprite(material);
+  sprite.scale.set(4, 1, 1);
+  return sprite;
+}
+
+// ─── Deform sphere to look like a brain hemisphere ─────────────────
+function createHemisphere(
+  isLeft: boolean
+): THREE.BufferGeometry {
+  const geometry = new THREE.SphereGeometry(5, 64, 64);
+  const positions = geometry.attributes.position;
+
+  for (let i = 0; i < positions.count; i++) {
+    let x = positions.getX(i);
+    let y = positions.getY(i);
+    let z = positions.getZ(i);
+
+    // Elongate front-to-back
+    z *= 1.25;
+    // Flatten top-to-bottom slightly
+    y *= 0.9;
+
+    // Sulci/gyri folds via layered sine waves
+    const fold =
+      Math.sin(y * 3.5) * 0.15 +
+      Math.sin(z * 2.8 + x * 1.5) * 0.12 +
+      Math.sin(x * 4.0 + y * 2.0) * 0.08;
+
+    const len = Math.sqrt(x * x + y * y + z * z);
+    if (len > 0) {
+      const scale = 1 + fold;
+      x *= scale;
+      y *= scale;
+      z *= scale;
+    }
+
+    // Offset for longitudinal fissure
+    x += isLeft ? -0.3 : 0.3;
+
+    positions.setXYZ(i, x, y, z);
+  }
+
+  geometry.computeVertexNormals();
+  return geometry;
+}
+
+// ─── Create cerebellum geometry ────────────────────────────────────
+function createCerebellum(): THREE.BufferGeometry {
+  const geometry = new THREE.SphereGeometry(2, 32, 32);
+  const positions = geometry.attributes.position;
+
+  for (let i = 0; i < positions.count; i++) {
+    let x = positions.getX(i);
+    let y = positions.getY(i);
+    let z = positions.getZ(i);
+
+    // Flatten
+    y *= 0.7;
+
+    // Tighter folds
+    const fold =
+      Math.sin(y * 6.0) * 0.1 +
+      Math.sin(z * 5.0 + x * 3.0) * 0.08;
+
+    const len = Math.sqrt(x * x + y * y + z * z);
+    if (len > 0) {
+      const scale = 1 + fold;
+      x *= scale;
+      y *= scale;
+      z *= scale;
+    }
+
+    positions.setXYZ(i, x, y, z);
+  }
+
+  geometry.computeVertexNormals();
+  return geometry;
+}
+
+// ─── Helpers ───────────────────────────────────────────────────────
+interface NodeUserData {
+  thoughtId: string;
+  title: string;
+  category: string;
 }
 
 interface BrainGraph3DProps {
@@ -37,106 +234,515 @@ interface BrainGraph3DProps {
 
 export function BrainGraph3D({ thoughts, connections }: BrainGraph3DProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const graphRef = useRef<any>(null);
+  const cleanupRef = useRef<(() => void) | null>(null);
+  const tooltipRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
-  const handleClick = useCallback(
-    (node: GraphNode) => {
-      router.push(`/thoughts/${node.id}`);
+  const handleNodeClick = useCallback(
+    (id: string) => {
+      router.push(`/thoughts/${id}`);
     },
     [router]
   );
 
   useEffect(() => {
-    if (!containerRef.current) return;
     const container = containerRef.current;
+    if (!container) return;
 
-    let cancelled = false;
+    // ── Scene setup ──────────────────────────────────────────────
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x030712);
 
-    async function init() {
-      const ForceGraph3DModule = await import("3d-force-graph");
-      const ForceGraph3D = ForceGraph3DModule.default;
+    const camera = new THREE.PerspectiveCamera(
+      55,
+      container.clientWidth / container.clientHeight,
+      0.1,
+      100
+    );
+    camera.position.set(0, 5, 20);
 
-      if (cancelled || !container) return;
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    container.appendChild(renderer.domElement);
 
-      const nodes: GraphNode[] = thoughts.map((t) => ({
-        id: t.id,
-        name: t.title,
-        category: t.category,
-        val: 1 + t.importance * 2,
-        color: categoryColors[t.category] || "#8b5cf6",
-      }));
+    // ── Lighting ─────────────────────────────────────────────────
+    const ambient = new THREE.AmbientLight(0x404060, 0.4);
+    scene.add(ambient);
 
-      const links: GraphLink[] = connections.map((c) => ({
-        source: c.sourceId,
-        target: c.targetId,
-        score: c.score,
-      }));
+    const keyLight = new THREE.DirectionalLight(0x8b7cb8, 1.0);
+    keyLight.position.set(5, 8, 10);
+    scene.add(keyLight);
 
-      const graph = new ForceGraph3D(container)
-        .graphData({ nodes, links })
-        .backgroundColor("#030712")
-        .nodeLabel((node: object) => {
-          const n = node as GraphNode;
-          return `<div style="background:#1f2937;padding:6px 10px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);font-size:12px;color:#e5e7eb;pointer-events:none;">
-            <strong>${n.name}</strong><br/>
-            <span style="color:${n.color};text-transform:capitalize;">${n.category}</span>
-          </div>`;
-        })
-        .nodeColor((node: object) => (node as GraphNode).color)
-        .nodeVal((node: object) => (node as GraphNode).val)
-        .nodeOpacity(0.9)
-        .linkWidth((link: object) => (link as GraphLink).score * 2)
-        .linkOpacity(0.4)
-        .linkColor(() => "rgba(255,255,255,0.2)")
-        .linkDirectionalParticles((link: object) => (link as GraphLink).score > 0.85 ? 4 : 0)
-        .linkDirectionalParticleWidth(1.5)
-        .linkDirectionalParticleSpeed(0.006)
-        .onNodeClick((node: object) => handleClick(node as GraphNode))
-        .width(container.clientWidth)
-        .height(container.clientHeight);
+    const fillLight = new THREE.DirectionalLight(0x4a6fa5, 0.5);
+    fillLight.position.set(-5, -5, -10);
+    scene.add(fillLight);
 
-      // Apply force tuning
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (graph.d3Force("charge") as any)?.strength(-120);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (graph.d3Force("link") as any)?.distance(50);
+    const rimLight = new THREE.PointLight(0xa78bfa, 0.3);
+    rimLight.position.set(0, 12, 0);
+    scene.add(rimLight);
 
-      // Initial camera position
-      setTimeout(() => {
-        if (!cancelled) {
-          graph.cameraPosition({ x: 0, y: 0, z: 300 });
-        }
-      }, 100);
+    // ── OrbitControls ────────────────────────────────────────────
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+    controls.enablePan = false;
+    controls.minDistance = 8;
+    controls.maxDistance = 35;
+    controls.autoRotate = true;
+    controls.autoRotateSpeed = 0.5;
 
-      graphRef.current = graph;
+    // Auto-rotation pause/resume on interaction
+    let idleTimeout: ReturnType<typeof setTimeout> | null = null;
+
+    function pauseAutoRotate() {
+      controls.autoRotate = false;
+      if (idleTimeout) clearTimeout(idleTimeout);
+      idleTimeout = setTimeout(() => {
+        controls.autoRotate = true;
+      }, 5000);
     }
 
-    init();
+    controls.addEventListener("start", pauseAutoRotate);
 
-    const handleResize = () => {
-      if (graphRef.current && container) {
-        graphRef.current.width(container.clientWidth);
-        graphRef.current.height(container.clientHeight);
+    // ── Brain wireframe geometry ─────────────────────────────────
+    const brainMaterial = new THREE.MeshPhysicalMaterial({
+      color: 0x8b7cb8,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.12,
+      emissive: 0x8b7cb8,
+      emissiveIntensity: 0.15,
+      depthWrite: false,
+    });
+
+    const brainFillMaterial = new THREE.MeshPhysicalMaterial({
+      color: 0x8b7cb8,
+      transparent: true,
+      opacity: 0.04,
+      depthWrite: false,
+      side: THREE.DoubleSide,
+    });
+
+    // Left hemisphere
+    const leftGeo = createHemisphere(true);
+    const leftWire = new THREE.Mesh(leftGeo, brainMaterial);
+    const leftFill = new THREE.Mesh(leftGeo, brainFillMaterial);
+    scene.add(leftWire);
+    scene.add(leftFill);
+
+    // Right hemisphere
+    const rightGeo = createHemisphere(false);
+    const rightWire = new THREE.Mesh(rightGeo, brainMaterial);
+    const rightFill = new THREE.Mesh(rightGeo, brainFillMaterial);
+    scene.add(rightWire);
+    scene.add(rightFill);
+
+    // Cerebellum
+    const cerebellumGeo = createCerebellum();
+    const cerebellumWire = new THREE.Mesh(cerebellumGeo, brainMaterial.clone());
+    cerebellumWire.position.set(0, -3.5, -4);
+    const cerebellumFill = new THREE.Mesh(cerebellumGeo, brainFillMaterial.clone());
+    cerebellumFill.position.set(0, -3.5, -4);
+    scene.add(cerebellumWire);
+    scene.add(cerebellumFill);
+
+    // Brain stem
+    const stemGeo = new THREE.CylinderGeometry(0.8, 0.5, 3, 16);
+    const stemWire = new THREE.Mesh(stemGeo, brainMaterial.clone());
+    stemWire.position.set(0, -6, -3);
+    const stemFill = new THREE.Mesh(stemGeo, brainFillMaterial.clone());
+    stemFill.position.set(0, -6, -3);
+    scene.add(stemWire);
+    scene.add(stemFill);
+
+    // ── Shared geometries / textures ─────────────────────────────
+    const sharedNodeGeo = new THREE.SphereGeometry(1, 16, 16);
+    const glowTexture = createGlowTexture();
+
+    // ── Place thought nodes ──────────────────────────────────────
+    const nodeMeshes: THREE.Mesh[] = [];
+    const nodeGlows: THREE.Sprite[] = [];
+    const thoughtPositions = new Map<string, THREE.Vector3>();
+
+    // Group thoughts by category
+    const categoryGroups = new Map<CategoryId, ThoughtData[]>();
+    for (const t of thoughts) {
+      const cat = t.category as CategoryId;
+      if (!categoryGroups.has(cat)) categoryGroups.set(cat, []);
+      categoryGroups.get(cat)!.push(t);
+    }
+
+    for (const [category, items] of categoryGroups) {
+      const region = brainRegions[category];
+      if (!region) continue;
+
+      // Sort by importance descending — higher importance → closer to center
+      const sorted = [...items].sort((a, b) => b.importance - a.importance);
+
+      for (let i = 0; i < sorted.length; i++) {
+        const thought = sorted[i];
+        const color = categoryColors[category] || 0x8b5cf6;
+
+        // Fibonacci distribution, higher importance closer to center
+        const importanceFactor = 1 - thought.importance / 10;
+        const offset = fibonacciSphere(i, sorted.length, region.radius * importanceFactor);
+        const worldPos = region.position.clone().add(offset);
+        thoughtPositions.set(thought.id, worldPos);
+
+        // Node sphere
+        const nodeRadius = 0.15 + thought.importance * 0.06;
+        const nodeMat = new THREE.MeshPhysicalMaterial({
+          color,
+          emissive: color,
+          emissiveIntensity: 0.4,
+          roughness: 0.3,
+          metalness: 0.1,
+          transparent: true,
+          opacity: 0.9,
+        });
+
+        const nodeMesh = new THREE.Mesh(sharedNodeGeo, nodeMat);
+        nodeMesh.position.copy(worldPos);
+        nodeMesh.scale.setScalar(nodeRadius);
+        nodeMesh.userData = {
+          thoughtId: thought.id,
+          title: thought.title,
+          category: thought.category,
+        } as NodeUserData;
+
+        scene.add(nodeMesh);
+        nodeMeshes.push(nodeMesh);
+
+        // Glow sprite
+        const glowMat = new THREE.SpriteMaterial({
+          map: glowTexture,
+          color,
+          transparent: true,
+          opacity: 0.4,
+          depthWrite: false,
+          blending: THREE.AdditiveBlending,
+        });
+        const glow = new THREE.Sprite(glowMat);
+        glow.position.copy(worldPos);
+        glow.scale.setScalar(nodeRadius * 4);
+        scene.add(glow);
+        nodeGlows.push(glow);
       }
-    };
+    }
 
-    window.addEventListener("resize", handleResize);
+    // ── Connections ──────────────────────────────────────────────
+    const connectionLines: THREE.Line[] = [];
+    const particleSystems: {
+      sprite: THREE.Sprite;
+      from: THREE.Vector3;
+      to: THREE.Vector3;
+      speed: number;
+      progress: number;
+    }[] = [];
 
-    return () => {
-      cancelled = true;
-      window.removeEventListener("resize", handleResize);
-      if (graphRef.current) {
-        graphRef.current.pauseAnimation();
-        // Clean up the renderer
-        if (graphRef.current.renderer) {
-          graphRef.current.renderer().dispose();
+    for (const conn of connections) {
+      const from = thoughtPositions.get(conn.sourceId);
+      const to = thoughtPositions.get(conn.targetId);
+      if (!from || !to) continue;
+
+      const lineGeo = new THREE.BufferGeometry().setFromPoints([from, to]);
+      const lineMat = new THREE.LineBasicMaterial({
+        color: 0xffffff,
+        transparent: true,
+        opacity: 0.08 + conn.score * 0.15,
+        depthWrite: false,
+      });
+      const line = new THREE.Line(lineGeo, lineMat);
+      scene.add(line);
+      connectionLines.push(line);
+
+      // High-score connections get animated particles
+      if (conn.score > 0.85) {
+        const particleCount = 2;
+        for (let p = 0; p < particleCount; p++) {
+          const pMat = new THREE.SpriteMaterial({
+            map: glowTexture,
+            color: 0xffffff,
+            transparent: true,
+            opacity: 0.6,
+            depthWrite: false,
+            blending: THREE.AdditiveBlending,
+          });
+          const pSprite = new THREE.Sprite(pMat);
+          pSprite.scale.setScalar(0.15);
+          pSprite.position.copy(from);
+          scene.add(pSprite);
+
+          particleSystems.push({
+            sprite: pSprite,
+            from: from.clone(),
+            to: to.clone(),
+            speed: 0.003 + Math.random() * 0.003,
+            progress: p / particleCount,
+          });
         }
       }
-      container.innerHTML = "";
+    }
+
+    // ── Region labels ───────────────────────────────────────────
+    const regionLabels: THREE.Sprite[] = [];
+    const activeCategories = new Set(thoughts.map((t) => t.category));
+
+    for (const cat of activeCategories) {
+      const region = brainRegions[cat as CategoryId];
+      if (!region) continue;
+
+      const label = createTextSprite(region.label);
+      label.position.copy(region.position);
+      label.position.y += 2.2;
+      scene.add(label);
+      regionLabels.push(label);
+    }
+
+    // ── Ambient particle field ──────────────────────────────────
+    const particleCount = 250;
+    const particlePositions = new Float32Array(particleCount * 3);
+    const particleVelocities: THREE.Vector3[] = [];
+
+    for (let i = 0; i < particleCount; i++) {
+      // Distribute within brain-ish volume
+      const theta = Math.random() * Math.PI * 2;
+      const phi = Math.acos(2 * Math.random() - 1);
+      const r = Math.random() * 6;
+      particlePositions[i * 3] = Math.sin(phi) * Math.cos(theta) * r;
+      particlePositions[i * 3 + 1] = Math.cos(phi) * r * 0.8;
+      particlePositions[i * 3 + 2] = Math.sin(phi) * Math.sin(theta) * r * 1.1;
+
+      particleVelocities.push(
+        new THREE.Vector3(
+          (Math.random() - 0.5) * 0.005,
+          (Math.random() - 0.5) * 0.005,
+          (Math.random() - 0.5) * 0.005
+        )
+      );
+    }
+
+    const particleGeo = new THREE.BufferGeometry();
+    particleGeo.setAttribute(
+      "position",
+      new THREE.BufferAttribute(particlePositions, 3)
+    );
+    const particleMat = new THREE.PointsMaterial({
+      color: 0x8b7cb8,
+      size: 0.06,
+      transparent: true,
+      opacity: 0.4,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending,
+    });
+    const particleField = new THREE.Points(particleGeo, particleMat);
+    scene.add(particleField);
+
+    // ── Raycasting (hover/click) ─────────────────────────────────
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+    let hoveredNode: THREE.Mesh | null = null;
+    let pointerDownPos = { x: 0, y: 0 };
+
+    function onPointerMove(e: PointerEvent) {
+      const rect = renderer.domElement.getBoundingClientRect();
+      mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+      mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+
+      raycaster.setFromCamera(mouse, camera);
+      const intersects = raycaster.intersectObjects(nodeMeshes);
+
+      if (intersects.length > 0) {
+        const hit = intersects[0].object as THREE.Mesh;
+        renderer.domElement.style.cursor = "pointer";
+
+        // Scale up hovered node
+        if (hoveredNode && hoveredNode !== hit) {
+          const prevData = hoveredNode.userData as NodeUserData;
+          const prevThought = thoughts.find((t) => t.id === prevData.thoughtId);
+          if (prevThought) {
+            const prevRadius = 0.15 + prevThought.importance * 0.06;
+            hoveredNode.scale.setScalar(prevRadius);
+          }
+        }
+
+        hoveredNode = hit;
+        const data = hit.userData as NodeUserData;
+        const thought = thoughts.find((t) => t.id === data.thoughtId);
+        if (thought) {
+          const hoverRadius = (0.15 + thought.importance * 0.06) * 1.4;
+          hit.scale.setScalar(hoverRadius);
+        }
+
+        // Show tooltip
+        if (tooltipRef.current) {
+          const colorStr = categoryColorStrings[data.category] || "#8b5cf6";
+          tooltipRef.current.innerHTML = `
+            <strong>${data.title}</strong><br/>
+            <span style="color:${colorStr};text-transform:capitalize;">${data.category}</span>
+          `;
+          tooltipRef.current.style.display = "block";
+          const rect2 = container!.getBoundingClientRect();
+          tooltipRef.current.style.left = `${e.clientX - rect2.left + 12}px`;
+          tooltipRef.current.style.top = `${e.clientY - rect2.top - 10}px`;
+        }
+      } else {
+        renderer.domElement.style.cursor = "default";
+        if (hoveredNode) {
+          const prevData = hoveredNode.userData as NodeUserData;
+          const prevThought = thoughts.find((t) => t.id === prevData.thoughtId);
+          if (prevThought) {
+            const prevRadius = 0.15 + prevThought.importance * 0.06;
+            hoveredNode.scale.setScalar(prevRadius);
+          }
+          hoveredNode = null;
+        }
+        if (tooltipRef.current) {
+          tooltipRef.current.style.display = "none";
+        }
+      }
+    }
+
+    function onPointerDown(e: PointerEvent) {
+      pointerDownPos = { x: e.clientX, y: e.clientY };
+    }
+
+    function onPointerUp(e: PointerEvent) {
+      const dx = e.clientX - pointerDownPos.x;
+      const dy = e.clientY - pointerDownPos.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+
+      // Only treat as click if pointer didn't move much (not a drag)
+      if (dist < 5 && hoveredNode) {
+        const data = hoveredNode.userData as NodeUserData;
+        handleNodeClick(data.thoughtId);
+      }
+    }
+
+    renderer.domElement.addEventListener("pointermove", onPointerMove);
+    renderer.domElement.addEventListener("pointerdown", onPointerDown);
+    renderer.domElement.addEventListener("pointerup", onPointerUp);
+
+    // ── Resize handler ──────────────────────────────────────────
+    function onResize() {
+      if (!container) return;
+      const w = container.clientWidth;
+      const h = container.clientHeight;
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+      renderer.setSize(w, h);
+    }
+
+    window.addEventListener("resize", onResize);
+
+    // ── Animation loop ──────────────────────────────────────────
+    let animFrameId = 0;
+
+    function animate() {
+      animFrameId = requestAnimationFrame(animate);
+      controls.update();
+
+      // Animate connection particles
+      for (const ps of particleSystems) {
+        ps.progress += ps.speed;
+        if (ps.progress > 1) ps.progress -= 1;
+        ps.sprite.position.lerpVectors(ps.from, ps.to, ps.progress);
+      }
+
+      // Animate ambient particles
+      const positions = particleField.geometry.attributes.position;
+      for (let i = 0; i < particleCount; i++) {
+        const vel = particleVelocities[i];
+        let px = positions.getX(i) + vel.x;
+        let py = positions.getY(i) + vel.y;
+        let pz = positions.getZ(i) + vel.z;
+
+        // Keep within bounds
+        const d = Math.sqrt(px * px + py * py + pz * pz);
+        if (d > 7) {
+          vel.negate();
+          px += vel.x * 2;
+          py += vel.y * 2;
+          pz += vel.z * 2;
+        }
+
+        positions.setXYZ(i, px, py, pz);
+      }
+      (positions as THREE.BufferAttribute).needsUpdate = true;
+
+      // Fade region labels based on camera distance
+      for (const label of regionLabels) {
+        const dist = camera.position.distanceTo(label.position);
+        const opacity = THREE.MathUtils.clamp(1 - (dist - 10) / 20, 0.1, 0.7);
+        (label.material as THREE.SpriteMaterial).opacity = opacity;
+      }
+
+      renderer.render(scene, camera);
+    }
+
+    animate();
+
+    // ── Cleanup ──────────────────────────────────────────────────
+    const cleanup = () => {
+      cancelAnimationFrame(animFrameId);
+      if (idleTimeout) clearTimeout(idleTimeout);
+      controls.removeEventListener("start", pauseAutoRotate);
+      controls.dispose();
+
+      renderer.domElement.removeEventListener("pointermove", onPointerMove);
+      renderer.domElement.removeEventListener("pointerdown", onPointerDown);
+      renderer.domElement.removeEventListener("pointerup", onPointerUp);
+      window.removeEventListener("resize", onResize);
+
+      // Dispose geometries
+      leftGeo.dispose();
+      rightGeo.dispose();
+      cerebellumGeo.dispose();
+      stemGeo.dispose();
+      sharedNodeGeo.dispose();
+      particleGeo.dispose();
+
+      // Dispose materials
+      brainMaterial.dispose();
+      brainFillMaterial.dispose();
+      particleMat.dispose();
+
+      for (const mesh of nodeMeshes) {
+        (mesh.material as THREE.Material).dispose();
+      }
+      for (const glow of nodeGlows) {
+        (glow.material as THREE.SpriteMaterial).map?.dispose();
+        glow.material.dispose();
+      }
+      for (const line of connectionLines) {
+        line.geometry.dispose();
+        (line.material as THREE.Material).dispose();
+      }
+      for (const ps of particleSystems) {
+        (ps.sprite.material as THREE.SpriteMaterial).map?.dispose();
+        ps.sprite.material.dispose();
+      }
+      for (const label of regionLabels) {
+        (label.material as THREE.SpriteMaterial).map?.dispose();
+        label.material.dispose();
+      }
+
+      glowTexture.dispose();
+      renderer.dispose();
+
+      if (container.contains(renderer.domElement)) {
+        container.removeChild(renderer.domElement);
+      }
     };
-  }, [thoughts, connections, handleClick]);
+
+    cleanupRef.current = cleanup;
+
+    return () => {
+      cleanup();
+      cleanupRef.current = null;
+    };
+  }, [thoughts, connections, handleNodeClick]);
 
   if (thoughts.length === 0) {
     return (
@@ -155,10 +761,13 @@ export function BrainGraph3D({ thoughts, connections }: BrainGraph3DProps) {
   }
 
   return (
-    <div
-      ref={containerRef}
-      className="w-full"
-      style={{ height: "calc(100vh - 140px)" }}
-    />
+    <div className="relative w-full" style={{ height: "calc(100vh - 140px)" }}>
+      <div ref={containerRef} className="h-full w-full" />
+      <div
+        ref={tooltipRef}
+        className="pointer-events-none absolute z-10 hidden rounded-lg border border-white/10 bg-gray-900/95 px-3 py-2 text-xs text-gray-200 shadow-xl backdrop-blur-sm"
+        style={{ maxWidth: 220 }}
+      />
+    </div>
   );
 }

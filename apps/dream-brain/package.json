@@ -9,7 +9,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "3d-force-graph": "^1.79.1",
     "@dreamhub/ai": "workspace:*",
     "@dreamhub/auth": "workspace:*",
     "@dreamhub/database": "workspace:*",
