@@ -10,8 +10,8 @@ export const CURRENT_USER: DreamerProfile = {
     "I want to build an AI-powered platform that connects dreamers worldwide and helps them form the perfect team to bring their visions to life.",
   dreamHeadline: "Building the future of team formation",
   dreamCategory: "Technology",
-  skillsOffered: ["Frontend Development", "UI Design", "Product Management"],
-  skillsNeeded: ["Backend Development", "Machine Learning", "Growth Hacking"],
+  skillsOffered: ["React / Next.js", "UI Design", "Product Strategy"],
+  skillsNeeded: ["Node.js / Express", "Machine Learning", "Growth Hacking"],
   interests: ["AI", "EdTech", "Social Impact"],
   city: "Seoul",
   country: "South Korea",
@@ -19,6 +19,16 @@ export const CURRENT_USER: DreamerProfile = {
   bio: "Full-stack dreamer passionate about connecting people through technology.",
   commitmentLevel: "full-time",
   experienceLevel: "mid-career",
+  intent: "lead",
+  workStyle: { ideation: 75, execution: 60, people: 70, thinking: 55, action: 65 },
+  preferences: {
+    remotePreference: "hybrid",
+    timezone: "UTC+9",
+    industryInterests: ["AI / Machine Learning", "EdTech", "Social Impact"],
+    techPreference: "both",
+  },
+  linkedAccounts: { github: "https://github.com/dreamer-me", portfolio: "https://dreamhub.dev" },
+  verificationLevel: "verified",
 };
 
 export const MOCK_PROFILES: DreamerProfile[] = [
@@ -30,8 +40,8 @@ export const MOCK_PROFILES: DreamerProfile[] = [
       "I dream of creating an AI tutoring platform that personalizes education for every student, making world-class learning accessible regardless of geography or income.",
     dreamHeadline: "Democratizing education with AI",
     dreamCategory: "EdTech",
-    skillsOffered: ["Machine Learning", "Backend Development", "Data Science"],
-    skillsNeeded: ["UI Design", "Frontend Development", "Content Marketing"],
+    skillsOffered: ["Machine Learning", "Node.js / Express", "Data Science / Analytics"],
+    skillsNeeded: ["UI Design", "React / Next.js", "Content Marketing"],
     interests: ["AI", "EdTech", "Social Impact"],
     city: "San Francisco",
     country: "United States",
@@ -39,6 +49,16 @@ export const MOCK_PROFILES: DreamerProfile[] = [
     bio: "ML engineer at a FAANG company, ready to build something meaningful. 5+ years in NLP and recommendation systems.",
     commitmentLevel: "part-time",
     experienceLevel: "mid-career",
+    intent: "partner",
+    workStyle: { ideation: 65, execution: 80, people: 45, thinking: 90, action: 55 },
+    preferences: {
+      remotePreference: "remote",
+      timezone: "UTC-8",
+      industryInterests: ["AI / Machine Learning", "EdTech"],
+      techPreference: "technical",
+    },
+    linkedAccounts: { github: "https://github.com/sarahchen-ml", linkedin: "https://linkedin.com/in/sarahchen" },
+    verificationLevel: "verified",
   },
   {
     id: "dp-2",
@@ -49,7 +69,7 @@ export const MOCK_PROFILES: DreamerProfile[] = [
     dreamHeadline: "Sustainable fashion for everyone",
     dreamCategory: "E-Commerce",
     skillsOffered: ["Brand Strategy", "Digital Marketing", "Copywriting"],
-    skillsNeeded: ["Full-Stack Development", "UI Design", "Supply Chain"],
+    skillsNeeded: ["React / Next.js", "UI Design", "Supply Chain Management"],
     interests: ["Sustainability", "Fashion", "Social Commerce"],
     city: "Berlin",
     country: "Germany",
@@ -57,6 +77,16 @@ export const MOCK_PROFILES: DreamerProfile[] = [
     bio: "Brand strategist with 8 years in fashion marketing. Built campaigns for major European brands. Now going indie.",
     commitmentLevel: "full-time",
     experienceLevel: "senior",
+    intent: "lead",
+    workStyle: { ideation: 85, execution: 50, people: 80, thinking: 40, action: 70 },
+    preferences: {
+      remotePreference: "hybrid",
+      timezone: "UTC+1",
+      industryInterests: ["E-Commerce", "Fashion"],
+      techPreference: "non-technical",
+    },
+    linkedAccounts: { linkedin: "https://linkedin.com/in/marcusrivera" },
+    verificationLevel: "basic",
   },
   {
     id: "dp-3",
@@ -67,7 +97,7 @@ export const MOCK_PROFILES: DreamerProfile[] = [
     dreamHeadline: "Mental health across cultures",
     dreamCategory: "HealthTech",
     skillsOffered: ["UX Design", "User Research", "Product Design"],
-    skillsNeeded: ["Backend Development", "Machine Learning", "Clinical Research"],
+    skillsNeeded: ["Node.js / Express", "Machine Learning", "Clinical Research"],
     interests: ["Mental Health", "AI", "Asian Markets"],
     city: "Tokyo",
     country: "Japan",
@@ -75,6 +105,16 @@ export const MOCK_PROFILES: DreamerProfile[] = [
     bio: "UX designer with a psychology background. Previously designed healthcare apps at a Tokyo startup. Bilingual EN/JP.",
     commitmentLevel: "part-time",
     experienceLevel: "mid-career",
+    intent: "partner",
+    workStyle: { ideation: 70, execution: 55, people: 85, thinking: 75, action: 40 },
+    preferences: {
+      remotePreference: "remote",
+      timezone: "UTC+9",
+      industryInterests: ["HealthTech", "AI / Machine Learning"],
+      techPreference: "both",
+    },
+    linkedAccounts: { portfolio: "https://yukitanaka.design" },
+    verificationLevel: "verified",
   },
   {
     id: "dp-4",
@@ -84,8 +124,8 @@ export const MOCK_PROFILES: DreamerProfile[] = [
       "I want to create a fintech platform that brings micro-investment opportunities to young Africans, helping them build wealth starting from $1.",
     dreamHeadline: "Micro-investing for Africa's youth",
     dreamCategory: "FinTech",
-    skillsOffered: ["Financial Planning", "Business Strategy", "Fundraising"],
-    skillsNeeded: ["Mobile Development (iOS)", "Mobile Development (Android)", "UI Design"],
+    skillsOffered: ["Financial Planning / FP&A", "Business Strategy", "Fundraising / VC"],
+    skillsNeeded: ["Mobile (React Native)", "Mobile (Flutter)", "UI Design"],
     interests: ["FinTech", "Africa", "Youth Empowerment"],
     city: "Lagos",
     country: "Nigeria",
@@ -93,6 +133,16 @@ export const MOCK_PROFILES: DreamerProfile[] = [
     bio: "Former investment banker turned entrepreneur. Raised $2M for my previous startup. Passionate about financial inclusion.",
     commitmentLevel: "full-time",
     experienceLevel: "senior",
+    intent: "lead",
+    workStyle: { ideation: 60, execution: 75, people: 70, thinking: 65, action: 90 },
+    preferences: {
+      remotePreference: "hybrid",
+      timezone: "UTC+1",
+      industryInterests: ["FinTech", "Social Impact"],
+      techPreference: "both",
+    },
+    linkedAccounts: { linkedin: "https://linkedin.com/in/amaraokafor", github: "https://github.com/amara-fin" },
+    verificationLevel: "verified",
   },
   {
     id: "dp-5",
@@ -102,8 +152,8 @@ export const MOCK_PROFILES: DreamerProfile[] = [
       "I dream of building a climate tech platform that gamifies carbon footprint reduction for businesses, with real-time dashboards and team challenges.",
     dreamHeadline: "Gamifying climate action",
     dreamCategory: "Climate Tech",
-    skillsOffered: ["Full-Stack Development", "DevOps / Cloud", "Data Visualization"],
-    skillsNeeded: ["Business Strategy", "Sales Strategy", "Growth Hacking"],
+    skillsOffered: ["React / Next.js", "Docker / Containers", "Data Visualization"],
+    skillsNeeded: ["Business Strategy", "B2B Sales", "Growth Hacking"],
     interests: ["Climate Tech", "Gamification", "B2B SaaS"],
     city: "Helsinki",
     country: "Finland",
@@ -111,6 +161,16 @@ export const MOCK_PROFILES: DreamerProfile[] = [
     bio: "Full-stack dev with 6 years at Nordic SaaS companies. Built real-time dashboards handling millions of data points.",
     commitmentLevel: "weekends",
     experienceLevel: "mid-career",
+    intent: "partner",
+    workStyle: { ideation: 55, execution: 90, people: 35, thinking: 80, action: 60 },
+    preferences: {
+      remotePreference: "remote",
+      timezone: "UTC+2",
+      industryInterests: ["Climate Tech", "SaaS / B2B"],
+      techPreference: "technical",
+    },
+    linkedAccounts: { github: "https://github.com/leovirtanen" },
+    verificationLevel: "basic",
   },
   {
     id: "dp-6",
@@ -120,8 +180,8 @@ export const MOCK_PROFILES: DreamerProfile[] = [
       "I want to build a platform that helps independent musicians collaborate remotely, share royalties fairly, and distribute their music globally.",
     dreamHeadline: "Fair music collaboration platform",
     dreamCategory: "Music Tech",
-    skillsOffered: ["Music Production", "Content Creation", "Community Building"],
-    skillsNeeded: ["Full-Stack Development", "Blockchain Development", "Legal Advisory"],
+    skillsOffered: ["Music Production", "Content Strategy", "Community Building"],
+    skillsNeeded: ["React / Next.js", "Blockchain / Web3", "Legal Advisory"],
     interests: ["Music", "Creator Economy", "Web3"],
     city: "Mumbai",
     country: "India",
@@ -129,6 +189,15 @@ export const MOCK_PROFILES: DreamerProfile[] = [
     bio: "Independent musician and community manager. Built a 50K+ music community on Discord. Ready to turn it into a product.",
     commitmentLevel: "full-time",
     experienceLevel: "early-career",
+    intent: "join",
+    workStyle: { ideation: 80, execution: 40, people: 90, thinking: 30, action: 55 },
+    preferences: {
+      remotePreference: "remote",
+      timezone: "UTC+5:30",
+      industryInterests: ["Music / Entertainment", "Creator Economy"],
+      techPreference: "non-technical",
+    },
+    verificationLevel: "unverified",
   },
   {
     id: "dp-7",
@@ -138,7 +207,7 @@ export const MOCK_PROFILES: DreamerProfile[] = [
       "I dream of creating a language exchange platform powered by AI that matches native speakers for real-time conversation practice with cultural context.",
     dreamHeadline: "AI-powered language exchange",
     dreamCategory: "EdTech",
-    skillsOffered: ["Backend Development", "AI / Deep Learning", "Natural Language Processing"],
+    skillsOffered: ["Node.js / Express", "Deep Learning", "Natural Language Processing"],
     skillsNeeded: ["UI Design", "Growth Hacking", "Content Marketing"],
     interests: ["AI", "Language Learning", "Cultural Exchange"],
     city: "Seoul",
@@ -147,6 +216,16 @@ export const MOCK_PROFILES: DreamerProfile[] = [
     bio: "NLP researcher with publications in multilingual AI. Fluent in Korean, English, and Japanese. Built speech recognition systems.",
     commitmentLevel: "part-time",
     experienceLevel: "mid-career",
+    intent: "lead",
+    workStyle: { ideation: 85, execution: 70, people: 50, thinking: 95, action: 45 },
+    preferences: {
+      remotePreference: "hybrid",
+      timezone: "UTC+9",
+      industryInterests: ["AI / Machine Learning", "EdTech"],
+      techPreference: "technical",
+    },
+    linkedAccounts: { github: "https://github.com/jamespark-nlp" },
+    verificationLevel: "verified",
   },
   {
     id: "dp-8",
@@ -156,8 +235,8 @@ export const MOCK_PROFILES: DreamerProfile[] = [
       "I want to build a remote-first project management tool specifically designed for creative teams — think Notion meets Figma for agencies.",
     dreamHeadline: "Creative project management reimagined",
     dreamCategory: "Productivity",
-    skillsOffered: ["Product Management", "Agile / Scrum", "UI Design"],
-    skillsNeeded: ["Frontend Development", "Backend Development", "DevOps / Cloud"],
+    skillsOffered: ["Product Strategy", "Agile / Scrum", "UI Design"],
+    skillsNeeded: ["React / Next.js", "Node.js / Express", "Docker / Containers"],
     interests: ["SaaS", "Productivity", "Design Tools"],
     city: "Warsaw",
     country: "Poland",
@@ -165,39 +244,61 @@ export const MOCK_PROFILES: DreamerProfile[] = [
     bio: "Product manager at a design agency. Tried every PM tool out there — none work for creative teams. Time to build our own.",
     commitmentLevel: "full-time",
     experienceLevel: "mid-career",
+    intent: "lead",
+    workStyle: { ideation: 70, execution: 85, people: 75, thinking: 60, action: 80 },
+    preferences: {
+      remotePreference: "remote",
+      timezone: "UTC+1",
+      industryInterests: ["SaaS / B2B", "Productivity"],
+      techPreference: "both",
+    },
+    linkedAccounts: { linkedin: "https://linkedin.com/in/elenakowalski", portfolio: "https://elenakowalski.com" },
+    verificationLevel: "basic",
   },
 ];
 
 function computeMatchScores(
   me: DreamerProfile,
   other: DreamerProfile
-): { matchScore: number; dreamScore: number; skillScore: number; valueScore: number; complementarySkills: string[]; sharedInterests: string[] } {
-  // Skill complementarity: how many of my needed skills does the other person offer?
+): {
+  matchScore: number;
+  dreamScore: number;
+  skillScore: number;
+  valueScore: number;
+  complementarySkills: string[];
+  sharedInterests: string[];
+} {
+  // Skill complementarity
   const complementarySkills = other.skillsOffered.filter((s) =>
     me.skillsNeeded.includes(s)
   );
   const reverseComplementary = me.skillsOffered.filter((s) =>
     other.skillsNeeded.includes(s)
   );
-  const skillScore = me.skillsNeeded.length > 0 && other.skillsNeeded.length > 0
-    ? ((complementarySkills.length / me.skillsNeeded.length) +
-       (reverseComplementary.length / other.skillsNeeded.length)) / 2
-    : 0;
+  const skillScore =
+    me.skillsNeeded.length > 0 && other.skillsNeeded.length > 0
+      ? (complementarySkills.length / me.skillsNeeded.length +
+          reverseComplementary.length / other.skillsNeeded.length) /
+        2
+      : 0;
 
   // Shared interests
   const sharedInterests = me.interests.filter((i) =>
     other.interests.includes(i)
   );
   const totalInterests = new Set([...me.interests, ...other.interests]).size;
-  const valueScore = totalInterests > 0 ? sharedInterests.length / totalInterests : 0;
+  const valueScore =
+    totalInterests > 0 ? sharedInterests.length / totalInterests : 0;
 
-  // Dream similarity (simplified — keyword overlap for MVP)
+  // Dream similarity (keyword overlap)
   const myWords = new Set(me.dreamStatement.toLowerCase().split(/\W+/));
   const otherWords = new Set(other.dreamStatement.toLowerCase().split(/\W+/));
-  const commonWords = [...myWords].filter((w) => otherWords.has(w) && w.length > 3);
+  const commonWords = [...myWords].filter(
+    (w) => otherWords.has(w) && w.length > 3
+  );
   const dreamScore = Math.min(commonWords.length / 15, 1);
 
-  // Geometric mean inspired combined score (as per design doc)
+  // Weighted score
   const weightedScore =
     dreamScore * 0.4 + skillScore * 0.35 + valueScore * 0.25;
   const matchScore = Math.round(weightedScore * 100);
@@ -222,9 +323,10 @@ export const MOCK_MATCHES: MatchResult[] = MOCK_PROFILES.map((profile) => {
   };
 }).sort((a, b) => b.matchScore - a.matchScore);
 
-export const MOCK_ACCEPTED_MATCHES: MatchResult[] = MOCK_MATCHES.slice(0, 3).map(
-  (m) => ({ ...m, status: "accepted" as const })
-);
+export const MOCK_ACCEPTED_MATCHES: MatchResult[] = MOCK_MATCHES.slice(
+  0,
+  3
+).map((m) => ({ ...m, status: "accepted" as const }));
 
 export const MOCK_CONVERSATIONS: Conversation[] = MOCK_ACCEPTED_MATCHES.map(
   (m, i) => ({
@@ -236,9 +338,7 @@ export const MOCK_CONVERSATIONS: Conversation[] = MOCK_ACCEPTED_MATCHES.map(
         : i === 1
           ? "Hey! I saw we're a great match. When are you free to talk?"
           : "Thanks for connecting! Your dream really resonates with me.",
-    lastMessageAt: new Date(
-      Date.now() - (i + 1) * 3600000
-    ).toISOString(),
+    lastMessageAt: new Date(Date.now() - (i + 1) * 3600000).toISOString(),
     unreadCount: i === 0 ? 2 : 0,
   })
 );

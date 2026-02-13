@@ -20,8 +20,24 @@ import {
   CURRENT_STATE_DEFAULTS,
   PART1_REFLECTION_QUESTIONS,
 } from "@/types/planner";
+import type { Part2Data } from "@/types/part2";
+import { DEFAULT_PART2_DATA } from "@/types/part2";
+import type { Part3Data } from "@/types/part3";
+import { DEFAULT_PART3_DATA } from "@/types/part3";
+import type { Part4Data } from "@/types/part4";
+import { DEFAULT_PART4_DATA } from "@/types/part4";
 
 // ── Types ──
+export interface CoachInsight {
+  id: string;
+  timestamp: string;
+  partNumber: number;
+  activityId: number;
+  activityName: string;
+  message: string;
+  type: "stuck" | "completion" | "entry" | "chat";
+}
+
 export interface PlannerData {
   // Meta
   onboarded: boolean;
@@ -30,6 +46,7 @@ export interface PlannerData {
   startedAt: string | null;
   lastVisitAt: string | null;
   streak: number;
+  maxStreak: number;
 
   // PART 1
   skills: SkillItem[];
@@ -40,6 +57,14 @@ export interface PlannerData {
   reflectionAnswers: string[];
   completedActivities: number[];
   currentActivity: number;
+
+  // PART 2~4
+  part2: Part2Data;
+  part3: Part3Data;
+  part4: Part4Data;
+
+  // AI Coach
+  recentInsights: CoachInsight[];
 }
 
 const DEFAULT_DATA: PlannerData = {
@@ -49,6 +74,7 @@ const DEFAULT_DATA: PlannerData = {
   startedAt: null,
   lastVisitAt: null,
   streak: 0,
+  maxStreak: 0,
   skills: [],
   resources: RESOURCE_DEFAULTS.map((r) => ({ ...r })),
   timeBlocks: [],
@@ -57,6 +83,10 @@ const DEFAULT_DATA: PlannerData = {
   reflectionAnswers: PART1_REFLECTION_QUESTIONS.map(() => ""),
   completedActivities: [],
   currentActivity: 1,
+  part2: { ...DEFAULT_PART2_DATA },
+  part3: { ...DEFAULT_PART3_DATA },
+  part4: { ...DEFAULT_PART4_DATA },
+  recentInsights: [],
 };
 
 const STORAGE_KEY = "dream-planner-data";
@@ -77,7 +107,13 @@ class PlannerStore {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
         const parsed = JSON.parse(raw) as Partial<PlannerData>;
-        this.data = { ...DEFAULT_DATA, ...parsed };
+        this.data = {
+          ...DEFAULT_DATA,
+          ...parsed,
+          part2: { ...DEFAULT_PART2_DATA, ...(parsed.part2 || {}) },
+          part3: { ...DEFAULT_PART3_DATA, ...(parsed.part3 || {}) },
+          part4: { ...DEFAULT_PART4_DATA, ...(parsed.part4 || {}) },
+        };
 
         // Update streak
         const now = new Date();
@@ -92,10 +128,18 @@ class PlannerStore {
           if (diffDays === 1) {
             this.data.streak += 1;
           } else if (diffDays > 1) {
+            // Streak broken — save previous best
+            if (this.data.streak > this.data.maxStreak) {
+              this.data.maxStreak = this.data.streak;
+            }
             this.data.streak = 1;
           }
         } else {
           this.data.streak = 1;
+        }
+        // Track best streak ever
+        if (this.data.streak > this.data.maxStreak) {
+          this.data.maxStreak = this.data.streak;
         }
 
         this.data.lastVisitAt = now.toISOString();
@@ -194,6 +238,39 @@ class PlannerStore {
       };
       this.emit();
     }
+  }
+
+  // ── PART 2 ──
+  setPart2Data(partial: Partial<Part2Data>) {
+    this.data = {
+      ...this.data,
+      part2: { ...this.data.part2, ...partial },
+    };
+    this.emit();
+  }
+
+  // ── PART 3 ──
+  setPart3Data(partial: Partial<Part3Data>) {
+    this.data = {
+      ...this.data,
+      part3: { ...this.data.part3, ...partial },
+    };
+    this.emit();
+  }
+
+  // ── PART 4 ──
+  setPart4Data(partial: Partial<Part4Data>) {
+    this.data = {
+      ...this.data,
+      part4: { ...this.data.part4, ...partial },
+    };
+    this.emit();
+  }
+
+  addInsight(insight: CoachInsight) {
+    const insights = [insight, ...this.data.recentInsights].slice(0, 10);
+    this.data = { ...this.data, recentInsights: insights };
+    this.emit();
   }
 
   reset() {

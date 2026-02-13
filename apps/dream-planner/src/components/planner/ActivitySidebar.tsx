@@ -1,19 +1,25 @@
 "use client";
 
 import { cn } from "@dreamhub/ui";
-import { PART1_ACTIVITIES } from "@/types/planner";
+import type { ActivityMeta } from "@/types/planner";
 
 interface ActivitySidebarProps {
-  currentActivity: number; // 1-5, 0 = reflection
+  activities: ActivityMeta[];
+  currentActivity: number;
   onSelect: (id: number) => void;
   completedActivities: Set<number>;
+  totalCount?: number;
 }
 
 export function ActivitySidebar({
+  activities,
   currentActivity,
   onSelect,
   completedActivities,
+  totalCount,
 }: ActivitySidebarProps) {
+  const total = totalCount ?? activities.length;
+
   return (
     <nav className="w-56 shrink-0">
       <div className="sticky top-20">
@@ -21,7 +27,7 @@ export function ActivitySidebar({
           Activities
         </h3>
         <div className="space-y-1">
-          {PART1_ACTIVITIES.map((activity) => {
+          {activities.map((activity) => {
             const isActive = currentActivity === activity.id;
             const isCompleted = completedActivities.has(activity.id);
 
@@ -117,14 +123,14 @@ export function ActivitySidebar({
           <div className="mb-1.5 flex items-center justify-between">
             <span className="text-xs font-medium text-gray-500">Progress</span>
             <span className="text-xs font-semibold text-gray-700 dark:text-gray-300">
-              {completedActivities.size}/5
+              {completedActivities.size}/{total}
             </span>
           </div>
           <div className="h-1.5 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
             <div
               className="h-full rounded-full bg-gradient-to-r from-brand-500 to-blue-500 transition-all duration-500"
               style={{
-                width: `${(completedActivities.size / 5) * 100}%`,
+                width: `${(completedActivities.size / total) * 100}%`,
               }}
             />
           </div>

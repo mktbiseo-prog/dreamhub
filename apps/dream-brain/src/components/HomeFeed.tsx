@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Sparkles } from "lucide-react";
+import Link from "next/link";
+import { Sparkles, TrendingUp } from "lucide-react";
 import { SearchBar } from "./SearchBar";
 import { CategoryFilter } from "./CategoryFilter";
 import { ThoughtCard } from "./ThoughtCard";
@@ -17,9 +18,10 @@ const dailyPrompts = [
 
 interface HomeFeedProps {
   initialThoughts: ThoughtData[];
+  todayInsight?: string | null;
 }
 
-export function HomeFeed({ initialThoughts }: HomeFeedProps) {
+export function HomeFeed({ initialThoughts, todayInsight }: HomeFeedProps) {
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<CategoryId | null>(null);
 
@@ -50,6 +52,19 @@ export function HomeFeed({ initialThoughts }: HomeFeedProps) {
         </div>
         <p className="text-sm text-gray-300">{prompt}</p>
       </div>
+
+      {/* Today's Insight */}
+      {todayInsight && (
+        <Link href="/insights">
+          <div className="rounded-card border border-emerald-500/30 bg-gradient-to-r from-emerald-500/10 to-teal-500/10 p-4 transition-colors hover:bg-emerald-500/15">
+            <div className="flex items-center gap-2 mb-1">
+              <TrendingUp className="h-4 w-4 text-emerald-400" />
+              <span className="text-xs font-medium text-emerald-300">Today&apos;s Insight</span>
+            </div>
+            <p className="text-sm text-gray-300 leading-relaxed">{todayInsight}</p>
+          </div>
+        </Link>
+      )}
 
       {/* Search */}
       <SearchBar value={search} onChange={setSearch} />

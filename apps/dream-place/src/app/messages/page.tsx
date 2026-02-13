@@ -1,11 +1,17 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
 import { cn } from "@dreamhub/ui";
 import { useDreamStore } from "@/store/useDreamStore";
 
 export default function MessagesPage() {
   const conversations = useDreamStore((s) => s.conversations);
+  const fetchMatches = useDreamStore((s) => s.fetchMatches);
+
+  useEffect(() => {
+    fetchMatches();
+  }, [fetchMatches]);
 
   return (
     <div className="mx-auto max-w-lg px-4 py-6">

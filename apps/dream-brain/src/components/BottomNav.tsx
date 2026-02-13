@@ -2,13 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Brain, Clock, Link2 } from "lucide-react";
+import { Home, Brain, BarChart3, Link2 } from "lucide-react";
 import { cn } from "@dreamhub/ui";
 
 const navItems = [
   { icon: Home, label: "Home", href: "/" },
   { icon: Brain, label: "Brain", href: "/brain" },
-  { icon: Clock, label: "Timeline", href: "/timeline" },
+  { icon: BarChart3, label: "Insights", href: "/insights" },
   { icon: Link2, label: "Hub", href: "#" },
 ];
 

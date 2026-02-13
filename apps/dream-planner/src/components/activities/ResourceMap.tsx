@@ -138,6 +138,60 @@ export function ResourceMap({ onNext }: { onNext: () => void }) {
         </div>
       )}
 
+      {/* AI Resource Insights */}
+      {hasData && (() => {
+        const scored = resources.filter((r) => r.score > 0).sort((a, b) => b.score - a.score);
+        const strongest = scored[0];
+        const weakest = scored[scored.length - 1];
+        const avg = scored.reduce((sum, r) => sum + r.score, 0) / scored.length;
+
+        const strengthTips: Record<string, string> = {
+          financial: "Consider investing in learning or tools that amplify your other resources.",
+          time: "Your time abundance is rare — use it to build skills and relationships fast.",
+          skills: "Your knowledge is your moat. Consider teaching or consulting as a starting point.",
+          experience: "Experience-based mentoring or case study content could be your entry point.",
+          people: "Your network is your net worth. Leverage connections for partnerships and feedback.",
+          physical: "Physical resources (space, equipment) give you a head start on execution.",
+        };
+        const weakTips: Record<string, string> = {
+          financial: "Start with zero-cost experiments. Many successful businesses started with $0.",
+          time: "Audit your week — even 2 hours redirected from consumption time can make a difference.",
+          skills: "Pick ONE skill gap and spend 30 min/day on it. Micro-learning compounds fast.",
+          experience: "Volunteer or take on a small project to build experience quickly.",
+          people: "Join one community related to your dream. Start with online groups.",
+          physical: "Libraries, co-working spaces, and cafes are free or cheap workspaces.",
+        };
+
+        return (
+          <div className="mb-6 rounded-card border border-brand-200 bg-gradient-to-r from-brand-50 to-blue-50 p-4 dark:border-brand-800 dark:from-brand-950 dark:to-blue-950">
+            <div className="mb-3 flex items-center gap-2">
+              <span className="rounded-md bg-brand-100 px-1.5 py-0.5 text-[10px] font-bold text-brand-700 dark:bg-brand-900 dark:text-brand-300">AI</span>
+              <span className="text-xs font-medium text-brand-700 dark:text-brand-300">Resource Insights</span>
+            </div>
+            <div className="space-y-3">
+              {strongest && (
+                <div className="rounded-[8px] bg-white p-3 dark:bg-gray-800">
+                  <p className="text-xs font-semibold text-emerald-600 dark:text-emerald-400">Strongest: {strongest.label} ({strongest.score}/5)</p>
+                  <p className="mt-1 text-xs text-gray-600 dark:text-gray-400">{strengthTips[strongest.key]}</p>
+                </div>
+              )}
+              {weakest && weakest.key !== strongest?.key && weakest.score < 4 && (
+                <div className="rounded-[8px] bg-white p-3 dark:bg-gray-800">
+                  <p className="text-xs font-semibold text-amber-600 dark:text-amber-400">Growth Area: {weakest.label} ({weakest.score}/5)</p>
+                  <p className="mt-1 text-xs text-gray-600 dark:text-gray-400">{weakTips[weakest.key]}</p>
+                </div>
+              )}
+              <div className="rounded-[8px] bg-white p-3 dark:bg-gray-800">
+                <p className="text-xs font-semibold text-blue-600 dark:text-blue-400">Overall Balance: {avg.toFixed(1)}/5</p>
+                <p className="mt-1 text-xs text-gray-600 dark:text-gray-400">
+                  {avg >= 3.5 ? "You have a strong resource foundation. Focus on leveraging your strengths." : avg >= 2.5 ? "Solid base with room to grow. Target your weakest area first." : "Building from scratch takes courage. Start with what you have — it's enough."}
+                </p>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
+
       {/* Resource Cards */}
       <div className="grid gap-4 sm:grid-cols-2">
         {resources.map((resource) => (

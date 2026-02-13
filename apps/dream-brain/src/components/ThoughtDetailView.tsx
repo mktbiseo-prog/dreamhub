@@ -16,6 +16,9 @@ import {
 } from "lucide-react";
 import { categories } from "@/lib/categories";
 import { updateThought, deleteThought } from "@/lib/actions/thoughts";
+import { EmotionBadge } from "./EmotionBadge";
+import { ActionItemsList } from "./ActionItemsList";
+import { EntityPills } from "./EntityPills";
 import type { ThoughtData, RelatedThoughtData } from "@/lib/data";
 
 interface ThoughtDetailViewProps {
@@ -207,6 +210,41 @@ export function ThoughtDetailView({
           </div>
         )}
 
+        {/* Emotion */}
+        {!isEditing && thought.emotion && (
+          <div className="mb-6">
+            <h2 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-3">
+              Emotion
+            </h2>
+            <div className="flex items-center gap-3">
+              <EmotionBadge emotion={thought.emotion} confidence={thought.emotionConfidence} size="md" />
+              {thought.emotionSecondary && (
+                <EmotionBadge emotion={thought.emotionSecondary} size="sm" />
+              )}
+            </div>
+            {thought.valence != null && (
+              <div className="mt-3 flex items-center gap-3">
+                <span className="text-xs text-gray-500">Negative</span>
+                <div className="flex-1 h-2 rounded-full bg-white/[0.06] overflow-hidden">
+                  <div
+                    className="h-full rounded-full bg-gradient-to-r from-red-500 via-gray-400 to-emerald-500"
+                    style={{ width: "100%" }}
+                  />
+                  <div
+                    className="relative -mt-2 h-2"
+                  >
+                    <div
+                      className="absolute top-0 h-2 w-2 rounded-full bg-white shadow-md border border-gray-600"
+                      style={{ left: `${((thought.valence + 1) / 2) * 100}%`, transform: "translateX(-50%)" }}
+                    />
+                  </div>
+                </div>
+                <span className="text-xs text-gray-500">Positive</span>
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Full Text */}
         <div className="mb-6">
           <h2 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-3">
@@ -248,6 +286,11 @@ export function ThoughtDetailView({
           </div>
         )}
 
+        {/* Action Items */}
+        {!isEditing && thought.actionItems.length > 0 && (
+          <ActionItemsList thoughtId={thought.id} items={thought.actionItems} />
+        )}
+
         {/* Tags */}
         <div className="mb-6">
           <div className="flex items-center gap-2 mb-3">
@@ -286,6 +329,9 @@ export function ThoughtDetailView({
             </div>
           </div>
         )}
+
+        {/* Entity Mentions */}
+        <EntityPills people={thought.peopleMentioned} places={thought.placesMentioned} />
 
         {/* Related Thoughts */}
         {relatedThoughts.length > 0 && (

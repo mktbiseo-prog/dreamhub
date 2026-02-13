@@ -12,6 +12,8 @@ import {
   YAxis,
   Tooltip,
   ResponsiveContainer,
+  LineChart,
+  Line,
 } from "recharts";
 import { usePlannerStore } from "@/lib/store";
 import type { ExpenseItem, SatisfactionLevel } from "@/types/planner";
@@ -184,6 +186,77 @@ export function MoneyFlow({ onNext }: { onNext: () => void }) {
     ].filter((d) => d.value > 0);
   }, [expenses]);
 
+  // Daily trend data
+  const dailyTrend = useMemo(() => {
+    const map = new Map<string, number>();
+    expenses.forEach((e) => {
+      if (e.date && e.amount > 0) {
+        map.set(e.date, (map.get(e.date) || 0) + e.amount);
+      }
+    });
+    return Array.from(map.entries())
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([date, total]) => ({
+        date: date.slice(5), // MM-DD
+        total,
+      }));
+  }, [expenses]);
+
+  // Satisfaction heatmap: category x satisfaction
+  const satisfactionHeatmap = useMemo(() => {
+    const map = new Map<string, { high: number; medium: number; low: number }>();
+    expenses.forEach((e) => {
+      if (e.amount > 0) {
+        const entry = map.get(e.category) || { high: 0, medium: 0, low: 0 };
+        entry[e.satisfaction] += e.amount;
+        map.set(e.category, entry);
+      }
+    });
+    return Array.from(map.entries()).map(([category, vals]) => ({
+      category,
+      ...vals,
+      total: vals.high + vals.medium + vals.low,
+      dominantSat: vals.low >= vals.medium && vals.low >= vals.high ? "low" : vals.high >= vals.medium ? "high" : "medium",
+    }));
+  }, [expenses]);
+
+  // Spending insights
+  const insights = useMemo(() => {
+    const results: { text: string; type: "success" | "warning" | "info" }[] = [];
+    if (expenses.length === 0) return results;
+
+    // Biggest low-satisfaction category
+    const lowSpend = satisfactionHeatmap
+      .filter(h => h.low > 0)
+      .sort((a, b) => b.low - a.low);
+    if (lowSpend.length > 0) {
+      results.push({
+        text: `"${lowSpend[0].category}" has $${lowSpend[0].low.toFixed(0)} in low-satisfaction spending. This is your biggest opportunity to redirect funds toward your dream.`,
+        type: "warning",
+      });
+    }
+
+    // High satisfaction ratio
+    const totalHigh = expenses.filter(e => e.satisfaction === "high").reduce((s, e) => s + e.amount, 0);
+    const totalLow = expenses.filter(e => e.satisfaction === "low").reduce((s, e) => s + e.amount, 0);
+    if (totalAmount > 0 && totalHigh > 0) {
+      const ratio = Math.round((totalHigh / totalAmount) * 100);
+      if (ratio >= 60) {
+        results.push({ text: `${ratio}% of your spending brings high satisfaction — you're already spending intentionally!`, type: "success" });
+      }
+    }
+
+    // Dream fund potential
+    if (totalLow > 0) {
+      results.push({
+        text: `If you redirected your low-satisfaction spending ($${totalLow.toFixed(0)}), that's $${(totalLow * 12).toFixed(0)}/year for your dream.`,
+        type: "info",
+      });
+    }
+
+    return results.slice(0, 3);
+  }, [expenses, satisfactionHeatmap, totalAmount]);
+
   const hasData = expenses.some((e) => e.amount > 0);
 
   return (
@@ -265,6 +338,111 @@ export function MoneyFlow({ onNext }: { onNext: () => void }) {
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
+          </div>
+        </div>
+      )}
+
+      {/* Daily Spending Trend */}
+      {dailyTrend.length >= 2 && (
+        <div className="mb-8 rounded-card border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-900">
+          <h4 className="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Daily Spending Trend
+          </h4>
+          <ResponsiveContainer width="100%" height={180}>
+            <LineChart data={dailyTrend}>
+              <XAxis dataKey="date" tick={{ fontSize: 10 }} />
+              <YAxis tick={{ fontSize: 10 }} tickFormatter={(v) => `$${v}`} width={50} />
+              <Tooltip
+                formatter={(value) => [`$${Number(value).toFixed(2)}`, "Spent"]}
+                contentStyle={{ borderRadius: 8, fontSize: 12 }}
+              />
+              <Line
+                type="monotone"
+                dataKey="total"
+                stroke="#8b5cf6"
+                strokeWidth={2}
+                dot={{ r: 4, fill: "#8b5cf6" }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      )}
+
+      {/* Satisfaction Heatmap */}
+      {satisfactionHeatmap.length > 0 && (
+        <div className="mb-8 rounded-card border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-900">
+          <h4 className="mb-3 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Satisfaction Heatmap
+          </h4>
+          <div className="space-y-2">
+            {satisfactionHeatmap.sort((a, b) => b.total - a.total).map((row) => (
+              <div key={row.category} className="flex items-center gap-3">
+                <span className="w-20 shrink-0 truncate text-xs text-gray-600 dark:text-gray-400">
+                  {row.category}
+                </span>
+                <div className="flex h-5 flex-1 overflow-hidden rounded-full">
+                  {row.high > 0 && (
+                    <div
+                      className="bg-green-400"
+                      style={{ width: `${(row.high / row.total) * 100}%` }}
+                      title={`High: $${row.high.toFixed(0)}`}
+                    />
+                  )}
+                  {row.medium > 0 && (
+                    <div
+                      className="bg-yellow-400"
+                      style={{ width: `${(row.medium / row.total) * 100}%` }}
+                      title={`Medium: $${row.medium.toFixed(0)}`}
+                    />
+                  )}
+                  {row.low > 0 && (
+                    <div
+                      className="bg-red-400"
+                      style={{ width: `${(row.low / row.total) * 100}%` }}
+                      title={`Low: $${row.low.toFixed(0)}`}
+                    />
+                  )}
+                </div>
+                <span className="w-14 shrink-0 text-right text-xs font-semibold text-gray-700 dark:text-gray-300">
+                  ${row.total.toFixed(0)}
+                </span>
+              </div>
+            ))}
+          </div>
+          <div className="mt-2 flex items-center justify-center gap-4 text-[10px] text-gray-400">
+            <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-green-400" /> High</span>
+            <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-yellow-400" /> Medium</span>
+            <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-red-400" /> Low</span>
+          </div>
+        </div>
+      )}
+
+      {/* Spending Insights */}
+      {insights.length > 0 && (
+        <div className="mb-8">
+          <h4 className="mb-3 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-brand-500">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 2L2 7l10 5 10-5-10-5z" /><path d="M2 17l10 5 10-5" />
+            </svg>
+            Spending Insights
+          </h4>
+          <div className="space-y-2">
+            {insights.map((insight, i) => (
+              <div
+                key={i}
+                className={cn(
+                  "flex items-start gap-2.5 rounded-[8px] px-4 py-3 text-xs",
+                  insight.type === "success" && "bg-green-50 text-green-800 dark:bg-green-950 dark:text-green-300",
+                  insight.type === "warning" && "bg-amber-50 text-amber-800 dark:bg-amber-950 dark:text-amber-300",
+                  insight.type === "info" && "bg-blue-50 text-blue-800 dark:bg-blue-950 dark:text-blue-300",
+                )}
+              >
+                {insight.type === "success" && <span className="mt-0.5 shrink-0">&#9733;</span>}
+                {insight.type === "warning" && <span className="mt-0.5 shrink-0">&#9888;</span>}
+                {insight.type === "info" && <span className="mt-0.5 shrink-0">&#8505;</span>}
+                <span>{insight.text}</span>
+              </div>
+            ))}
           </div>
         </div>
       )}

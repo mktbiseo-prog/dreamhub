@@ -2,6 +2,7 @@
 
 import { prisma, type ThoughtCategory } from "@dreamhub/database";
 import { analyzeThought, generateEmbedding, cosineSimilarity } from "@dreamhub/ai";
+import type { ActionItem } from "@dreamhub/ai";
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
 
@@ -49,6 +50,16 @@ async function ensureDemoUser() {
   }
 }
 
+// ── Cache Invalidation ──────────────────────────────────────
+
+async function invalidateInsightCache(userId: string) {
+  try {
+    await prisma.insightReport.deleteMany({ where: { userId } });
+  } catch {
+    // Best-effort — don't propagate cache errors
+  }
+}
+
 // ── Actions ─────────────────────────────────────────────────
 
 export async function createThought(input: { title?: string; body: string }) {
@@ -73,15 +84,25 @@ export async function createThought(input: { title?: string; body: string }) {
       importance: analysis.importance,
       inputMethod: "TEXT",
       embedding,
+      emotion: analysis.emotion,
+      emotionSecondary: analysis.emotionSecondary || null,
+      valence: analysis.valence,
+      emotionConfidence: analysis.confidence,
+      actionItems: JSON.parse(JSON.stringify(analysis.actionItems)),
+      peopleMentioned: analysis.peopleMentioned,
+      placesMentioned: analysis.placesMentioned,
     },
   });
 
   // Find and create connections to related thoughts
   await findAndCreateConnections(userId, thought.id, thought.tags, thought.keywords, thought.category, embedding);
 
+  await invalidateInsightCache(userId);
+
   revalidatePath("/");
   revalidatePath("/timeline");
   revalidatePath("/brain");
+  revalidatePath("/insights");
 
   return thought;
 }
@@ -187,9 +208,12 @@ export async function updateThought(input: {
     await findAndCreateConnections(userId, id, thought.tags, thought.keywords, thought.category, thought.embedding);
   }
 
+  await invalidateInsightCache(userId);
+
   revalidatePath("/");
   revalidatePath("/timeline");
   revalidatePath(`/thoughts/${id}`);
+  revalidatePath("/insights");
 
   return thought;
 }
@@ -204,9 +228,12 @@ export async function deleteThought(id: string) {
 
   await prisma.thought.delete({ where: { id } });
 
+  await invalidateInsightCache(userId);
+
   revalidatePath("/");
   revalidatePath("/timeline");
   revalidatePath("/brain");
+  revalidatePath("/insights");
 }
 
 export async function createVoiceThought(input: {
@@ -239,14 +266,24 @@ export async function createVoiceThought(input: {
       inputMethod: "VOICE",
       voiceDurationSeconds: parsed.voiceDurationSeconds,
       embedding,
+      emotion: analysis.emotion,
+      emotionSecondary: analysis.emotionSecondary || null,
+      valence: analysis.valence,
+      emotionConfidence: analysis.confidence,
+      actionItems: JSON.parse(JSON.stringify(analysis.actionItems)),
+      peopleMentioned: analysis.peopleMentioned,
+      placesMentioned: analysis.placesMentioned,
     },
   });
 
   await findAndCreateConnections(userId, thought.id, thought.tags, thought.keywords, thought.category, embedding);
 
+  await invalidateInsightCache(userId);
+
   revalidatePath("/");
   revalidatePath("/timeline");
   revalidatePath("/brain");
+  revalidatePath("/insights");
 
   return thought;
 }
@@ -262,6 +299,33 @@ export async function toggleFavorite(id: string) {
 
   revalidatePath(`/thoughts/${id}`);
   return updated;
+}
+
+export async function toggleActionItem(thoughtId: string, itemIndex: number) {
+  const userId = await getCurrentUserId();
+  const thought = await prisma.thought.findUnique({ where: { id: thoughtId } });
+
+  if (!thought || thought.userId !== userId) {
+    throw new Error("Thought not found or access denied");
+  }
+
+  const items: ActionItem[] = Array.isArray(thought.actionItems)
+    ? (thought.actionItems as unknown as ActionItem[])
+    : [];
+
+  if (itemIndex < 0 || itemIndex >= items.length) {
+    throw new Error("Invalid action item index");
+  }
+
+  items[itemIndex].completed = !items[itemIndex].completed;
+
+  await prisma.thought.update({
+    where: { id: thoughtId },
+    data: { actionItems: JSON.parse(JSON.stringify(items)) },
+  });
+
+  revalidatePath(`/thoughts/${thoughtId}`);
+  revalidatePath("/insights");
 }
 
 export async function getGraphData() {

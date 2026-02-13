@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { SessionProvider } from "@/components/providers/SessionProvider";
 import { BottomNav } from "@/components/layout/BottomNav";
 import "./globals.css";
 
@@ -18,11 +19,18 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const authEnabled = !!process.env.DATABASE_URL;
+  const content = (
+    <>
+      {children}
+      <BottomNav />
+    </>
+  );
+
   return (
     <html lang="en" className={inter.className}>
       <body className="min-h-screen pb-16 antialiased">
-        {children}
-        <BottomNav />
+        {authEnabled ? <SessionProvider>{content}</SessionProvider> : content}
       </body>
     </html>
   );

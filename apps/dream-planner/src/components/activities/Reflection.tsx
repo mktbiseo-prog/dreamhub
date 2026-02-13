@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Button, cn } from "@dreamhub/ui";
 import { usePlannerStore } from "@/lib/store";
 import { PART1_REFLECTION_QUESTIONS } from "@/types/planner";
+import { AiSummary } from "@/components/planner/AiSummary";
 
 export function Reflection() {
   const { data, store } = usePlannerStore();
@@ -78,6 +79,18 @@ export function Reflection() {
             </p>
             <p className="mt-1 text-xs text-brand-500">— Simon Squibb</p>
           </div>
+
+          <AiSummary
+            partNumber={1}
+            dataSummary={JSON.stringify({
+              skills: data.skills.slice(0, 5).map((s) => ({ name: s.name, proficiency: s.proficiency })),
+              resources: data.resources.map((r) => ({ key: r.key, score: r.score })),
+              timeBlocks: data.timeBlocks.length,
+              expenses: { count: data.expenses.length, total: data.expenses.reduce((s, e) => s + e.amount, 0) },
+              currentState: data.currentState.filter((c) => c.content.trim()).map((c) => ({ title: c.title, snippet: c.content.slice(0, 80) })),
+              reflections: answers.filter((a) => a.trim()).slice(0, 3),
+            }).slice(0, 2000)}
+          />
         </div>
       </div>
     );

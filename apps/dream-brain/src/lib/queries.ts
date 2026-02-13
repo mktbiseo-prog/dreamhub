@@ -1,4 +1,6 @@
 import { prisma } from "@dreamhub/database";
+import { generateInsight, type InsightData } from "@dreamhub/ai";
+import type { ActionItem } from "@dreamhub/ai";
 import { fromDbCategory, type CategoryId } from "./categories";
 import { mockThoughts, mockConnections, getRelatedThoughts as getMockRelated } from "./mock-data";
 import { getCurrentUserId } from "./auth";
@@ -6,6 +8,15 @@ import type { ThoughtData, ConnectionData, RelatedThoughtData } from "./data";
 
 function isDbAvailable(): boolean {
   return !!process.env.DATABASE_URL;
+}
+
+function parseActionItems(raw: unknown): ActionItem[] {
+  if (!raw) return [];
+  if (Array.isArray(raw)) return raw as ActionItem[];
+  if (typeof raw === "string") {
+    try { return JSON.parse(raw) as ActionItem[]; } catch { return []; }
+  }
+  return [];
 }
 
 function dbThoughtToData(t: {
@@ -21,6 +32,13 @@ function dbThoughtToData(t: {
   importance: number;
   inputMethod?: string;
   voiceDurationSeconds?: number | null;
+  emotion?: string | null;
+  emotionSecondary?: string | null;
+  valence?: number | null;
+  emotionConfidence?: number | null;
+  actionItems?: unknown;
+  peopleMentioned?: string[];
+  placesMentioned?: string[];
 }): ThoughtData {
   return {
     id: t.id,
@@ -35,6 +53,13 @@ function dbThoughtToData(t: {
     importance: t.importance,
     inputMethod: (t.inputMethod as "TEXT" | "VOICE") || "TEXT",
     voiceDurationSeconds: t.voiceDurationSeconds ?? undefined,
+    emotion: (t.emotion as ThoughtData["emotion"]) ?? undefined,
+    emotionSecondary: (t.emotionSecondary as ThoughtData["emotionSecondary"]) ?? undefined,
+    valence: t.valence ?? undefined,
+    emotionConfidence: t.emotionConfidence ?? undefined,
+    actionItems: parseActionItems(t.actionItems),
+    peopleMentioned: t.peopleMentioned ?? [],
+    placesMentioned: t.placesMentioned ?? [],
   };
 }
 
@@ -160,4 +185,99 @@ export async function fetchGraphData(): Promise<{
       reason: c.reason || "",
     })),
   };
+}
+
+export async function fetchInsight(periodType: "weekly" | "monthly"): Promise<InsightData> {
+  if (!isDbAvailable()) {
+    // Use mock thoughts to generate insight
+    return generateInsight(mockThoughts.map((t) => ({
+      category: t.category.toUpperCase(),
+      emotion: t.emotion,
+      keywords: t.keywords,
+      tags: t.tags,
+      importance: t.importance,
+      actionItems: t.actionItems,
+      createdAt: t.createdAt,
+      summary: t.summary,
+    })), periodType);
+  }
+
+  const userId = await getCurrentUserId();
+
+  // Calculate period boundaries
+  const now = new Date();
+  const periodStart = new Date(now);
+  if (periodType === "weekly") {
+    periodStart.setDate(now.getDate() - 7);
+  } else {
+    periodStart.setMonth(now.getMonth() - 1);
+  }
+  periodStart.setHours(0, 0, 0, 0);
+
+  // Check cache
+  const cached = await prisma.insightReport.findUnique({
+    where: {
+      userId_periodType_periodStart: {
+        userId,
+        periodType,
+        periodStart,
+      },
+    },
+  });
+
+  if (cached) {
+    // TTL check: weekly = 24h, monthly = 72h
+    const ttlMs = periodType === "weekly" ? 24 * 60 * 60 * 1000 : 72 * 60 * 60 * 1000;
+    const age = now.getTime() - cached.createdAt.getTime();
+    if (age < ttlMs) {
+      return cached.content as unknown as InsightData;
+    }
+    // Stale — delete and regenerate
+    await prisma.insightReport.delete({ where: { id: cached.id } });
+  }
+
+  // Fetch thoughts for the period
+  const thoughts = await prisma.thought.findMany({
+    where: {
+      userId,
+      isArchived: false,
+      createdAt: { gte: periodStart },
+    },
+    orderBy: { createdAt: "desc" },
+  });
+
+  const thoughtInputs = thoughts.map((t) => ({
+    category: t.category,
+    emotion: t.emotion || "calm",
+    keywords: t.keywords,
+    tags: t.tags,
+    importance: t.importance,
+    actionItems: parseActionItems(t.actionItems),
+    createdAt: t.createdAt.toISOString(),
+    summary: t.summary || "",
+  }));
+
+  const insight = await generateInsight(thoughtInputs, periodType);
+
+  // Cache the result
+  await prisma.insightReport.create({
+    data: {
+      userId,
+      periodType,
+      periodStart,
+      periodEnd: now,
+      content: JSON.parse(JSON.stringify(insight)),
+    },
+  });
+
+  return insight;
+}
+
+export async function fetchTodayInsight(): Promise<string | null> {
+  try {
+    const insight = await fetchInsight("weekly");
+    return insight.todayInsight || null;
+  } catch {
+    return null;
+  }
 }

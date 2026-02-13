@@ -1,4 +1,5 @@
 import type { CategoryId } from "./categories";
+import type { EmotionType, ActionItem } from "@dreamhub/ai";
 
 export interface Thought {
   id: string;
@@ -11,6 +12,13 @@ export interface Thought {
   createdAt: string;
   isFavorite: boolean;
   importance: number;
+  emotion: EmotionType;
+  emotionSecondary?: EmotionType;
+  valence: number;
+  emotionConfidence: number;
+  actionItems: ActionItem[];
+  peopleMentioned: string[];
+  placesMentioned: string[];
 }
 
 export interface Connection {
@@ -32,6 +40,16 @@ export const mockThoughts: Thought[] = [
     createdAt: "2026-02-12T14:30:00Z",
     isFavorite: true,
     importance: 5,
+    emotion: "excited",
+    emotionSecondary: "determined",
+    valence: 0.8,
+    emotionConfidence: 0.9,
+    actionItems: [
+      { text: "Build a prototype of the content generator", completed: false },
+      { text: "Research existing social media automation tools", completed: false },
+    ],
+    peopleMentioned: [],
+    placesMentioned: [],
   },
   {
     id: "2",
@@ -44,6 +62,16 @@ export const mockThoughts: Thought[] = [
     createdAt: "2026-02-12T11:15:00Z",
     isFavorite: false,
     importance: 4,
+    emotion: "determined",
+    emotionSecondary: "calm",
+    valence: 0.2,
+    emotionConfidence: 0.8,
+    actionItems: [
+      { text: "Update the roadmap", completed: false },
+      { text: "Communicate the change to stakeholders", completed: false },
+    ],
+    peopleMentioned: ["Sarah"],
+    placesMentioned: [],
   },
   {
     id: "3",
@@ -56,6 +84,12 @@ export const mockThoughts: Thought[] = [
     createdAt: "2026-02-12T09:00:00Z",
     isFavorite: false,
     importance: 2,
+    emotion: "grateful",
+    valence: 0.7,
+    emotionConfidence: 0.95,
+    actionItems: [],
+    peopleMentioned: [],
+    placesMentioned: [],
   },
   {
     id: "4",
@@ -68,6 +102,15 @@ export const mockThoughts: Thought[] = [
     createdAt: "2026-02-11T20:45:00Z",
     isFavorite: true,
     importance: 4,
+    emotion: "curious",
+    emotionSecondary: "determined",
+    valence: 0.5,
+    emotionConfidence: 0.85,
+    actionItems: [
+      { text: "Practice RSC patterns with a sample project", completed: false },
+    ],
+    peopleMentioned: [],
+    placesMentioned: [],
   },
   {
     id: "5",
@@ -80,6 +123,15 @@ export const mockThoughts: Thought[] = [
     createdAt: "2026-02-11T07:30:00Z",
     isFavorite: false,
     importance: 3,
+    emotion: "determined",
+    emotionSecondary: "excited",
+    valence: 0.6,
+    emotionConfidence: 0.8,
+    actionItems: [
+      { text: "Try interval training next week", completed: false },
+    ],
+    peopleMentioned: [],
+    placesMentioned: [],
   },
   {
     id: "6",
@@ -92,6 +144,16 @@ export const mockThoughts: Thought[] = [
     createdAt: "2026-02-10T16:20:00Z",
     isFavorite: true,
     importance: 5,
+    emotion: "hopeful",
+    emotionSecondary: "excited",
+    valence: 0.85,
+    emotionConfidence: 0.88,
+    actionItems: [
+      { text: "Research coworking space business models", completed: false },
+      { text: "Sketch out the floor plan concept", completed: false },
+    ],
+    peopleMentioned: [],
+    placesMentioned: [],
   },
   {
     id: "7",
@@ -104,6 +166,15 @@ export const mockThoughts: Thought[] = [
     createdAt: "2026-02-10T10:00:00Z",
     isFavorite: false,
     importance: 3,
+    emotion: "determined",
+    valence: 0.1,
+    emotionConfidence: 0.75,
+    actionItems: [
+      { text: "Audit and cancel unused subscriptions", completed: false },
+      { text: "Hit 40% savings rate by June", completed: false },
+    ],
+    peopleMentioned: [],
+    placesMentioned: [],
   },
   {
     id: "8",
@@ -116,6 +187,16 @@ export const mockThoughts: Thought[] = [
     createdAt: "2026-02-09T13:00:00Z",
     isFavorite: false,
     importance: 3,
+    emotion: "grateful",
+    emotionSecondary: "calm",
+    valence: 0.6,
+    emotionConfidence: 0.82,
+    actionItems: [
+      { text: "Connect Alex with people in my tech network", completed: false },
+      { text: "Schedule regular meetups with Alex", completed: false },
+    ],
+    peopleMentioned: ["Alex"],
+    placesMentioned: [],
   },
   {
     id: "9",
@@ -128,6 +209,16 @@ export const mockThoughts: Thought[] = [
     createdAt: "2026-02-09T10:30:00Z",
     isFavorite: true,
     importance: 4,
+    emotion: "curious",
+    valence: 0.4,
+    emotionConfidence: 0.9,
+    actionItems: [
+      { text: "Prototype with LangChain", completed: false },
+      { text: "Prototype with direct OpenAI API calls", completed: false },
+      { text: "Compare both approaches", completed: false },
+    ],
+    peopleMentioned: [],
+    placesMentioned: [],
   },
   {
     id: "10",
@@ -140,6 +231,15 @@ export const mockThoughts: Thought[] = [
     createdAt: "2026-02-08T15:45:00Z",
     isFavorite: false,
     importance: 3,
+    emotion: "curious",
+    emotionSecondary: "determined",
+    valence: 0.3,
+    emotionConfidence: 0.78,
+    actionItems: [
+      { text: "Apply authenticity-first approach to content strategy", completed: false },
+    ],
+    peopleMentioned: [],
+    placesMentioned: [],
   },
   {
     id: "11",
@@ -152,6 +252,14 @@ export const mockThoughts: Thought[] = [
     createdAt: "2026-02-08T21:00:00Z",
     isFavorite: false,
     importance: 2,
+    emotion: "calm",
+    valence: 0.5,
+    emotionConfidence: 0.92,
+    actionItems: [
+      { text: "Stick with body scan meditation for the next week", completed: false },
+    ],
+    peopleMentioned: [],
+    placesMentioned: [],
   },
   {
     id: "12",
@@ -164,6 +272,13 @@ export const mockThoughts: Thought[] = [
     createdAt: "2026-02-08T11:20:00Z",
     isFavorite: false,
     importance: 2,
+    emotion: "calm",
+    emotionSecondary: "grateful",
+    valence: 0.3,
+    emotionConfidence: 0.7,
+    actionItems: [],
+    peopleMentioned: [],
+    placesMentioned: [],
   },
 ];
 

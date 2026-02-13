@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useEffect } from "react";
 import { Button, Input, cn } from "@dreamhub/ui";
 import { StarRating } from "@/components/ui/StarRating";
 import { usePlannerStore } from "@/lib/store";
@@ -40,6 +40,62 @@ function TagCloud({ skills }: { skills: SkillItem[] }) {
   );
 }
 
+// AI skill suggestion map: when user types a skill, suggest related ones
+const SKILL_SUGGESTIONS: Record<string, string[]> = {
+  excel: ["Data Analysis", "Pivot Tables", "VBA Macros", "Financial Modeling"],
+  python: ["Data Science", "Machine Learning", "Web Scraping", "Automation"],
+  design: ["UI/UX Design", "Figma", "Prototyping", "User Research"],
+  marketing: ["SEO", "Content Strategy", "Social Media", "Email Marketing"],
+  writing: ["Copywriting", "Blog Writing", "Technical Writing", "Storytelling"],
+  sales: ["Negotiation", "CRM Management", "Lead Generation", "Cold Outreach"],
+  cooking: ["Recipe Development", "Food Styling", "Nutrition", "Meal Planning"],
+  photography: ["Photo Editing", "Lightroom", "Composition", "Studio Lighting"],
+  teaching: ["Curriculum Design", "Public Speaking", "Mentoring", "Workshop Facilitation"],
+  coding: ["Web Development", "API Design", "Database Management", "Testing"],
+  management: ["Project Management", "Team Leadership", "Agile/Scrum", "Stakeholder Communication"],
+  music: ["Audio Production", "Songwriting", "Music Theory", "Sound Design"],
+  video: ["Video Editing", "Premiere Pro", "YouTube Strategy", "Thumbnails"],
+  fitness: ["Personal Training", "Nutrition Coaching", "Program Design", "Body Assessment"],
+  language: ["Translation", "Interpretation", "Tutoring", "Cultural Consulting"],
+};
+
+function getSkillSuggestions(skillName: string): string[] {
+  const lower = skillName.toLowerCase().trim();
+  if (!lower) return [];
+  for (const [key, suggestions] of Object.entries(SKILL_SUGGESTIONS)) {
+    if (lower.includes(key) || key.includes(lower)) return suggestions;
+  }
+  return [];
+}
+
+function getSkillCombinations(skills: SkillItem[]): string[] {
+  const named = skills.filter((s) => s.name.trim() && s.proficiency >= 3);
+  if (named.length < 2) return [];
+  const combos: string[] = [];
+  const categories = {
+    work: named.filter((s) => s.category === "work").map((s) => s.name),
+    personal: named.filter((s) => s.category === "personal").map((s) => s.name),
+    learning: named.filter((s) => s.category === "learning").map((s) => s.name),
+  };
+  // Cross-category combinations
+  for (const a of categories.work.slice(0, 2)) {
+    for (const b of categories.personal.slice(0, 2)) {
+      combos.push(`${a} + ${b}`);
+    }
+  }
+  for (const a of categories.work.slice(0, 2)) {
+    for (const b of categories.learning.slice(0, 2)) {
+      combos.push(`${a} + ${b}`);
+    }
+  }
+  for (const a of categories.personal.slice(0, 2)) {
+    for (const b of categories.learning.slice(0, 2)) {
+      combos.push(`${a} + ${b}`);
+    }
+  }
+  return combos.slice(0, 6);
+}
+
 function SkillCard({ skill, onUpdate, onDelete }: { skill: SkillItem; onUpdate: (id: string, updates: Partial<SkillItem>) => void; onDelete: (id: string) => void }) {
   return (
     <div className="group rounded-card border border-gray-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md dark:border-gray-700 dark:bg-gray-900">
@@ -77,6 +133,28 @@ export function SkillsInventory({ onNext }: { onNext: () => void }) {
   }, [skills, store]);
 
   const tabCounts = useMemo(() => SKILL_TABS.map((t) => skills.filter((s) => s.category === t.key).length), [skills]);
+
+  // AI Suggestions based on recent skill input
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const lastSkill = filteredSkills[filteredSkills.length - 1];
+
+  useEffect(() => {
+    if (lastSkill?.name) {
+      const s = getSkillSuggestions(lastSkill.name);
+      const existingNames = skills.map((sk) => sk.name.toLowerCase());
+      setSuggestions(s.filter((sug) => !existingNames.includes(sug.toLowerCase())));
+    } else {
+      setSuggestions([]);
+    }
+  }, [lastSkill?.name, skills]);
+
+  const addSuggested = useCallback((name: string) => {
+    store.setSkills([...skills, { id: crypto.randomUUID(), name, description: "", proficiency: 0, category: tab }]);
+    setSuggestions((prev) => prev.filter((s) => s !== name));
+  }, [tab, skills, store]);
+
+  // AI Combination Engine
+  const combinations = useMemo(() => getSkillCombinations(skills), [skills]);
 
   return (
     <div className="mx-auto w-full max-w-3xl">
@@ -119,6 +197,45 @@ export function SkillsInventory({ onNext }: { onNext: () => void }) {
           Add Skill
         </Button>
       </div>
+
+      {/* AI Skill Suggestions */}
+      {suggestions.length > 0 && (
+        <div className="mt-4 rounded-card border border-brand-200 bg-gradient-to-r from-brand-50 to-blue-50 p-4 dark:border-brand-800 dark:from-brand-950 dark:to-blue-950">
+          <div className="mb-2 flex items-center gap-2">
+            <span className="rounded-md bg-brand-100 px-1.5 py-0.5 text-[10px] font-bold text-brand-700 dark:bg-brand-900 dark:text-brand-300">AI</span>
+            <span className="text-xs font-medium text-brand-700 dark:text-brand-300">Related skills you might have</span>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {suggestions.map((s) => (
+              <button key={s} type="button" onClick={() => addSuggested(s)} className="flex items-center gap-1 rounded-full border border-brand-200 bg-white px-3 py-1 text-xs font-medium text-brand-700 transition-all hover:bg-brand-100 dark:border-brand-700 dark:bg-gray-800 dark:text-brand-300 dark:hover:bg-brand-900">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>
+                {s}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* AI Combination Engine */}
+      {combinations.length > 0 && (
+        <div className="mt-4 rounded-card border border-emerald-200 bg-gradient-to-r from-emerald-50 to-teal-50 p-4 dark:border-emerald-800 dark:from-emerald-950 dark:to-teal-950">
+          <div className="mb-2 flex items-center gap-2">
+            <span className="rounded-md bg-emerald-100 px-1.5 py-0.5 text-[10px] font-bold text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300">AI</span>
+            <span className="text-xs font-medium text-emerald-700 dark:text-emerald-300">Your unique skill combinations</span>
+          </div>
+          <p className="mb-3 text-xs text-gray-500 dark:text-gray-400">
+            Cross-category skills create unique value. Here are combinations from your top-rated skills:
+          </p>
+          <div className="grid gap-2 sm:grid-cols-2">
+            {combinations.map((combo, i) => (
+              <div key={i} className="flex items-center gap-2 rounded-[8px] bg-white px-3 py-2 dark:bg-gray-800">
+                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-[10px] font-bold text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300">{i + 1}</span>
+                <span className="text-xs font-medium text-gray-700 dark:text-gray-300">{combo}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="mt-8 flex items-center justify-between">
         {skills.length > 0 && <p className="text-xs text-gray-500"><span className="font-semibold text-gray-700 dark:text-gray-300">{skills.length} {skills.length === 1 ? "skill" : "skills"}</span> across all categories</p>}

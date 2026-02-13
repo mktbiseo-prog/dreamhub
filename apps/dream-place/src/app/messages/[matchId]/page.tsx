@@ -14,17 +14,42 @@ export default function ChatPage({
 }) {
   const { matchId } = use(params);
   const matches = useDreamStore((s) => s.matches);
+  const currentUser = useDreamStore((s) => s.currentUser);
   const messagesByMatch = useDreamStore((s) => s.messagesByMatch);
   const sendMessage = useDreamStore((s) => s.sendMessage);
+  const fetchMessages = useDreamStore((s) => s.fetchMessages);
 
   const match = matches.find((m) => m.id === matchId);
   const messages = messagesByMatch[matchId] ?? [];
   const [input, setInput] = useState("");
+  const [icebreakers, setIcebreakers] = useState<string[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    fetchMessages(matchId);
+  }, [fetchMessages, matchId]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  // Fetch icebreaker suggestions if no messages yet
+  useEffect(() => {
+    if (!match || messages.length > 0) return;
+    fetch("/api/ai/icebreaker", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        profileA: currentUser,
+        profileB: match.profile,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.suggestions) setIcebreakers(data.suggestions);
+      })
+      .catch(() => {});
+  }, [match, messages.length, currentUser]);
 
   if (!match) {
     return (
@@ -41,6 +66,12 @@ export default function ChatPage({
     if (!input.trim()) return;
     sendMessage(matchId, input.trim());
     setInput("");
+    setIcebreakers([]); // Hide icebreakers after first message
+  }
+
+  function handleIcebreakerClick(text: string) {
+    setInput(text);
+    setIcebreakers([]);
   }
 
   return (
@@ -85,6 +116,27 @@ export default function ChatPage({
             complementary skills
           </p>
         </div>
+
+        {/* AI Icebreaker suggestions */}
+        {icebreakers.length > 0 && messages.length === 0 && (
+          <div className="mb-6">
+            <p className="mb-2 text-center text-xs font-medium text-gray-400">
+              AI-suggested conversation starters
+            </p>
+            <div className="space-y-2">
+              {icebreakers.map((text, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={() => handleIcebreakerClick(text)}
+                  className="block w-full rounded-[8px] border border-brand-200 bg-brand-50/50 p-3 text-left text-sm text-brand-700 transition-colors hover:bg-brand-100 dark:border-brand-800 dark:bg-brand-900/10 dark:text-brand-300 dark:hover:bg-brand-900/20"
+                >
+                  {text}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Messages */}
         <div className="space-y-3">

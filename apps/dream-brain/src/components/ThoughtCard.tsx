@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { categories } from "@/lib/categories";
+import { EmotionBadge } from "./EmotionBadge";
 import type { ThoughtData } from "@/lib/data";
 
 function formatRelativeTime(dateStr: string): string {
@@ -48,7 +49,13 @@ export function ThoughtCard({ thought }: ThoughtCardProps) {
             {thought.summary}
           </p>
 
-          <div className="mt-2.5 flex flex-wrap gap-1.5">
+          <div className="mt-2 flex flex-wrap items-center gap-1.5">
+            {thought.emotion && (
+              <EmotionBadge emotion={thought.emotion} size="sm" />
+            )}
+          </div>
+
+          <div className="mt-2 flex flex-wrap gap-1.5">
             {thought.tags.map((tag) => (
               <span
                 key={tag}

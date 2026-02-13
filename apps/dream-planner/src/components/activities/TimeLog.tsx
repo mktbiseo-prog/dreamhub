@@ -267,6 +267,94 @@ export function TimeLog({ onNext }: { onNext: () => void }) {
         </div>
       )}
 
+      {/* Pattern Insights */}
+      {blocks.length >= 3 && (() => {
+        const insights: { icon: string; text: string; type: "success" | "warning" | "info" }[] = [];
+
+        // Golden time detection
+        const productiveBlocks = blocks.filter(b => b.type === "productive");
+        if (productiveBlocks.length > 0) {
+          const hourCounts: Record<number, number> = {};
+          productiveBlocks.forEach(b => {
+            hourCounts[b.startHour] = (hourCounts[b.startHour] || 0) + b.duration;
+          });
+          const bestHour = Object.entries(hourCounts).sort(([, a], [, b]) => b - a)[0];
+          if (bestHour) {
+            insights.push({
+              icon: "star",
+              text: `Your golden hour: ${Number(bestHour[0]).toString().padStart(2, "0")}:00 — most productive time slot (${bestHour[1]}h total).`,
+              type: "success",
+            });
+          }
+        }
+
+        // Consumption alert
+        if (stats.consumption > 0 && totalHours > 0) {
+          const pct = Math.round((stats.consumption / totalHours) * 100);
+          if (pct >= 30) {
+            const consumptionBlocks = blocks.filter(b => b.type === "consumption");
+            const dayCounts: Record<number, number> = {};
+            consumptionBlocks.forEach(b => { dayCounts[b.day] = (dayCounts[b.day] || 0) + b.duration; });
+            const worstDay = Object.entries(dayCounts).sort(([, a], [, b]) => b - a)[0];
+            const dayName = worstDay ? DAYS[Number(worstDay[0])] : "";
+            insights.push({
+              icon: "alert",
+              text: `${pct}% of your time is consumption${dayName ? `. Worst day: ${dayName} (${worstDay![1]}h)` : ""}. What if you converted just 1 hour?`,
+              type: "warning",
+            });
+          }
+        }
+
+        // Day coverage
+        const uniqueDays = new Set(blocks.map(b => b.day));
+        if (uniqueDays.size < 5) {
+          insights.push({
+            icon: "info",
+            text: `You've logged ${uniqueDays.size}/7 days. Try tracking a full week for better patterns.`,
+            type: "info",
+          });
+        }
+
+        // Productive ratio
+        if (totalHours > 0 && stats.productive > 0) {
+          const prodPct = Math.round((stats.productive / totalHours) * 100);
+          if (prodPct >= 50) {
+            insights.push({ icon: "star", text: `${prodPct}% productive time — that's impressive! You're already making time for what matters.`, type: "success" });
+          }
+        }
+
+        if (insights.length === 0) return null;
+
+        return (
+          <div className="mb-6">
+            <h4 className="mb-3 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-brand-500">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 2L2 7l10 5 10-5-10-5z" /><path d="M2 17l10 5 10-5" />
+              </svg>
+              Pattern Insights
+            </h4>
+            <div className="space-y-2">
+              {insights.slice(0, 3).map((insight, i) => (
+                <div
+                  key={i}
+                  className={cn(
+                    "flex items-start gap-2.5 rounded-[8px] px-4 py-3 text-xs",
+                    insight.type === "success" && "bg-green-50 text-green-800 dark:bg-green-950 dark:text-green-300",
+                    insight.type === "warning" && "bg-amber-50 text-amber-800 dark:bg-amber-950 dark:text-amber-300",
+                    insight.type === "info" && "bg-blue-50 text-blue-800 dark:bg-blue-950 dark:text-blue-300",
+                  )}
+                >
+                  {insight.icon === "star" && <span className="mt-0.5 shrink-0">&#9733;</span>}
+                  {insight.icon === "alert" && <span className="mt-0.5 shrink-0">&#9888;</span>}
+                  {insight.icon === "info" && <span className="mt-0.5 shrink-0">&#8505;</span>}
+                  <span>{insight.text}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      })()}
+
       {/* Time Block Cards */}
       <div className="grid gap-4">
         {blocks.map((block) => (

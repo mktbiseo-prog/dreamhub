@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@dreamhub/ui";
 import { cn } from "@dreamhub/ui";
@@ -14,7 +14,12 @@ export default function MatchesPage() {
   const matches = useDreamStore((s) => s.matches);
   const acceptMatch = useDreamStore((s) => s.acceptMatch);
   const declineMatch = useDreamStore((s) => s.declineMatch);
+  const fetchMatches = useDreamStore((s) => s.fetchMatches);
   const [activeTab, setActiveTab] = useState<TabKey>("accepted");
+
+  useEffect(() => {
+    fetchMatches();
+  }, [fetchMatches]);
 
   const accepted = matches.filter((m) => m.status === "accepted");
   const pending = matches.filter((m) => m.status === "pending");

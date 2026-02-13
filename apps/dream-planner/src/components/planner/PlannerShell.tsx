@@ -1,6 +1,7 @@
 "use client";
 
 import { usePlannerStore } from "@/lib/store";
+import { PART1_ACTIVITIES } from "@/types/planner";
 import { ActivitySidebar } from "./ActivitySidebar";
 import { SkillsInventory } from "@/components/activities/SkillsInventory";
 import { ResourceMap } from "@/components/activities/ResourceMap";
@@ -31,9 +32,11 @@ export function PlannerShell() {
       {/* Sidebar - hidden on mobile */}
       <div className="hidden lg:block">
         <ActivitySidebar
+          activities={PART1_ACTIVITIES}
           currentActivity={data.currentActivity}
           onSelect={handleSelectActivity}
           completedActivities={completedSet}
+          totalCount={5}
         />
       </div>
 
@@ -52,7 +55,7 @@ export function PlannerShell() {
                   : "bg-gray-200 text-gray-500"
             }`}
           >
-            {completedSet.has(id) ? "✓" : id}
+            {completedSet.has(id) ? "\u2713" : id}
           </button>
         ))}
         <button

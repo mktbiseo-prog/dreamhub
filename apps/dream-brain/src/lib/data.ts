@@ -1,4 +1,5 @@
 import type { CategoryId } from "./categories";
+import type { EmotionType, ActionItem } from "@dreamhub/ai";
 
 /**
  * Shared Thought type used across all frontend components.
@@ -17,6 +18,13 @@ export interface ThoughtData {
   importance: number;
   inputMethod?: "TEXT" | "VOICE";
   voiceDurationSeconds?: number;
+  emotion?: EmotionType;
+  emotionSecondary?: EmotionType;
+  valence?: number;
+  emotionConfidence?: number;
+  actionItems: ActionItem[];
+  peopleMentioned: string[];
+  placesMentioned: string[];
 }
 
 export interface ConnectionData {

@@ -199,6 +199,67 @@ export function CurrentState({ onNext }: { onNext: () => void }) {
         ))}
       </div>
 
+      {/* Auto-SWOT Analysis */}
+      {filledCount >= 3 && (
+        <div className="mt-8">
+          <h3 className="mb-4 flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-gray-400">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" /><rect x="3" y="14" width="7" height="7" /><rect x="14" y="14" width="7" height="7" />
+            </svg>
+            Auto-generated SWOT
+          </h3>
+          <div className="grid grid-cols-2 gap-3">
+            {/* Strengths */}
+            <div className="rounded-[8px] bg-green-50 p-4 dark:bg-green-950">
+              <p className="mb-2 text-xs font-bold uppercase tracking-wider text-green-600">Strengths</p>
+              <p className="text-xs text-green-800 dark:text-green-300">
+                {(() => {
+                  const job = cards.find(c => c.key === "job")?.content.trim();
+                  const role = cards.find(c => c.key === "role")?.content.trim();
+                  const parts: string[] = [];
+                  if (job) parts.push(`Current role: ${job.slice(0, 80)}`);
+                  if (role) parts.push(`Network/context: ${role.slice(0, 80)}`);
+                  return parts.length > 0 ? parts.join(". ") : "Fill in Job & Role cards to see strengths.";
+                })()}
+              </p>
+            </div>
+            {/* Weaknesses */}
+            <div className="rounded-[8px] bg-red-50 p-4 dark:bg-red-950">
+              <p className="mb-2 text-xs font-bold uppercase tracking-wider text-red-600">Weaknesses</p>
+              <p className="text-xs text-red-800 dark:text-red-300">
+                {(() => {
+                  const constraints = cards.find(c => c.key === "constraints")?.content.trim();
+                  return constraints ? `Limitations: ${constraints.slice(0, 160)}` : "Fill in Constraints card.";
+                })()}
+              </p>
+            </div>
+            {/* Opportunities */}
+            <div className="rounded-[8px] bg-blue-50 p-4 dark:bg-blue-950">
+              <p className="mb-2 text-xs font-bold uppercase tracking-wider text-blue-600">Opportunities</p>
+              <p className="text-xs text-blue-800 dark:text-blue-300">
+                {(() => {
+                  const opps = cards.find(c => c.key === "opportunities")?.content.trim();
+                  return opps ? opps.slice(0, 160) : "Fill in Opportunities card.";
+                })()}
+              </p>
+            </div>
+            {/* Threats */}
+            <div className="rounded-[8px] bg-amber-50 p-4 dark:bg-amber-950">
+              <p className="mb-2 text-xs font-bold uppercase tracking-wider text-amber-600">Threats</p>
+              <p className="text-xs text-amber-800 dark:text-amber-300">
+                {(() => {
+                  const concerns = cards.find(c => c.key === "concerns")?.content.trim();
+                  return concerns ? concerns.slice(0, 160) : "Fill in Concerns card.";
+                })()}
+              </p>
+            </div>
+          </div>
+          <p className="mt-2 text-center text-[10px] text-gray-400">
+            This SWOT updates automatically as you fill in cards above
+          </p>
+        </div>
+      )}
+
       {/* Footer */}
       <div className="mt-8 flex justify-end">
         <Button onClick={onNext} className="gap-2">

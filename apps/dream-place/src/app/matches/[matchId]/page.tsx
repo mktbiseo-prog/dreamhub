@@ -1,10 +1,12 @@
 "use client";
 
-import { use } from "react";
+import { use, useState, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@dreamhub/ui";
 import { cn } from "@dreamhub/ui";
 import { MatchScoreRing } from "@/components/discover/MatchScoreRing";
+import { DreamerDNA } from "@/components/charts/DreamerDNA";
+import { SkillRadar } from "@/components/charts/SkillRadar";
 import { useDreamStore } from "@/store/useDreamStore";
 
 export default function MatchDetailPage({
@@ -17,10 +19,31 @@ export default function MatchDetailPage({
   const myMatches = useDreamStore((s) => s.matches);
   const currentUser = useDreamStore((s) => s.currentUser);
   const expressInterest = useDreamStore((s) => s.expressInterest);
+  const [explanation, setExplanation] = useState<string | null>(null);
 
   const match =
     discoverFeed.find((m) => m.id === matchId) ??
     myMatches.find((m) => m.id === matchId);
+
+  useEffect(() => {
+    if (!match) return;
+    fetch("/api/ai/match-explanation", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        profileA: currentUser,
+        profileB: match.profile,
+        scores: {
+          dreamScore: match.dreamScore,
+          skillScore: match.skillScore,
+          valueScore: match.valueScore,
+        },
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => setExplanation(data.explanation))
+      .catch(() => {});
+  }, [match, currentUser]);
 
   if (!match) {
     return (
@@ -42,7 +65,6 @@ export default function MatchDetailPage({
   const isConnected = match.status === "accepted";
   const isPending = match.status === "pending";
 
-  // Compute reverse complementary skills
   const reverseComplementary = currentUser.skillsOffered.filter((s) =>
     profile.skillsNeeded.includes(s)
   );
@@ -54,24 +76,14 @@ export default function MatchDetailPage({
         href="/discover"
         className="mb-4 inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
       >
-        <svg
-          className="h-4 w-4"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          strokeWidth={2}
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M15 19l-7-7 7-7"
-          />
+        <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
         </svg>
         Back
       </Link>
 
       {/* Profile header */}
-      <div className="rounded-card border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-950">
+      <div className="rounded-[12px] border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-950">
         <div className="flex items-start gap-5">
           <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand-400 to-blue-500 text-3xl font-bold text-white">
             {profile.name.charAt(0)}
@@ -87,6 +99,17 @@ export default function MatchDetailPage({
               {profile.dreamHeadline}
             </p>
             <div className="mt-2 flex flex-wrap gap-2">
+              {profile.intent && (
+                <span className="rounded-full bg-brand-50 px-2.5 py-0.5 text-xs text-brand-600 dark:bg-brand-900/20 dark:text-brand-400">
+                  {profile.intent === "lead"
+                    ? "Dream Leader"
+                    : profile.intent === "join"
+                      ? "Wants to Join"
+                      : profile.intent === "partner"
+                        ? "Seeking Partners"
+                        : "Exploring"}
+                </span>
+              )}
               <span className="rounded-full bg-gray-100 px-2.5 py-0.5 text-xs text-gray-600 dark:bg-gray-800 dark:text-gray-400">
                 {profile.commitmentLevel}
               </span>
@@ -100,15 +123,26 @@ export default function MatchDetailPage({
           </div>
           <MatchScoreRing score={matchScore} size={80} strokeWidth={5} />
         </div>
-
         <p className="mt-4 text-sm leading-relaxed text-gray-600 dark:text-gray-300">
           {profile.bio}
         </p>
       </div>
 
+      {/* AI Match Explanation */}
+      {explanation && (
+        <div className="mt-6 rounded-[12px] border border-brand-200 bg-brand-50/50 p-4 dark:border-brand-800 dark:bg-brand-900/10">
+          <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-brand-500">
+            Why You Matched
+          </p>
+          <p className="text-sm leading-relaxed text-brand-700 dark:text-brand-300">
+            {explanation}
+          </p>
+        </div>
+      )}
+
       {/* Dream comparison */}
       <div className="mt-6 grid gap-4 sm:grid-cols-2">
-        <div className="rounded-card border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-gray-950">
+        <div className="rounded-[12px] border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-gray-950">
           <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
             Your Dream
           </p>
@@ -116,7 +150,7 @@ export default function MatchDetailPage({
             &ldquo;{currentUser.dreamStatement}&rdquo;
           </p>
         </div>
-        <div className="rounded-card border border-brand-200 bg-brand-50/30 p-5 dark:border-brand-800 dark:bg-brand-900/10">
+        <div className="rounded-[12px] border border-brand-200 bg-brand-50/30 p-5 dark:border-brand-800 dark:bg-brand-900/10">
           <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-brand-500">
             Their Dream
           </p>
@@ -127,34 +161,66 @@ export default function MatchDetailPage({
       </div>
 
       {/* Match breakdown */}
-      <div className="mt-6 rounded-card border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-950">
+      <div className="mt-6 rounded-[12px] border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-950">
         <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
           Match Breakdown
         </h2>
         <div className="space-y-4">
-          <ScoreBar
-            label="Dream Alignment"
-            score={dreamScore}
-            weight="40%"
-            description="How well your dreams and visions align"
-          />
-          <ScoreBar
-            label="Skill Complementarity"
-            score={skillScore}
-            weight="35%"
-            description="How well your skills fill each other's gaps"
-          />
-          <ScoreBar
-            label="Value Alignment"
-            score={valueScore}
-            weight="25%"
-            description="Shared interests and values"
-          />
+          <ScoreBar label="Dream Alignment" score={dreamScore} weight="25%" description="How well your dreams and visions align" />
+          <ScoreBar label="Skill Complementarity" score={skillScore} weight="25%" description="How well your skills fill each other's gaps" />
+          <ScoreBar label="Value Alignment" score={valueScore} weight="5%" description="Shared interests and values" />
+          {match.workStyleScore !== undefined && (
+            <ScoreBar label="Work Style Fit" score={match.workStyleScore} weight="15%" description="How well your work styles complement each other" />
+          )}
+          {match.locationScore !== undefined && (
+            <ScoreBar label="Location" score={match.locationScore} weight="10%" description="Geographic proximity and remote compatibility" />
+          )}
+          {match.experienceScore !== undefined && (
+            <ScoreBar label="Experience Balance" score={match.experienceScore} weight="10%" description="Complementary experience levels" />
+          )}
+          {match.availabilityScore !== undefined && (
+            <ScoreBar label="Availability" score={match.availabilityScore} weight="10%" description="Commitment and timezone overlap" />
+          )}
         </div>
       </div>
 
+      {/* Skill Radar Chart */}
+      <div className="mt-6 rounded-[12px] border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-950">
+        <h2 className="mb-2 text-lg font-semibold text-gray-900 dark:text-gray-100">
+          Skill Coverage
+        </h2>
+        <p className="mb-4 text-xs text-gray-400">
+          Skills across domains for both profiles
+        </p>
+        <SkillRadar
+          skillsA={[...currentUser.skillsOffered, ...currentUser.skillsNeeded]}
+          skillsB={[...profile.skillsOffered, ...profile.skillsNeeded]}
+          nameA="You"
+          nameB={profile.name}
+          size={280}
+        />
+      </div>
+
+      {/* Dreamer DNA comparison */}
+      {currentUser.workStyle && profile.workStyle && (
+        <div className="mt-6 rounded-[12px] border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-950">
+          <h2 className="mb-2 text-lg font-semibold text-gray-900 dark:text-gray-100">
+            Dreamer DNA
+          </h2>
+          <p className="mb-4 text-xs text-gray-400">
+            Work style comparison — complementary styles make great teams
+          </p>
+          <DreamerDNA
+            workStyle={currentUser.workStyle}
+            compareWith={profile.workStyle}
+            compareName={profile.name}
+            size={280}
+          />
+        </div>
+      )}
+
       {/* Skill analysis */}
-      <div className="mt-6 rounded-card border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-950">
+      <div className="mt-6 rounded-[12px] border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-950">
         <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
           Skill Analysis
         </h2>
@@ -166,10 +232,7 @@ export default function MatchDetailPage({
             </p>
             <div className="flex flex-wrap gap-2">
               {complementarySkills.map((skill) => (
-                <span
-                  key={skill}
-                  className="rounded-full bg-green-50 px-3 py-1 text-sm font-medium text-green-700 dark:bg-green-900/20 dark:text-green-400"
-                >
+                <span key={skill} className="rounded-full bg-green-50 px-3 py-1 text-sm font-medium text-green-700 dark:bg-green-900/20 dark:text-green-400">
                   {skill}
                 </span>
               ))}
@@ -184,10 +247,7 @@ export default function MatchDetailPage({
             </p>
             <div className="flex flex-wrap gap-2">
               {reverseComplementary.map((skill) => (
-                <span
-                  key={skill}
-                  className="rounded-full bg-blue-50 px-3 py-1 text-sm font-medium text-blue-700 dark:bg-blue-900/20 dark:text-blue-400"
-                >
+                <span key={skill} className="rounded-full bg-blue-50 px-3 py-1 text-sm font-medium text-blue-700 dark:bg-blue-900/20 dark:text-blue-400">
                   {skill}
                 </span>
               ))}
@@ -219,16 +279,13 @@ export default function MatchDetailPage({
 
       {/* Shared interests */}
       {sharedInterests.length > 0 && (
-        <div className="mt-6 rounded-card border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-950">
+        <div className="mt-6 rounded-[12px] border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-950">
           <h2 className="mb-3 text-lg font-semibold text-gray-900 dark:text-gray-100">
             Shared Interests
           </h2>
           <div className="flex flex-wrap gap-2">
             {sharedInterests.map((interest) => (
-              <span
-                key={interest}
-                className="rounded-full bg-brand-50 px-3 py-1 text-sm font-medium text-brand-700 dark:bg-brand-900/20 dark:text-brand-300"
-              >
+              <span key={interest} className="rounded-full bg-brand-50 px-3 py-1 text-sm font-medium text-brand-700 dark:bg-brand-900/20 dark:text-brand-300">
                 {interest}
               </span>
             ))}
@@ -237,11 +294,26 @@ export default function MatchDetailPage({
       )}
 
       {/* Action */}
-      <div className="sticky bottom-20 mt-6 rounded-card border border-gray-200 bg-white/90 p-4 backdrop-blur-sm dark:border-gray-800 dark:bg-gray-950/90">
+      <div className="sticky bottom-20 mt-6 rounded-[12px] border border-gray-200 bg-white/90 p-4 backdrop-blur-sm dark:border-gray-800 dark:bg-gray-950/90">
         {isConnected ? (
-          <Link href={`/messages/${matchId}`}>
-            <Button className="w-full">Send Message</Button>
-          </Link>
+          <div className="flex gap-3">
+            <Link href={`/messages/${matchId}`} className="flex-1">
+              <Button className="w-full">Send Message</Button>
+            </Link>
+            <Button
+              variant="outline"
+              onClick={() => {
+                // Create team from match — will be handled by Phase 4
+                const createTeam = useDreamStore.getState().createTeam;
+                createTeam(
+                  `Team: ${currentUser.name} & ${profile.name}`,
+                  `${currentUser.dreamStatement} + ${profile.dreamStatement}`
+                );
+              }}
+            >
+              Form a Team
+            </Button>
+          </div>
         ) : isPending ? (
           <div className="text-center">
             <p className="font-medium text-amber-600 dark:text-amber-400">
