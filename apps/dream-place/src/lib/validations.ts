@@ -81,3 +81,44 @@ export const discoverFiltersSchema = z.object({
 });
 
 export type DiscoverFilters = z.infer<typeof discoverFiltersSchema>;
+
+// ─── Cafe & Doorbell ────────────────────────────────────────
+
+export const cafeCheckInSchema = z.object({
+  method: z.enum(["qr", "nfc", "manual"]),
+});
+
+export type CafeCheckInInput = z.infer<typeof cafeCheckInSchema>;
+
+export const doorbellDreamSchema = z.object({
+  dreamStatement: z
+    .string()
+    .min(10, "Dream statement must be at least 10 characters")
+    .max(500, "Dream statement must be under 500 characters"),
+  categories: z
+    .array(z.enum(["tech", "design", "business", "social-impact", "creative", "education", "other"]))
+    .min(1, "Select at least 1 category")
+    .max(3, "Maximum 3 categories"),
+  neededSkills: z
+    .array(z.string())
+    .min(1, "Select at least 1 skill you need")
+    .max(5, "Maximum 5 skills"),
+});
+
+export type DoorbellDreamInput = z.infer<typeof doorbellDreamSchema>;
+
+export const ringBellSchema = z.object({
+  dreamId: z.string().min(1),
+  message: z
+    .string()
+    .max(300, "Message must be under 300 characters")
+    .optional(),
+});
+
+export type RingBellInput = z.infer<typeof ringBellSchema>;
+
+export const ringResponseSchema = z.object({
+  status: z.enum(["accepted", "declined"]),
+});
+
+export type RingResponseInput = z.infer<typeof ringResponseSchema>;
