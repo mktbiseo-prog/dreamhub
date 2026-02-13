@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getProductById, formatPrice, MOCK_SUPPORTERS } from "@/lib/mockData";
+import { getProductById, getSupporters, formatPrice } from "@/lib/queries";
 import { SupportButton } from "./SupportButton";
+import { ImageGallery } from "./ImageGallery";
 
 interface PageProps {
   params: Promise<{ storyId: string; productId: string }>;
@@ -10,7 +11,7 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { productId } = await params;
-  const result = getProductById(productId);
+  const result = await getProductById(productId);
   if (!result) return { title: "Product Not Found" };
   return {
     title: `${result.product.title} | Dream Store`,
@@ -20,11 +21,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function ProductDetailPage({ params }: PageProps) {
   const { storyId, productId } = await params;
-  const result = getProductById(productId);
+  const result = await getProductById(productId);
   if (!result || result.story.id !== storyId) notFound();
 
   const { product, story } = result;
-  const recentSupporters = MOCK_SUPPORTERS.slice(0, 5);
+  const supporters = await getSupporters(storyId);
+  const recentSupporters = supporters.slice(0, 5);
 
   return (
     <main className="min-h-screen">
@@ -48,15 +50,9 @@ export default async function ProductDetailPage({ params }: PageProps) {
         </nav>
 
         <div className="grid gap-10 lg:grid-cols-2">
-          {/* Left — Product Image */}
+          {/* Left — Product Image Gallery */}
           <div>
-            <div className="overflow-hidden rounded-card">
-              <img
-                src={product.images[0]}
-                alt={product.title}
-                className="h-auto w-full object-cover"
-              />
-            </div>
+            <ImageGallery images={product.images} alt={product.title} />
           </div>
 
           {/* Right — Product Info */}
@@ -96,6 +92,28 @@ export default async function ProductDetailPage({ params }: PageProps) {
               storyId={story.id}
               price={product.price}
             />
+
+            {/* Trust Badges — Section 6 */}
+            <div className="mt-4 flex flex-wrap items-center gap-3 text-xs text-gray-500">
+              <span className="flex items-center gap-1">
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+                </svg>
+                Secure Checkout
+              </span>
+              <span className="flex items-center gap-1">
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z" />
+                </svg>
+                Visa, Mastercard, PayPal
+              </span>
+              <span className="flex items-center gap-1">
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182" />
+                </svg>
+                Refund Guarantee
+              </span>
+            </div>
 
             {/* Description */}
             <div className="mt-8 border-t border-gray-200 pt-8 dark:border-gray-800">

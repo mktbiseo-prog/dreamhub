@@ -17,6 +17,20 @@ export const createDreamStorySchema = z.object({
     .string()
     .min(10, "Dream statement must be at least 10 characters")
     .max(2000, "Dream statement must be 2000 characters or less"),
+  originStory: z
+    .string()
+    .max(3000, "Origin story must be 3000 characters or less")
+    .optional()
+    .or(z.literal("")),
+  impactStatement: z
+    .string()
+    .max(1000, "Impact statement must be 1000 characters or less")
+    .optional()
+    .or(z.literal("")),
+  creatorStage: z
+    .string()
+    .optional()
+    .or(z.literal("")),
   milestones: z
     .array(milestoneSchema)
     .length(3, "Please add exactly 3 milestones"),

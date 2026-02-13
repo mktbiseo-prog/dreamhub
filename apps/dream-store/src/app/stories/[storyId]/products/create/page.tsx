@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getStoryById } from "@/lib/mockData";
+import { getStoryById } from "@/lib/queries";
 import { CreateProductForm } from "./CreateProductForm";
 
 export const metadata: Metadata = {
@@ -14,7 +14,7 @@ interface PageProps {
 
 export default async function CreateProductPage({ params }: PageProps) {
   const { storyId } = await params;
-  const story = getStoryById(storyId);
+  const story = await getStoryById(storyId);
   if (!story) notFound();
 
   return (

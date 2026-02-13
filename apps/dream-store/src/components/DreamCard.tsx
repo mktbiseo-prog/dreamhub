@@ -27,9 +27,23 @@ export function DreamCard({ story }: DreamCardProps) {
           alt={story.title}
           className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
         />
+        {/* Category badge */}
         <span className="absolute left-3 top-3 rounded-full bg-white/90 px-2.5 py-1 text-xs font-medium text-gray-700 dark:bg-gray-900/90 dark:text-gray-300">
           {story.category}
         </span>
+        {/* Staff Pick / Featured badges */}
+        <div className="absolute right-3 top-3 flex flex-col gap-1">
+          {story.isStaffPick && (
+            <span className="rounded-full bg-yellow-400 px-2 py-0.5 text-[10px] font-bold text-yellow-900 shadow-sm">
+              Staff Pick
+            </span>
+          )}
+          {story.isFeatured && !story.isStaffPick && (
+            <span className="rounded-full bg-brand-500 px-2 py-0.5 text-[10px] font-bold text-white shadow-sm">
+              Featured
+            </span>
+          )}
+        </div>
       </div>
 
       <div className="p-5">
@@ -43,6 +57,12 @@ export function DreamCard({ story }: DreamCardProps) {
           <span className="text-xs font-medium text-gray-500 dark:text-gray-400">
             {story.creatorName}
           </span>
+          {/* Creator stage badge */}
+          {story.creatorStage === "established" && (
+            <span className="rounded-full bg-green-100 px-1.5 py-0.5 text-[10px] font-medium text-green-700 dark:bg-green-900/30 dark:text-green-400">
+              Established
+            </span>
+          )}
         </div>
 
         {/* Title */}

@@ -1,8 +1,9 @@
 import { prisma } from "@dreamhub/database";
-import type { DreamStory, Supporter, DreamUpdateView } from "./types";
+import type { DreamStory, Supporter, DreamUpdateView, DreamCommentView } from "./types";
 import {
   MOCK_STORIES,
   MOCK_SUPPORTERS,
+  MOCK_COMMENTS,
   getStoryById as mockGetStoryById,
   getProductById as mockGetProductById,
   formatPrice,
@@ -25,8 +26,16 @@ function mapDbStoryToView(
     coverImage: story.coverImage || "",
     creatorName: story.user.name || "Anonymous Dreamer",
     creatorAvatar: story.user.avatar || "",
+    creatorBio: story.user.bio || "",
+    originStory: story.originStory || "",
+    processImages: story.processImages,
+    impactStatement: story.impactStatement || "",
+    isFeatured: story.isFeatured,
+    isStaffPick: story.isStaffPick,
+    creatorStage: story.creatorStage || "early",
     category: story.category || "Other",
     supporterCount: story._count.orders,
+    followerCount: story._count.followers,
     createdAt: story.createdAt.toISOString().split("T")[0],
     milestones: story.milestones.map((m) => ({
       id: m.id,
@@ -44,6 +53,7 @@ function mapDbStoryToView(
       images: p.images,
       whyIMadeThis: p.whyIMadeThis || "",
       category: p.category || "",
+      productType: p.productType || "Physical Product",
     })),
   };
 }
@@ -54,7 +64,7 @@ const storyInclude = {
   user: true,
   milestones: { orderBy: { sortOrder: "asc" as const } },
   products: { orderBy: { createdAt: "desc" as const } },
-  _count: { select: { orders: true } },
+  _count: { select: { orders: true, followers: true } },
 } as const;
 
 // ─── Queries ────────────────────────────────────────────────
@@ -175,6 +185,75 @@ export async function isFollowing(
     return !!follow;
   } catch {
     return false;
+  }
+}
+
+// ─── Dream Comments ─────────────────────────────────────
+
+export async function getDreamComments(
+  dreamStoryId: string
+): Promise<DreamCommentView[]> {
+  try {
+    const comments = await prisma.dreamComment.findMany({
+      where: { dreamStoryId },
+      include: { user: { select: { id: true, name: true, avatar: true } } },
+      orderBy: { createdAt: "desc" },
+    });
+
+    if (comments.length === 0) return MOCK_COMMENTS;
+
+    return comments.map((c) => ({
+      id: c.id,
+      content: c.content,
+      userName: c.user.name || "Anonymous",
+      userAvatar: c.user.avatar || "",
+      userId: c.user.id,
+      createdAt: c.createdAt.toISOString().split("T")[0],
+    }));
+  } catch {
+    return MOCK_COMMENTS;
+  }
+}
+
+// ─── Search ─────────────────────────────────────────────
+
+export async function searchStories(query: string): Promise<DreamStory[]> {
+  if (!query.trim()) return getStories();
+
+  try {
+    const stories = await prisma.dreamStory.findMany({
+      where: {
+        OR: [
+          { title: { contains: query, mode: "insensitive" } },
+          { statement: { contains: query, mode: "insensitive" } },
+          { category: { contains: query, mode: "insensitive" } },
+        ],
+      },
+      include: storyInclude,
+      orderBy: { createdAt: "desc" },
+    });
+
+    if (stories.length === 0) {
+      const q = query.toLowerCase();
+      return MOCK_STORIES.filter(
+        (s) =>
+          s.title.toLowerCase().includes(q) ||
+          s.statement.toLowerCase().includes(q) ||
+          s.category.toLowerCase().includes(q) ||
+          s.creatorName.toLowerCase().includes(q)
+      );
+    }
+
+    return stories.map(mapDbStoryToView);
+  } catch {
+    const q = query.toLowerCase();
+    return MOCK_STORIES.filter(
+      (s) =>
+        s.title.toLowerCase().includes(q) ||
+        s.statement.toLowerCase().includes(q) ||
+        s.category.toLowerCase().includes(q) ||
+        s.creatorName.toLowerCase().includes(q)
+    );
   }
 }
 

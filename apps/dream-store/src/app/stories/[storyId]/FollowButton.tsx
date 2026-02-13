@@ -1,18 +1,38 @@
 "use client";
 
-import { useState } from "react";
+import { useOptimistic, useTransition } from "react";
 import { Button } from "@dreamhub/ui";
+import { toggleFollow } from "@/lib/actions/social";
 
-export function FollowButton() {
-  const [following, setFollowing] = useState(false);
+interface FollowButtonProps {
+  storyId: string;
+  initialFollowing: boolean;
+}
+
+export function FollowButton({ storyId, initialFollowing }: FollowButtonProps) {
+  const [isPending, startTransition] = useTransition();
+  const [optimisticFollowing, setOptimisticFollowing] =
+    useOptimistic(initialFollowing);
+
+  function handleClick() {
+    startTransition(async () => {
+      setOptimisticFollowing(!optimisticFollowing);
+      try {
+        await toggleFollow(storyId);
+      } catch {
+        // Revert on error — revalidation will fix the state
+      }
+    });
+  }
 
   return (
     <Button
-      variant={following ? "secondary" : "outline"}
+      variant={optimisticFollowing ? "secondary" : "outline"}
       size="sm"
-      onClick={() => setFollowing((prev) => !prev)}
+      onClick={handleClick}
+      disabled={isPending}
     >
-      {following ? "Following" : "Follow This Dream"}
+      {optimisticFollowing ? "Following" : "Follow This Dream"}
     </Button>
   );
 }

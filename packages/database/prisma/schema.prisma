@@ -38,6 +38,7 @@ model User {
   orders        Order[]
   following     Follow[]
   dreamUpdates  DreamUpdate[] @relation("DreamUpdates")
+  dreamComments DreamComment[] @relation("DreamComments")
 
   @@map("users")
 }
@@ -90,22 +91,35 @@ model DreamProfile {
   dreamStatement  String   @db.Text
   dreamHeadline   String?
   dreamCategory   String?
+  intent          String?  // "lead" | "join" | "partner" | "explore"
   skillsOffered   String[] @default([])
   skillsNeeded    String[] @default([])
   interests       String[] @default([])
   city            String?
   country         String?
   remotePreference String?  // "remote" | "local" | "hybrid"
+  timezone         String?
+  industryInterests String[] @default([])
   commitmentLevel  String?  // "full-time" | "part-time" | "weekends" | "flexible"
   experienceLevel  String?  // "student" | "early-career" | "mid-career" | "senior" | "executive"
+  workStyleIdeation   Int?  @default(50)
+  workStyleExecution  Int?  @default(50)
+  workStylePeople     Int?  @default(50)
+  workStyleThinking   Int?  @default(50)
+  workStyleAction     Int?  @default(50)
   avatarUrl       String?
   bio             String?  @db.Text
   embedding       Float[]  @default([])
   onboardingCompleted Boolean @default(false)
+  githubUrl       String?
+  linkedinUrl     String?
+  portfolioUrl    String?
+  verificationLevel String @default("unverified")
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  teamMembers TeamMember[]
 
   @@map("dream_profiles")
 }
@@ -151,24 +165,135 @@ model Message {
   @@map("messages")
 }
 
+// ─── Dream Teams & Projects ─────────────────────────────────
+
+model DreamTeam {
+  id             String   @id @default(cuid())
+  name           String
+  dreamStatement String   @db.Text
+  createdById    String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  members   TeamMember[]
+  projects  DreamProject[]
+  checkIns  TeamCheckIn[]
+
+  @@map("dream_teams")
+}
+
+enum TeamRole {
+  LEADER
+  CORE_DREAMER
+  CONTRIBUTOR
+  SUPPORTER
+  DREAM_GUIDE
+}
+
+model TeamMember {
+  id        String   @id @default(cuid())
+  teamId    String
+  userId    String
+  role      TeamRole @default(CONTRIBUTOR)
+  joinedAt  DateTime @default(now())
+
+  team    DreamTeam    @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  profile DreamProfile @relation(fields: [userId], references: [userId], onDelete: Cascade)
+
+  @@unique([teamId, userId])
+  @@map("team_members")
+}
+
+enum ProjectStage {
+  IDEATION
+  TEAM_FORMATION
+  ACTIVE_DEVELOPMENT
+  LAUNCH
+  COMPLETE
+}
+
+model DreamProject {
+  id           String       @id @default(cuid())
+  teamId       String
+  name         String
+  description  String       @db.Text
+  stage        ProjectStage @default(IDEATION)
+  skillsNeeded String[]     @default([])
+  maxTeamSize  Int          @default(5)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  isTrial             Boolean  @default(false)
+  trialDurationWeeks  Int?
+  evaluationCriteria  String[] @default([])
+  upvotes             Int      @default(0)
+  isFeatured          Boolean  @default(false)
+
+  team  DreamTeam     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  tasks ProjectTask[]
+
+  @@map("dream_projects")
+}
+
+model ProjectTask {
+  id          String   @id @default(cuid())
+  projectId   String
+  title       String
+  description String?  @db.Text
+  status      String   @default("todo")
+  assigneeId  String?
+  sortOrder   Int      @default(0)
+  priority    String   @default("P1")
+  dueDate     DateTime?
+  goodFirstContribution Boolean @default(false)
+  skillsRequired String[] @default([])
+  createdAt   DateTime @default(now())
+
+  project DreamProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@map("project_tasks")
+}
+
+model TeamCheckIn {
+  id        String   @id @default(cuid())
+  teamId    String
+  userId    String
+  date      DateTime @default(now())
+  mood      Int      @default(3)
+  blockers  String?  @db.Text
+  progress  String?  @db.Text
+  createdAt DateTime @default(now())
+
+  team DreamTeam @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@map("team_check_ins")
+}
+
 // ─── Dream Store ─────────────────────────────────────────────
 
 model DreamStory {
-  id        String   @id @default(cuid())
-  userId    String
-  title     String
-  statement String   @db.Text
-  coverImage String?
-  category   String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id              String   @id @default(cuid())
+  userId          String
+  title           String
+  statement       String   @db.Text
+  coverImage      String?
+  category        String?
+  originStory     String?  @db.Text  // "How this dream started"
+  processImages   String[] @default([])  // Behind-the-scenes photos
+  impactStatement String?  @db.Text  // "What one sale means for this dream"
+  isFeatured      Boolean  @default(false)
+  isStaffPick     Boolean  @default(false)
+  creatorStage    String?  // "early" | "growing" | "established"
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
-  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user       User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   milestones Milestone[]
   products   Product[]
   orders     Order[]
   followers  Follow[]
   updates    DreamUpdate[]
+  comments   DreamComment[]
 
   @@index([userId])
   @@map("dream_stories")
@@ -197,6 +322,7 @@ model Product {
   images       String[] @default([])
   whyIMadeThis String?  @db.Text
   category     String?
+  productType  String?  // "physical" | "digital" | "service" | "class"
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
@@ -265,6 +391,21 @@ model DreamUpdate {
 
   @@index([dreamStoryId, createdAt(sort: Desc)])
   @@map("dream_updates")
+}
+
+model DreamComment {
+  id           String   @id @default(cuid())
+  dreamStoryId String
+  userId       String
+  content      String   @db.Text
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  dreamStory DreamStory @relation(fields: [dreamStoryId], references: [id], onDelete: Cascade)
+  user       User       @relation("DreamComments", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([dreamStoryId, createdAt(sort: Desc)])
+  @@map("dream_comments")
 }
 
 // ─── Dream Brain ─────────────────────────────────────────────

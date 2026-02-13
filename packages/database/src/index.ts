@@ -14,4 +14,10 @@ export type {
   Match,
   MatchStatus,
   Message,
+  Order,
+  Follow,
+  DreamUpdate,
+  DreamComment,
+  OrderStatus,
+  InsightReport,
 } from "@prisma/client";

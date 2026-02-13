@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, type ChangeEvent, type FormEvent } from "react";
+import { useState, useRef, useTransition, type ChangeEvent, type FormEvent } from "react";
 import {
   Button,
   Input,
@@ -14,6 +14,7 @@ import {
 } from "@dreamhub/ui";
 import { createProductSchema } from "@/lib/validations";
 import { CATEGORIES } from "@/lib/types";
+import { createProduct } from "@/lib/actions/products";
 
 interface CreateProductFormProps {
   storyId: string;
@@ -30,7 +31,7 @@ export function CreateProductForm({ storyId }: CreateProductFormProps) {
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -99,24 +100,18 @@ export function CreateProductForm({ storyId }: CreateProductFormProps) {
       return;
     }
 
-    if (imageFiles.length === 0) {
-      setErrors({ images: "Please upload at least one product image" });
-      return;
-    }
-
-    setIsSubmitting(true);
-
-    // TODO: Upload images, then POST /api/stories/:storyId/products
-    console.log("Product data:", {
-      storyId,
-      ...result.data,
-      priceInCents: Math.round(Number(result.data.price) * 100),
-      imageFiles,
+    startTransition(async () => {
+      try {
+        await createProduct(storyId, result.data);
+      } catch (err) {
+        setErrors({
+          _form:
+            err instanceof Error
+              ? err.message
+              : "Something went wrong. Please try again.",
+        });
+      }
     });
-
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    setIsSubmitting(false);
-    alert("Product created! (API not connected yet)");
   }
 
   return (
@@ -331,14 +326,19 @@ export function CreateProductForm({ storyId }: CreateProductFormProps) {
       </Card>
 
       {/* Submit */}
+      {errors._form && (
+        <div className="rounded-card border border-red-200 bg-red-50 p-4 text-center text-sm text-red-600 dark:border-red-800 dark:bg-red-950/30 dark:text-red-400">
+          {errors._form}
+        </div>
+      )}
       <div className="flex flex-col items-center gap-4 pt-2">
         <Button
           type="submit"
           size="lg"
-          disabled={isSubmitting}
+          disabled={isPending}
           className="w-full bg-gradient-to-r from-brand-600 to-orange-500 text-white shadow-lg hover:from-brand-700 hover:to-orange-600 sm:w-auto sm:min-w-[240px]"
         >
-          {isSubmitting ? "Adding Product..." : "Add Product to My Dream"}
+          {isPending ? "Adding Product..." : "Add Product to My Dream"}
         </Button>
         <p className="text-center text-xs text-gray-500">
           Your product will be listed under your dream story.

@@ -1,7 +1,19 @@
-import type { DreamStory, Supporter } from "./types";
+import type { DreamStory, Supporter, DreamCommentView } from "./types";
+
+const storyDefaults = {
+  creatorBio: "",
+  originStory: "",
+  processImages: [] as string[],
+  impactStatement: "",
+  isFeatured: false,
+  isStaffPick: false,
+  creatorStage: "early" as string,
+  followerCount: 0,
+};
 
 export const MOCK_STORIES: DreamStory[] = [
   {
+    ...storyDefaults,
     id: "story-1",
     userId: "user-1",
     title: "Handcrafted Ceramics from My Home Studio",
@@ -10,8 +22,19 @@ export const MOCK_STORIES: DreamStory[] = [
     coverImage: "https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=800&h=400&fit=crop",
     creatorName: "Maya Chen",
     creatorAvatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=face",
+    creatorBio: "Self-taught ceramicist based in Portland, OR. 8 years of making things with my hands. Previously a graphic designer — traded pixels for clay.",
+    originStory: "It all started when I took a weekend pottery class on a whim. The moment my hands touched the clay on the wheel, something clicked. I spent the next 3 years learning everything I could, filling my apartment with mugs and bowls. My friends started asking to buy them, and that's when I realized — this could be more than a hobby.",
+    processImages: [
+      "https://images.unsplash.com/photo-1606577924006-27d39b132ae2?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1493106641515-6b5631de4bb9?w=400&h=400&fit=crop",
+    ],
+    impactStatement: "Every purchase funds my dream of opening a community ceramics studio. One mug = one step closer to a space where anyone can learn the craft.",
+    isFeatured: true,
+    isStaffPick: true,
+    creatorStage: "growing",
     category: "Art & Craft",
     supporterCount: 127,
+    followerCount: 89,
     createdAt: "2025-11-15",
     milestones: [
       { id: "m1", title: "First 50 supporters", targetDate: "2025-12-01", completed: true, sortOrder: 0 },
@@ -25,9 +48,14 @@ export const MOCK_STORIES: DreamStory[] = [
         title: "Sunrise Mug — Handmade Ceramic",
         description: "A hand-thrown ceramic mug glazed in warm sunrise tones. Each mug is one-of-a-kind, perfect for your morning ritual.",
         price: 3500,
-        images: ["https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?w=600&h=600&fit=crop"],
+        images: [
+          "https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?w=600&h=600&fit=crop",
+          "https://images.unsplash.com/photo-1572726729207-a78d6feb18d7?w=600&h=600&fit=crop",
+          "https://images.unsplash.com/photo-1556909172-54557c7e4fb7?w=600&h=600&fit=crop",
+        ],
         whyIMadeThis: "This mug represents the beginning of every day — a fresh start. I wanted to create something that people reach for first thing in the morning and feel a moment of calm.",
         category: "Art & Craft",
+        productType: "Physical Product",
       },
       {
         id: "prod-2",
@@ -35,13 +63,18 @@ export const MOCK_STORIES: DreamStory[] = [
         title: "Ocean Bowl Set (2 pcs)",
         description: "A set of two handcrafted bowls with deep ocean-blue glaze. Perfect for soups, salads, or as decorative pieces.",
         price: 5800,
-        images: ["https://images.unsplash.com/photo-1610701596061-2ecf227e85b2?w=600&h=600&fit=crop"],
+        images: [
+          "https://images.unsplash.com/photo-1610701596061-2ecf227e85b2?w=600&h=600&fit=crop",
+          "https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?w=600&h=600&fit=crop",
+        ],
         whyIMadeThis: "The ocean has always been my biggest inspiration. These bowls carry the depth and movement of the sea in every swirl of glaze.",
         category: "Art & Craft",
+        productType: "Physical Product",
       },
     ],
   },
   {
+    ...storyDefaults,
     id: "story-2",
     userId: "user-2",
     title: "AI-Powered Tools for Small Farmers",
@@ -50,8 +83,14 @@ export const MOCK_STORIES: DreamStory[] = [
     coverImage: "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=800&h=400&fit=crop",
     creatorName: "Daniel Okafor",
     creatorAvatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face",
+    creatorBio: "Agricultural engineer and ML researcher. Born in Nigeria, now building tech that bridges the gap between Silicon Valley and rural farms worldwide.",
+    originStory: "Growing up, I watched my grandparents farm by instinct alone — reading the sky, feeling the soil. When I studied computer science in college, I realized: what if we could give every farmer a digital farming advisor? I quit my BigTech job to make it happen.",
+    impactStatement: "Each FarmSight kit deployed means one more family can make data-driven decisions about their land. Your purchase literally feeds communities.",
+    isFeatured: true,
+    creatorStage: "growing",
     category: "Technology",
     supporterCount: 89,
+    followerCount: 156,
     createdAt: "2025-12-01",
     milestones: [
       { id: "m4", title: "Beta launch with 10 farms", targetDate: "2026-01-15", completed: true, sortOrder: 0 },
@@ -68,10 +107,12 @@ export const MOCK_STORIES: DreamStory[] = [
         images: ["https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=600&h=600&fit=crop"],
         whyIMadeThis: "I grew up watching my grandparents farm by instinct alone. This kit is for every farmer who deserves the same technology that large farms use.",
         category: "Technology",
+        productType: "Physical Product",
       },
     ],
   },
   {
+    ...storyDefaults,
     id: "story-3",
     userId: "user-3",
     title: "Zero-Waste Bakery in Brooklyn",
@@ -80,8 +121,14 @@ export const MOCK_STORIES: DreamStory[] = [
     coverImage: "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=800&h=400&fit=crop",
     creatorName: "Sofia Martinez",
     creatorAvatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&crop=face",
+    creatorBio: "Baker, sustainability nerd, Brooklyn local. Former chef at a Michelin-starred restaurant — now chasing sourdough and zero-waste dreams.",
+    originStory: "After years working in fine dining, I was shocked by the waste. Mountains of perfectly good food thrown away nightly. I started baking at home with local flour, giving loaves to neighbors. The response was overwhelming — turns out people are hungry for bread that doesn't cost the earth.",
+    impactStatement: "Each subscription diverts 5kg of food waste from landfills monthly and supports local organic farmers within 50 miles of Brooklyn.",
+    isStaffPick: true,
+    creatorStage: "established",
     category: "Food & Drink",
     supporterCount: 203,
+    followerCount: 312,
     createdAt: "2025-10-20",
     milestones: [
       { id: "m7", title: "Raise seed funding", targetDate: "2025-12-15", completed: true, sortOrder: 0 },
@@ -98,6 +145,7 @@ export const MOCK_STORIES: DreamStory[] = [
         images: ["https://images.unsplash.com/photo-1549931319-a545753467c8?w=600&h=600&fit=crop"],
         whyIMadeThis: "Bread is the most universal food. By making it sustainably, I want to prove that everyday essentials can be both delicious and kind to the planet.",
         category: "Food & Drink",
+        productType: "Physical Product",
       },
       {
         id: "prod-5",
@@ -108,10 +156,12 @@ export const MOCK_STORIES: DreamStory[] = [
         images: ["https://images.unsplash.com/photo-1555507036-ab1f4038024a?w=600&h=600&fit=crop"],
         whyIMadeThis: "Teaching is how dreams multiply. When you learn to bake, you carry a piece of this dream into your own kitchen.",
         category: "Food & Drink",
+        productType: "Class",
       },
     ],
   },
   {
+    ...storyDefaults,
     id: "story-4",
     userId: "user-4",
     title: "Free Coding Bootcamp for Refugees",
@@ -120,8 +170,13 @@ export const MOCK_STORIES: DreamStory[] = [
     coverImage: "https://images.unsplash.com/photo-1531482615713-2afd69097998?w=800&h=400&fit=crop",
     creatorName: "Amir Hassan",
     creatorAvatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face",
+    creatorBio: "Software engineer, former refugee from Syria. Now a tech lead at a startup. Building the bootcamp I wish I had when I arrived with nothing.",
+    originStory: "When I arrived in Germany as a refugee in 2015, I had no network, limited language skills, and zero job prospects. A free online course taught me to code, and within 18 months I had a developer job. I want to replicate that transformation for thousands more.",
+    impactStatement: "Every student sponsored gains a career-launching skill. 87% of our graduates find tech employment within 6 months.",
+    creatorStage: "established",
     category: "Education",
     supporterCount: 341,
+    followerCount: 478,
     createdAt: "2025-09-10",
     milestones: [
       { id: "m10", title: "First cohort of 30 students", targetDate: "2025-11-01", completed: true, sortOrder: 0 },
@@ -138,10 +193,12 @@ export const MOCK_STORIES: DreamStory[] = [
         images: ["https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=600&h=600&fit=crop"],
         whyIMadeThis: "Every student sponsored is a life changed. You're not just buying a product — you're investing in someone's future.",
         category: "Education",
+        productType: "Service",
       },
     ],
   },
   {
+    ...storyDefaults,
     id: "story-5",
     userId: "user-5",
     title: "Sustainable Fashion from Recycled Ocean Plastic",
@@ -150,8 +207,14 @@ export const MOCK_STORIES: DreamStory[] = [
     coverImage: "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=800&h=400&fit=crop",
     creatorName: "Lena Park",
     creatorAvatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=face",
+    creatorBio: "Fashion designer and ocean conservation advocate. Studied at Parsons, interned at Patagonia. Now building the brand I always wanted to exist.",
+    originStory: "During a surf trip in Bali, I saw beaches buried in plastic. I spent 3 months learning textile recycling and discovered you can make beautiful, soft fabrics from ocean waste. That trip changed everything — I came home and started designing.",
+    impactStatement: "Each item sold removes measured ocean plastic. We've removed 450kg so far. Your purchase literally cleans the ocean.",
+    isFeatured: true,
+    creatorStage: "growing",
     category: "Fashion & Beauty",
     supporterCount: 178,
+    followerCount: 234,
     createdAt: "2025-11-01",
     milestones: [
       { id: "m13", title: "First capsule collection launch", targetDate: "2026-01-01", completed: true, sortOrder: 0 },
@@ -168,6 +231,7 @@ export const MOCK_STORIES: DreamStory[] = [
         images: ["https://images.unsplash.com/photo-1591561954557-26941169b49e?w=600&h=600&fit=crop"],
         whyIMadeThis: "I wanted to create something useful and beautiful from what we throw away. This bag is a daily reminder that waste can become wonder.",
         category: "Fashion & Beauty",
+        productType: "Physical Product",
       },
       {
         id: "prod-8",
@@ -178,10 +242,12 @@ export const MOCK_STORIES: DreamStory[] = [
         images: ["https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=600&h=600&fit=crop"],
         whyIMadeThis: "Fashion is the second most polluting industry. This hoodie is proof that we can do better — and look great doing it.",
         category: "Fashion & Beauty",
+        productType: "Physical Product",
       },
     ],
   },
   {
+    ...storyDefaults,
     id: "story-6",
     userId: "user-6",
     title: "Community Music Studio for At-Risk Youth",
@@ -190,8 +256,14 @@ export const MOCK_STORIES: DreamStory[] = [
     coverImage: "https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=800&h=400&fit=crop",
     creatorName: "Marcus Johnson",
     creatorAvatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop&crop=face",
+    creatorBio: "Producer, music teacher, and community organizer in South LA. Grammy-nominated backing vocalist turned full-time youth mentor.",
+    originStory: "I grew up in a neighborhood where the only after-school options were the streets. A church basement with a beat-up keyboard changed my life. Now I have the skills, the vision, and the network — I just need the space and the gear to give the next generation that same chance.",
+    impactStatement: "Each gift card directly funds mentorship sessions for at-risk youth. 90% of our students stay in school and report improved mental health.",
+    isStaffPick: true,
+    creatorStage: "established",
     category: "Social Impact",
     supporterCount: 256,
+    followerCount: 390,
     createdAt: "2025-10-05",
     milestones: [
       { id: "m16", title: "Secure studio space", targetDate: "2025-12-01", completed: true, sortOrder: 0 },
@@ -208,6 +280,7 @@ export const MOCK_STORIES: DreamStory[] = [
         images: ["https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=600&h=600&fit=crop"],
         whyIMadeThis: "Music taught me discipline, creativity, and hope. This gift card is a ticket to that same transformation for a young person who needs it.",
         category: "Social Impact",
+        productType: "Service",
       },
     ],
   },
@@ -222,6 +295,12 @@ export const MOCK_SUPPORTERS: Supporter[] = [
   { id: "s6", name: "Taylor Swift", avatar: "https://images.unsplash.com/photo-1607746882042-944635dfe10e?w=80&h=80&fit=crop&crop=face", supportedAt: "2026-01-03", amount: 5800 },
   { id: "s7", name: "Jamie Fox", avatar: "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=80&h=80&fit=crop&crop=face", supportedAt: "2025-12-28", amount: 3500 },
   { id: "s8", name: "Morgan Yu", avatar: "https://images.unsplash.com/photo-1645830166230-187caf791b90?w=80&h=80&fit=crop&crop=face", supportedAt: "2025-12-25", amount: 3500 },
+];
+
+export const MOCK_COMMENTS: DreamCommentView[] = [
+  { id: "c1", content: "Your ceramics are absolutely stunning! The sunrise mug is my favorite piece in my kitchen. So proud to support this dream!", userName: "Alex Rivera", userAvatar: "https://images.unsplash.com/photo-1599566150163-29194dcabd9c?w=80&h=80&fit=crop&crop=face", userId: "s1", createdAt: "2026-01-16" },
+  { id: "c2", content: "Can't wait for the workshop! You're going to inspire so many people.", userName: "Jordan Lee", userAvatar: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=80&h=80&fit=crop&crop=face", userId: "s2", createdAt: "2026-01-14" },
+  { id: "c3", content: "Just received my ocean bowls — the glaze is even more beautiful in person. Keep dreaming, Maya!", userName: "Sam Patel", userAvatar: "https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=80&h=80&fit=crop&crop=face", userId: "s3", createdAt: "2026-01-11" },
 ];
 
 export function getStoryById(id: string): DreamStory | undefined {
