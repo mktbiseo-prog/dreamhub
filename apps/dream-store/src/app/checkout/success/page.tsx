@@ -1,13 +1,41 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Button } from "@dreamhub/ui";
+import { prisma } from "@dreamhub/database";
+import { formatPrice } from "@/lib/queries";
 
 export const metadata: Metadata = {
   title: "Thank You! | Dream Store",
   description: "Your support means the world.",
 };
 
-export default function CheckoutSuccessPage() {
+interface PageProps {
+  searchParams: Promise<{ session_id?: string }>;
+}
+
+async function getOrderInfo(sessionId: string | undefined) {
+  if (!sessionId) return null;
+
+  try {
+    const order = await prisma.order.findUnique({
+      where: { stripeSessionId: sessionId },
+      include: {
+        product: true,
+        dreamStory: true,
+      },
+    });
+    return order;
+  } catch {
+    return null;
+  }
+}
+
+export default async function CheckoutSuccessPage({
+  searchParams,
+}: PageProps) {
+  const params = await searchParams;
+  const order = await getOrderInfo(params.session_id);
+
   return (
     <main className="flex min-h-[80vh] items-center justify-center px-4">
       <div className="max-w-md text-center">
@@ -31,21 +59,52 @@ export default function CheckoutSuccessPage() {
         <h1 className="mb-3 text-3xl font-bold text-gray-900 dark:text-white">
           You&apos;re a Dream Supporter!
         </h1>
-        <p className="mb-8 text-lg text-gray-600 dark:text-gray-400">
-          Thank you for supporting this dream. Your purchase directly helps a
-          creator move closer to their goal. You&apos;re now part of their
-          story.
-        </p>
+
+        {order ? (
+          <div className="mb-8 space-y-2">
+            <p className="text-lg text-gray-600 dark:text-gray-400">
+              Thank you for supporting{" "}
+              <span className="font-semibold text-gray-900 dark:text-white">
+                {order.dreamStory.title}
+              </span>
+            </p>
+            <p className="text-sm text-gray-500">
+              {order.product.title} &middot;{" "}
+              {formatPrice(order.amount)}
+            </p>
+          </div>
+        ) : (
+          <p className="mb-8 text-lg text-gray-600 dark:text-gray-400">
+            Thank you for supporting this dream. Your purchase directly helps a
+            creator move closer to their goal. You&apos;re now part of their
+            story.
+          </p>
+        )}
 
         <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
-          <Link href="/">
-            <Button size="lg" className="w-full sm:w-auto">
-              Discover More Dreams
+          {order && (
+            <Link href={`/stories/${order.dreamStoryId}`}>
+              <Button size="lg" className="w-full sm:w-auto">
+                View the Dream
+              </Button>
+            </Link>
+          )}
+          <Link href="/my-dreams">
+            <Button
+              variant="outline"
+              size="lg"
+              className="w-full sm:w-auto"
+            >
+              View My Supported Dreams
             </Button>
           </Link>
           <Link href="/">
-            <Button variant="outline" size="lg" className="w-full sm:w-auto">
-              View My Supported Dreams
+            <Button
+              variant="outline"
+              size="lg"
+              className="w-full sm:w-auto"
+            >
+              Discover More Dreams
             </Button>
           </Link>
         </div>

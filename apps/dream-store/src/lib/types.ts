@@ -40,6 +40,17 @@ export interface Supporter {
   amount: number;
 }
 
+export interface DreamUpdateView {
+  id: string;
+  dreamStoryId: string;
+  title: string;
+  content: string;
+  images: string[];
+  creatorName: string;
+  creatorAvatar: string;
+  createdAt: string;
+}
+
 export const CATEGORIES = [
   "All",
   "Art & Craft",

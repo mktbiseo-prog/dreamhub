@@ -2,9 +2,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Button } from "@dreamhub/ui";
-import { getStoryById, formatPrice, MOCK_SUPPORTERS } from "@/lib/mockData";
+import { getStoryById, getSupporters, getDreamUpdates, isFollowing, formatPrice } from "@/lib/queries";
+import { getCurrentUser } from "@/lib/auth";
 import { SupporterWall } from "./SupporterWall";
 import { FollowButton } from "./FollowButton";
+import { UpdateForm } from "./UpdateForm";
+import { UpdateCard } from "./UpdateCard";
 
 interface PageProps {
   params: Promise<{ storyId: string }>;
@@ -12,7 +15,7 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { storyId } = await params;
-  const story = getStoryById(storyId);
+  const story = await getStoryById(storyId);
   if (!story) return { title: "Dream Not Found" };
   return {
     title: `${story.title} | Dream Store`,
@@ -22,8 +25,18 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function DreamStoryPage({ params }: PageProps) {
   const { storyId } = await params;
-  const story = getStoryById(storyId);
+  const story = await getStoryById(storyId);
   if (!story) notFound();
+
+  const [supporters, updates, currentUser] = await Promise.all([
+    getSupporters(storyId),
+    getDreamUpdates(storyId),
+    getCurrentUser(),
+  ]);
+  const following = currentUser?.id
+    ? await isFollowing(currentUser.id, storyId)
+    : false;
+  const isOwner = currentUser?.id === story.userId;
 
   const completedMilestones = story.milestones.filter((m) => m.completed).length;
   const progressPercent = Math.round(
@@ -64,7 +77,7 @@ export default async function DreamStoryPage({ params }: PageProps) {
                   </p>
                 </div>
               </div>
-              <FollowButton />
+              <FollowButton storyId={storyId} initialFollowing={following} />
             </div>
           </div>
         </div>
@@ -166,14 +179,16 @@ export default async function DreamStoryPage({ params }: PageProps) {
             </span>
           </div>
 
-          {/* Creator action — visible to story owner */}
-          <div className="mb-6 flex justify-end">
-            <Link href={`/stories/${story.id}/products/create`}>
-              <Button variant="outline" size="sm">
-                + Add Product
-              </Button>
-            </Link>
-          </div>
+          {/* Creator action — visible to story owner only */}
+          {isOwner && (
+            <div className="mb-6 flex justify-end">
+              <Link href={`/stories/${story.id}/products/create`}>
+                <Button variant="outline" size="sm">
+                  + Add Product
+                </Button>
+              </Link>
+            </div>
+          )}
 
           <div className="grid gap-6 sm:grid-cols-2">
             {story.products.map((product) => (
@@ -210,6 +225,35 @@ export default async function DreamStoryPage({ params }: PageProps) {
           </div>
         </section>
 
+        {/* Dream Updates */}
+        <section className="mb-16">
+          <h2 className="mb-6 text-sm font-semibold uppercase tracking-wider text-brand-600">
+            Dream Updates
+          </h2>
+
+          {isOwner && (
+            <div className="mb-6">
+              <UpdateForm storyId={story.id} />
+            </div>
+          )}
+
+          {updates.length > 0 ? (
+            <div className="space-y-4">
+              {updates.map((update) => (
+                <UpdateCard
+                  key={update.id}
+                  update={update}
+                  isOwner={isOwner}
+                />
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm text-gray-500">
+              No updates yet. {isOwner ? "Share your progress with supporters!" : "Check back soon for updates from the creator."}
+            </p>
+          )}
+        </section>
+
         {/* Supporter Wall */}
         <section>
           <h2 className="mb-6 text-sm font-semibold uppercase tracking-wider text-brand-600">
@@ -218,7 +262,7 @@ export default async function DreamStoryPage({ params }: PageProps) {
           <p className="mb-6 text-sm text-gray-500">
             {story.supporterCount} people are supporting this dream
           </p>
-          <SupporterWall supporters={MOCK_SUPPORTERS} />
+          <SupporterWall supporters={supporters} />
         </section>
       </div>
     </main>
