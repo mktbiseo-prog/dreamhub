@@ -2,9 +2,10 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
-import { Sparkles, TrendingUp } from "lucide-react";
+import { Sparkles, TrendingUp, Search } from "lucide-react";
 import { SearchBar } from "./SearchBar";
 import { CategoryFilter } from "./CategoryFilter";
+import { ViewFilter, type ViewFilterType } from "./ViewFilter";
 import { ThoughtCard } from "./ThoughtCard";
 import type { ThoughtData } from "@/lib/data";
 import type { CategoryId } from "@/lib/categories";
@@ -24,11 +25,18 @@ interface HomeFeedProps {
 export function HomeFeed({ initialThoughts, todayInsight }: HomeFeedProps) {
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<CategoryId | null>(null);
+  const [viewFilter, setViewFilter] = useState<ViewFilterType>("all");
 
   const prompt = dailyPrompts[Math.floor(Date.now() / 86400000) % dailyPrompts.length];
 
   const filteredThoughts = useMemo(() => {
     return initialThoughts.filter((thought) => {
+      // View filter
+      if (viewFilter === "favorites" && !thought.isFavorite) return false;
+      if (viewFilter === "pinned" && !thought.isPinned) return false;
+      if (viewFilter === "archived" && !thought.isArchived) return false;
+      if (viewFilter === "all" && thought.isArchived) return false;
+
       if (selectedCategory && thought.category !== selectedCategory) return false;
       if (search) {
         const q = search.toLowerCase();
@@ -40,7 +48,7 @@ export function HomeFeed({ initialThoughts, todayInsight }: HomeFeedProps) {
       }
       return true;
     });
-  }, [search, selectedCategory, initialThoughts]);
+  }, [search, selectedCategory, viewFilter, initialThoughts]);
 
   return (
     <div className="flex flex-col gap-5">
@@ -68,6 +76,16 @@ export function HomeFeed({ initialThoughts, todayInsight }: HomeFeedProps) {
 
       {/* Search */}
       <SearchBar value={search} onChange={setSearch} />
+      <Link
+        href="/search"
+        className="inline-flex items-center gap-1.5 self-end text-xs text-gray-500 hover:text-brand-400 transition-colors"
+      >
+        <Search className="h-3 w-3" />
+        Advanced Search
+      </Link>
+
+      {/* View Filter */}
+      <ViewFilter selected={viewFilter} onChange={setViewFilter} />
 
       {/* Category Filter */}
       <CategoryFilter selected={selectedCategory} onChange={setSelectedCategory} />

@@ -29,6 +29,8 @@ function dbThoughtToData(t: {
   keywords: string[];
   createdAt: Date;
   isFavorite: boolean;
+  isArchived: boolean;
+  isPinned: boolean;
   importance: number;
   inputMethod?: string;
   voiceDurationSeconds?: number | null;
@@ -50,6 +52,8 @@ function dbThoughtToData(t: {
     keywords: t.keywords,
     createdAt: t.createdAt.toISOString(),
     isFavorite: t.isFavorite,
+    isArchived: t.isArchived,
+    isPinned: t.isPinned,
     importance: t.importance,
     inputMethod: (t.inputMethod as "TEXT" | "VOICE") || "TEXT",
     voiceDurationSeconds: t.voiceDurationSeconds ?? undefined,
@@ -67,9 +71,21 @@ export async function fetchThoughts(options?: {
   category?: CategoryId;
   search?: string;
   limit?: number;
+  includeArchived?: boolean;
+  favoritesOnly?: boolean;
+  pinnedOnly?: boolean;
 }): Promise<ThoughtData[]> {
   if (!isDbAvailable()) {
     let results = [...mockThoughts];
+    if (!options?.includeArchived) {
+      results = results.filter((t) => !t.isArchived);
+    }
+    if (options?.favoritesOnly) {
+      results = results.filter((t) => t.isFavorite);
+    }
+    if (options?.pinnedOnly) {
+      results = results.filter((t) => t.isPinned);
+    }
     if (options?.category) {
       results = results.filter((t) => t.category === options.category);
     }
@@ -89,8 +105,19 @@ export async function fetchThoughts(options?: {
   const userId = await getCurrentUserId();
   const where: Record<string, unknown> = {
     userId,
-    isArchived: false,
   };
+
+  if (!options?.includeArchived) {
+    where.isArchived = false;
+  }
+
+  if (options?.favoritesOnly) {
+    where.isFavorite = true;
+  }
+
+  if (options?.pinnedOnly) {
+    where.isPinned = true;
+  }
 
   if (options?.category) {
     where.category = options.category.toUpperCase();
@@ -280,4 +307,132 @@ export async function fetchTodayInsight(): Promise<string | null> {
   } catch {
     return null;
   }
+}
+
+export interface UserProfile {
+  name: string | null;
+  email: string;
+  bio: string | null;
+  dreamStatement: string | null;
+  skills: string[];
+  interests: string[];
+}
+
+export interface UserStats {
+  totalThoughts: number;
+  topCategory: string | null;
+}
+
+export async function fetchUserProfile(): Promise<UserProfile> {
+  if (!isDbAvailable()) {
+    return {
+      name: "Demo User",
+      email: "demo@dreambrain.app",
+      bio: "Exploring Dream Brain in demo mode.",
+      dreamStatement: "Build something meaningful every day.",
+      skills: ["TypeScript", "React", "AI"],
+      interests: ["startups", "design", "coffee"],
+    };
+  }
+
+  const userId = await getCurrentUserId();
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: {
+      name: true,
+      email: true,
+      bio: true,
+      dreamStatement: true,
+      skills: true,
+      interests: true,
+    },
+  });
+
+  if (!user) {
+    return { name: null, email: "", bio: null, dreamStatement: null, skills: [], interests: [] };
+  }
+  return user;
+}
+
+export async function fetchUserStats(): Promise<UserStats> {
+  if (!isDbAvailable()) {
+    const categoryCounts: Record<string, number> = {};
+    for (const t of mockThoughts) {
+      categoryCounts[t.category] = (categoryCounts[t.category] || 0) + 1;
+    }
+    const topCategory = Object.entries(categoryCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || null;
+    return { totalThoughts: mockThoughts.length, topCategory };
+  }
+
+  const userId = await getCurrentUserId();
+  const totalThoughts = await prisma.thought.count({
+    where: { userId, isArchived: false },
+  });
+
+  const topCategoryResult = await prisma.thought.groupBy({
+    by: ["category"],
+    where: { userId, isArchived: false },
+    _count: { category: true },
+    orderBy: { _count: { category: "desc" } },
+    take: 1,
+  });
+
+  const topCategory = topCategoryResult[0]?.category?.toLowerCase() || null;
+
+  return { totalThoughts, topCategory };
+}
+
+export interface UserPreferencesData {
+  aiProcessingLevel: string;
+  dailyPromptEnabled: boolean;
+  weeklyInsightEnabled: boolean;
+  connectionAlerts: boolean;
+  defaultView: string;
+  thoughtsPerPage: number;
+  embeddingEnabled: boolean;
+}
+
+const DEFAULT_PREFERENCES: UserPreferencesData = {
+  aiProcessingLevel: "standard",
+  dailyPromptEnabled: true,
+  weeklyInsightEnabled: true,
+  connectionAlerts: true,
+  defaultView: "home",
+  thoughtsPerPage: 20,
+  embeddingEnabled: true,
+};
+
+export async function fetchUserPreferences(): Promise<UserPreferencesData> {
+  if (!isDbAvailable()) return DEFAULT_PREFERENCES;
+
+  const userId = await getCurrentUserId();
+  const prefs = await prisma.userPreferences.findUnique({
+    where: { userId },
+  });
+
+  if (!prefs) return DEFAULT_PREFERENCES;
+
+  return {
+    aiProcessingLevel: prefs.aiProcessingLevel,
+    dailyPromptEnabled: prefs.dailyPromptEnabled,
+    weeklyInsightEnabled: prefs.weeklyInsightEnabled,
+    connectionAlerts: prefs.connectionAlerts,
+    defaultView: prefs.defaultView,
+    thoughtsPerPage: prefs.thoughtsPerPage,
+    embeddingEnabled: prefs.embeddingEnabled,
+  };
+}
+
+export async function fetchOnboardingStatus(): Promise<boolean> {
+  if (!isDbAvailable()) return true;
+
+  const userId = await getCurrentUserId();
+  if (userId === "demo-user") return true;
+
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { onboardingCompleted: true },
+  });
+
+  return user?.onboardingCompleted ?? false;
 }

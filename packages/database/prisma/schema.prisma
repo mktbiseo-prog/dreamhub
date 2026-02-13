@@ -18,10 +18,11 @@ model User {
   dreamStatement String?   @db.Text
   skills         String[]  @default([])
   interests      String[]  @default([])
-  emailVerified  DateTime?
-  hashedPassword String?
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
+  emailVerified        DateTime?
+  hashedPassword       String?
+  onboardingCompleted  Boolean   @default(false)
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
 
   stripeCustomerId String?
   stripeConnectId  String?
@@ -39,6 +40,7 @@ model User {
   following     Follow[]
   dreamUpdates  DreamUpdate[] @relation("DreamUpdates")
   dreamComments DreamComment[] @relation("DreamComments")
+  preferences   UserPreferences?
 
   @@map("users")
 }
@@ -406,6 +408,26 @@ model DreamComment {
 
   @@index([dreamStoryId, createdAt(sort: Desc)])
   @@map("dream_comments")
+}
+
+// ─── User Preferences ────────────────────────────────────────
+
+model UserPreferences {
+  id                  String   @id @default(cuid())
+  userId              String   @unique
+  aiProcessingLevel   String   @default("standard") // "minimal" | "standard" | "detailed"
+  dailyPromptEnabled  Boolean  @default(true)
+  weeklyInsightEnabled Boolean @default(true)
+  connectionAlerts    Boolean  @default(true)
+  defaultView         String   @default("home") // "home" | "timeline" | "brain"
+  thoughtsPerPage     Int      @default(20)
+  embeddingEnabled    Boolean  @default(true)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_preferences")
 }
 
 // ─── Dream Brain ─────────────────────────────────────────────

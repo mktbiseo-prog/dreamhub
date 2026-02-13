@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Star, Pin } from "lucide-react";
 import { categories } from "@/lib/categories";
 import { EmotionBadge } from "./EmotionBadge";
 import type { ThoughtData } from "@/lib/data";
@@ -50,6 +51,12 @@ export function ThoughtCard({ thought }: ThoughtCardProps) {
           </p>
 
           <div className="mt-2 flex flex-wrap items-center gap-1.5">
+            {thought.isFavorite && (
+              <Star className="h-3.5 w-3.5 text-yellow-400 fill-yellow-400" />
+            )}
+            {thought.isPinned && (
+              <Pin className="h-3.5 w-3.5 text-brand-400" />
+            )}
             {thought.emotion && (
               <EmotionBadge emotion={thought.emotion} size="sm" />
             )}

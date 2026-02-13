@@ -6,6 +6,8 @@ import { useRouter } from "next/navigation";
 import {
   ArrowLeft,
   Star,
+  Pin,
+  Archive,
   MoreHorizontal,
   Link2,
   Calendar,
@@ -15,7 +17,7 @@ import {
   Mic,
 } from "lucide-react";
 import { categories } from "@/lib/categories";
-import { updateThought, deleteThought } from "@/lib/actions/thoughts";
+import { updateThought, deleteThought, toggleFavorite, togglePin, toggleArchive } from "@/lib/actions/thoughts";
 import { EmotionBadge } from "./EmotionBadge";
 import { ActionItemsList } from "./ActionItemsList";
 import { EntityPills } from "./EntityPills";
@@ -59,6 +61,30 @@ export function ThoughtDetailView({
   const [editTitle, setEditTitle] = useState(thought.title);
   const [editBody, setEditBody] = useState(thought.body);
   const [isPending, startTransition] = useTransition();
+
+  function handleToggleFavorite() {
+    setMenuOpen(false);
+    startTransition(async () => {
+      await toggleFavorite(thought.id);
+      router.refresh();
+    });
+  }
+
+  function handleTogglePin() {
+    setMenuOpen(false);
+    startTransition(async () => {
+      await togglePin(thought.id);
+      router.refresh();
+    });
+  }
+
+  function handleToggleArchive() {
+    setMenuOpen(false);
+    startTransition(async () => {
+      await toggleArchive(thought.id);
+      router.refresh();
+    });
+  }
 
   function handleEdit() {
     setMenuOpen(false);
@@ -121,7 +147,32 @@ export function ThoughtDetailView({
                 onClick={() => setMenuOpen(false)}
               />
               {/* Dropdown */}
-              <div className="absolute right-0 top-full mt-1 z-50 w-40 rounded-xl border border-white/10 bg-gray-900 py-1 shadow-xl">
+              <div className="absolute right-0 top-full mt-1 z-50 w-44 rounded-xl border border-white/10 bg-gray-900 py-1 shadow-xl">
+                <button
+                  type="button"
+                  onClick={handleToggleFavorite}
+                  className="flex w-full items-center gap-2.5 px-3.5 py-2.5 text-sm text-gray-300 transition-colors hover:bg-white/5"
+                >
+                  <Star className={`h-4 w-4 ${thought.isFavorite ? "fill-yellow-400 text-yellow-400" : ""}`} />
+                  {thought.isFavorite ? "Unfavorite" : "Favorite"}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleTogglePin}
+                  className="flex w-full items-center gap-2.5 px-3.5 py-2.5 text-sm text-gray-300 transition-colors hover:bg-white/5"
+                >
+                  <Pin className={`h-4 w-4 ${thought.isPinned ? "text-brand-400" : ""}`} />
+                  {thought.isPinned ? "Unpin" : "Pin"}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleToggleArchive}
+                  className="flex w-full items-center gap-2.5 px-3.5 py-2.5 text-sm text-gray-300 transition-colors hover:bg-white/5"
+                >
+                  <Archive className={`h-4 w-4 ${thought.isArchived ? "text-amber-400" : ""}`} />
+                  {thought.isArchived ? "Unarchive" : "Archive"}
+                </button>
+                <div className="my-1 border-t border-white/[0.06]" />
                 <button
                   type="button"
                   onClick={handleEdit}
@@ -157,6 +208,15 @@ export function ThoughtDetailView({
           </div>
           {thought.isFavorite && (
             <Star className="h-4 w-4 text-yellow-400 fill-yellow-400" />
+          )}
+          {thought.isPinned && (
+            <Pin className="h-4 w-4 text-brand-400" />
+          )}
+          {thought.isArchived && (
+            <span className="inline-flex items-center gap-1 rounded-lg bg-amber-500/10 px-2 py-1">
+              <Archive className="h-3.5 w-3.5 text-amber-400" />
+              <span className="text-xs font-medium text-amber-300">Archived</span>
+            </span>
           )}
           {thought.inputMethod === "VOICE" && thought.voiceDurationSeconds != null && (
             <div className="flex items-center gap-1.5 rounded-lg bg-purple-500/10 px-2.5 py-1.5">

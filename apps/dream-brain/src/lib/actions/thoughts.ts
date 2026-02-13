@@ -301,6 +301,37 @@ export async function toggleFavorite(id: string) {
   return updated;
 }
 
+export async function togglePin(id: string) {
+  const thought = await prisma.thought.findUnique({ where: { id } });
+  if (!thought) throw new Error("Thought not found");
+
+  const updated = await prisma.thought.update({
+    where: { id },
+    data: { isPinned: !thought.isPinned },
+  });
+
+  revalidatePath(`/thoughts/${id}`);
+  revalidatePath("/");
+  revalidatePath("/timeline");
+  return updated;
+}
+
+export async function toggleArchive(id: string) {
+  const thought = await prisma.thought.findUnique({ where: { id } });
+  if (!thought) throw new Error("Thought not found");
+
+  const updated = await prisma.thought.update({
+    where: { id },
+    data: { isArchived: !thought.isArchived },
+  });
+
+  revalidatePath(`/thoughts/${id}`);
+  revalidatePath("/");
+  revalidatePath("/timeline");
+  revalidatePath("/brain");
+  return updated;
+}
+
 export async function toggleActionItem(thoughtId: string, itemIndex: number) {
   const userId = await getCurrentUserId();
   const thought = await prisma.thought.findUnique({ where: { id: thoughtId } });

@@ -9,7 +9,7 @@ const navItems = [
   { icon: Home, label: "Home", href: "/" },
   { icon: Brain, label: "Brain", href: "/brain" },
   { icon: BarChart3, label: "Insights", href: "/insights" },
-  { icon: Link2, label: "Hub", href: "#" },
+  { icon: Link2, label: "Hub", href: "/hub" },
 ];
 
 export function BottomNav() {

@@ -15,6 +15,8 @@ export interface ThoughtData {
   keywords: string[];
   createdAt: string;
   isFavorite: boolean;
+  isArchived: boolean;
+  isPinned: boolean;
   importance: number;
   inputMethod?: "TEXT" | "VOICE";
   voiceDurationSeconds?: number;

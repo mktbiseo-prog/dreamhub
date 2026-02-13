@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Calendar } from "lucide-react";
 import { SearchBar } from "./SearchBar";
 import { CategoryFilter } from "./CategoryFilter";
+import { ViewFilter, type ViewFilterType } from "./ViewFilter";
 import { categories, type CategoryId } from "@/lib/categories";
 import type { ThoughtData } from "@/lib/data";
 
@@ -65,9 +66,15 @@ interface TimelineViewProps {
 export function TimelineView({ initialThoughts }: TimelineViewProps) {
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<CategoryId | null>(null);
+  const [viewFilter, setViewFilter] = useState<ViewFilterType>("all");
 
   const filtered = useMemo(() => {
     return initialThoughts.filter((t) => {
+      if (viewFilter === "favorites" && !t.isFavorite) return false;
+      if (viewFilter === "pinned" && !t.isPinned) return false;
+      if (viewFilter === "archived" && !t.isArchived) return false;
+      if (viewFilter === "all" && t.isArchived) return false;
+
       if (selectedCategory && t.category !== selectedCategory) return false;
       if (search) {
         const q = search.toLowerCase();
@@ -80,7 +87,7 @@ export function TimelineView({ initialThoughts }: TimelineViewProps) {
       }
       return true;
     });
-  }, [search, selectedCategory]);
+  }, [search, selectedCategory, viewFilter, initialThoughts]);
 
   const dayGroups = useMemo(() => groupByDay(filtered), [filtered]);
 
@@ -93,6 +100,8 @@ export function TimelineView({ initialThoughts }: TimelineViewProps) {
         onChange={setSearch}
         placeholder="Search by keyword, tag, or content..."
       />
+
+      <ViewFilter selected={viewFilter} onChange={setViewFilter} />
 
       <CategoryFilter selected={selectedCategory} onChange={setSelectedCategory} />
 

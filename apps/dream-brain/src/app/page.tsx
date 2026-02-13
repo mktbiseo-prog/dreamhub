@@ -1,12 +1,24 @@
+import { redirect } from "next/navigation";
 import { Header } from "@/components/Header";
 import { HomeFeed } from "@/components/HomeFeed";
 import { FabButton } from "@/components/FabButton";
 import { BottomNav } from "@/components/BottomNav";
-import { fetchThoughts, fetchTodayInsight } from "@/lib/queries";
+import { fetchThoughts, fetchTodayInsight, fetchOnboardingStatus } from "@/lib/queries";
+import { getCurrentUserId } from "@/lib/auth";
 
 export default async function Home() {
+  const userId = await getCurrentUserId();
+
+  // Redirect non-demo users to onboarding if not completed
+  if (userId !== "demo-user") {
+    const onboarded = await fetchOnboardingStatus();
+    if (!onboarded) {
+      redirect("/onboarding");
+    }
+  }
+
   const [thoughts, todayInsight] = await Promise.all([
-    fetchThoughts(),
+    fetchThoughts({ includeArchived: true }),
     fetchTodayInsight(),
   ]);
 
