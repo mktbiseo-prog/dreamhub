@@ -24,6 +24,7 @@ export interface DreamStory {
   title: string;
   statement: string;
   coverImage: string;
+  videoUrl: string;
   creatorName: string;
   creatorAvatar: string;
   creatorBio: string;
@@ -33,6 +34,7 @@ export interface DreamStory {
   isFeatured: boolean;
   isStaffPick: boolean;
   creatorStage: string;
+  status: "DRAFT" | "PREVIEW" | "ACTIVE" | "ARCHIVED";
   milestones: Milestone[];
   products: Product[];
   supporterCount: number;
@@ -66,6 +68,28 @@ export interface DreamCommentView {
   userName: string;
   userAvatar: string;
   userId: string;
+  createdAt: string;
+}
+
+export interface PollView {
+  id: string;
+  question: string;
+  endsAt: string | null;
+  options: { id: string; label: string; voteCount: number }[];
+  totalVotes: number;
+  userVotedOptionId: string | null;
+  createdAt: string;
+}
+
+export interface ReviewView {
+  id: string;
+  productId: string;
+  rating: number;
+  content: string;
+  images: string[];
+  buyerName: string;
+  buyerAvatar: string;
+  buyerId: string;
   createdAt: string;
 }
 

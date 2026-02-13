@@ -3,6 +3,7 @@
 import { usePlannerStore } from "@/lib/store";
 import { PART1_ACTIVITIES } from "@/types/planner";
 import { ActivitySidebar } from "./ActivitySidebar";
+import { AiInsightPanel } from "./AiInsightPanel";
 import { SkillsInventory } from "@/components/activities/SkillsInventory";
 import { ResourceMap } from "@/components/activities/ResourceMap";
 import { TimeLog } from "@/components/activities/TimeLog";
@@ -26,6 +27,8 @@ export function PlannerShell() {
   const handleSelectActivity = (id: number) => {
     store.setCurrentActivity(id);
   };
+
+  const currentActivityMeta = PART1_ACTIVITIES.find((a) => a.id === data.currentActivity);
 
   return (
     <div className="flex gap-8">
@@ -78,6 +81,15 @@ export function PlannerShell() {
         {data.currentActivity === 4 && <MoneyFlow onNext={handleNext} />}
         {data.currentActivity === 5 && <CurrentState onNext={handleNext} />}
         {data.currentActivity === 0 && <Reflection />}
+
+        {/* AI Insight Panel — shows for all activities */}
+        {currentActivityMeta && data.currentActivity > 0 && (
+          <AiInsightPanel
+            activityId={data.currentActivity}
+            activityName={currentActivityMeta.title}
+            className="mt-6"
+          />
+        )}
       </div>
     </div>
   );

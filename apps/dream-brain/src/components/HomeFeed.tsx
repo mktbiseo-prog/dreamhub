@@ -5,10 +5,13 @@ import Link from "next/link";
 import { Sparkles, TrendingUp, Search } from "lucide-react";
 import { SearchBar } from "./SearchBar";
 import { CategoryFilter } from "./CategoryFilter";
+import { EmotionFilter } from "./EmotionFilter";
+import { DateRangeFilter, getDateRangeStart, type DateRange } from "./DateRangeFilter";
 import { ViewFilter, type ViewFilterType } from "./ViewFilter";
 import { ThoughtCard } from "./ThoughtCard";
 import type { ThoughtData } from "@/lib/data";
 import type { CategoryId } from "@/lib/categories";
+import type { EmotionType } from "@dreamhub/ai";
 
 const dailyPrompts = [
   "What's on your mind right now?",
@@ -25,11 +28,14 @@ interface HomeFeedProps {
 export function HomeFeed({ initialThoughts, todayInsight }: HomeFeedProps) {
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<CategoryId | null>(null);
+  const [selectedEmotion, setSelectedEmotion] = useState<EmotionType | null>(null);
+  const [dateRange, setDateRange] = useState<DateRange>(null);
   const [viewFilter, setViewFilter] = useState<ViewFilterType>("all");
 
   const prompt = dailyPrompts[Math.floor(Date.now() / 86400000) % dailyPrompts.length];
 
   const filteredThoughts = useMemo(() => {
+    const dateStart = getDateRangeStart(dateRange);
     return initialThoughts.filter((thought) => {
       // View filter
       if (viewFilter === "favorites" && !thought.isFavorite) return false;
@@ -38,6 +44,8 @@ export function HomeFeed({ initialThoughts, todayInsight }: HomeFeedProps) {
       if (viewFilter === "all" && thought.isArchived) return false;
 
       if (selectedCategory && thought.category !== selectedCategory) return false;
+      if (selectedEmotion && thought.emotion !== selectedEmotion) return false;
+      if (dateStart && new Date(thought.createdAt) < dateStart) return false;
       if (search) {
         const q = search.toLowerCase();
         return (
@@ -48,7 +56,7 @@ export function HomeFeed({ initialThoughts, todayInsight }: HomeFeedProps) {
       }
       return true;
     });
-  }, [search, selectedCategory, viewFilter, initialThoughts]);
+  }, [search, selectedCategory, selectedEmotion, dateRange, viewFilter, initialThoughts]);
 
   return (
     <div className="flex flex-col gap-5">
@@ -89,6 +97,12 @@ export function HomeFeed({ initialThoughts, todayInsight }: HomeFeedProps) {
 
       {/* Category Filter */}
       <CategoryFilter selected={selectedCategory} onChange={setSelectedCategory} />
+
+      {/* Emotion Filter */}
+      <EmotionFilter selected={selectedEmotion} onChange={setSelectedEmotion} />
+
+      {/* Date Range Filter */}
+      <DateRangeFilter selected={dateRange} onChange={setDateRange} />
 
       {/* Recent Thoughts */}
       <section>

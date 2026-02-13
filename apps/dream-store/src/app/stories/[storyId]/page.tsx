@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Button } from "@dreamhub/ui";
-import { getStoryById, getSupporters, getDreamUpdates, getDreamComments, isFollowing, formatPrice } from "@/lib/queries";
+import { getStoryById, getSupporters, getDreamUpdates, getDreamComments, getStoryPolls, isFollowing, formatPrice } from "@/lib/queries";
 import { getCreatorBadge } from "@/lib/types";
 import { getCurrentUser } from "@/lib/auth";
 import { SupporterWall } from "./SupporterWall";
@@ -11,6 +11,10 @@ import { UpdateForm } from "./UpdateForm";
 import { UpdateCard } from "./UpdateCard";
 import { CommentForm } from "./CommentForm";
 import { CommentList } from "./CommentList";
+import { PollForm } from "./PollForm";
+import { PollCard } from "./PollCard";
+import { VideoButton } from "./VideoButton";
+import { LaunchButton } from "./LaunchButton";
 
 interface PageProps {
   params: Promise<{ storyId: string }>;
@@ -37,10 +41,12 @@ export default async function DreamStoryPage({ params }: PageProps) {
     getDreamComments(storyId),
     getCurrentUser(),
   ]);
-  const following = currentUser?.id
-    ? await isFollowing(currentUser.id, storyId)
-    : false;
+  const [following, polls] = await Promise.all([
+    currentUser?.id ? isFollowing(currentUser.id, storyId) : Promise.resolve(false),
+    getStoryPolls(storyId, currentUser?.id ?? undefined),
+  ]);
   const isOwner = currentUser?.id === story.userId;
+  const isPreview = story.status === "PREVIEW";
 
   const completedMilestones = story.milestones.filter((m) => m.completed).length;
   const progressPercent = story.milestones.length > 0
@@ -68,6 +74,11 @@ export default async function DreamStoryPage({ params }: PageProps) {
               <span className="inline-block rounded-full bg-white/20 px-3 py-1 text-xs font-medium text-white backdrop-blur-sm">
                 {story.category}
               </span>
+              {isPreview && (
+                <span className="inline-block rounded-full bg-orange-500/90 px-3 py-1 text-xs font-bold text-white backdrop-blur-sm">
+                  Coming Soon
+                </span>
+              )}
               {story.isStaffPick && (
                 <span className="inline-block rounded-full bg-yellow-500/90 px-3 py-1 text-xs font-bold text-white backdrop-blur-sm">
                   Staff Pick
@@ -98,13 +109,50 @@ export default async function DreamStoryPage({ params }: PageProps) {
                   </p>
                 </div>
               </div>
-              <FollowButton storyId={storyId} initialFollowing={following} />
+              <div className="flex items-center gap-3">
+                {isOwner && (
+                  <>
+                    <Link href={`/stories/${storyId}/edit`}>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="border-white/30 bg-white/10 text-white backdrop-blur-sm hover:bg-white/20"
+                      >
+                        Edit Dream
+                      </Button>
+                    </Link>
+                  </>
+                )}
+                <FollowButton storyId={storyId} initialFollowing={following} />
+              </div>
             </div>
+            {story.videoUrl && (
+              <VideoButton videoUrl={story.videoUrl} title={story.title} />
+            )}
           </div>
         </div>
       </section>
 
       <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
+        {/* Coming Soon Banner */}
+        {isPreview && (
+          <section className="mb-12">
+            <div className="rounded-card bg-gradient-to-r from-orange-500/10 to-brand-600/10 p-6 text-center dark:from-orange-500/5 dark:to-brand-600/5">
+              <h2 className="mb-2 text-lg font-bold text-orange-600 dark:text-orange-400">
+                Coming Soon
+              </h2>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                This dream is in preview mode. Follow to be notified when it launches!
+              </p>
+              {isOwner && (
+                <div className="mt-4">
+                  <LaunchButton storyId={storyId} />
+                </div>
+              )}
+            </div>
+          </section>
+        )}
+
         {/* Dream Statement */}
         <section className="mb-12">
           <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-brand-600">
@@ -217,62 +265,78 @@ export default async function DreamStoryPage({ params }: PageProps) {
           </div>
         </section>
 
-        {/* Products */}
-        <section className="mb-16">
-          <div className="mb-6 flex items-center justify-between">
-            <h2 className="text-sm font-semibold uppercase tracking-wider text-brand-600">
-              Support This Dream
-            </h2>
-            <span className="text-sm text-gray-500">
-              {story.products.length} product{story.products.length !== 1 ? "s" : ""}
-            </span>
-          </div>
-          {isOwner && (
-            <div className="mb-6 flex justify-end">
-              <Link href={`/stories/${story.id}/products/create`}>
-                <Button variant="outline" size="sm">+ Add Product</Button>
-              </Link>
+        {/* Products — hidden for PREVIEW stories */}
+        {isPreview ? (
+          <section className="mb-16">
+            <div className="rounded-card border border-dashed border-gray-300 bg-gray-50 p-8 text-center dark:border-gray-700 dark:bg-gray-900">
+              <h2 className="mb-2 text-sm font-semibold uppercase tracking-wider text-brand-600">
+                Support This Dream
+              </h2>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                Products coming soon. Follow this dream to be notified!
+              </p>
+              <div className="mt-4">
+                <FollowButton storyId={storyId} initialFollowing={following} />
+              </div>
             </div>
-          )}
-          <div className="grid gap-6 sm:grid-cols-2">
-            {story.products.map((product) => (
-              <Link
-                key={product.id}
-                href={`/stories/${story.id}/products/${product.id}`}
-                className="group overflow-hidden rounded-card border border-gray-200 bg-white shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5 dark:border-gray-800 dark:bg-gray-950"
-              >
-                <div className="relative h-48 overflow-hidden">
-                  <img
-                    src={product.images[0]}
-                    alt={product.title}
-                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                  />
-                  {product.productType && product.productType !== "Physical Product" && (
-                    <span className="absolute top-2 right-2 rounded-full bg-black/60 px-2 py-0.5 text-xs text-white backdrop-blur-sm">
-                      {product.productType}
-                    </span>
-                  )}
-                </div>
-                <div className="p-5">
-                  <h3 className="mb-2 font-semibold text-gray-900 group-hover:text-brand-600 dark:text-white">
-                    {product.title}
-                  </h3>
-                  <p className="mb-3 line-clamp-2 text-sm text-gray-500 dark:text-gray-400">
-                    {product.description}
-                  </p>
-                  <div className="flex items-center justify-between">
-                    <span className="text-lg font-bold text-gray-900 dark:text-white">
-                      {formatPrice(product.price)}
-                    </span>
-                    <span className="rounded-full bg-gradient-to-r from-brand-600 to-orange-500 px-4 py-1.5 text-xs font-semibold text-white">
-                      Support This Dream
-                    </span>
+          </section>
+        ) : (
+          <section className="mb-16">
+            <div className="mb-6 flex items-center justify-between">
+              <h2 className="text-sm font-semibold uppercase tracking-wider text-brand-600">
+                Support This Dream
+              </h2>
+              <span className="text-sm text-gray-500">
+                {story.products.length} product{story.products.length !== 1 ? "s" : ""}
+              </span>
+            </div>
+            {isOwner && (
+              <div className="mb-6 flex justify-end">
+                <Link href={`/stories/${story.id}/products/create`}>
+                  <Button variant="outline" size="sm">+ Add Product</Button>
+                </Link>
+              </div>
+            )}
+            <div className="grid gap-6 sm:grid-cols-2">
+              {story.products.map((product) => (
+                <Link
+                  key={product.id}
+                  href={`/stories/${story.id}/products/${product.id}`}
+                  className="group overflow-hidden rounded-card border border-gray-200 bg-white shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5 dark:border-gray-800 dark:bg-gray-950"
+                >
+                  <div className="relative h-48 overflow-hidden">
+                    <img
+                      src={product.images[0]}
+                      alt={product.title}
+                      className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    />
+                    {product.productType && product.productType !== "Physical Product" && (
+                      <span className="absolute top-2 right-2 rounded-full bg-black/60 px-2 py-0.5 text-xs text-white backdrop-blur-sm">
+                        {product.productType}
+                      </span>
+                    )}
                   </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </section>
+                  <div className="p-5">
+                    <h3 className="mb-2 font-semibold text-gray-900 group-hover:text-brand-600 dark:text-white">
+                      {product.title}
+                    </h3>
+                    <p className="mb-3 line-clamp-2 text-sm text-gray-500 dark:text-gray-400">
+                      {product.description}
+                    </p>
+                    <div className="flex items-center justify-between">
+                      <span className="text-lg font-bold text-gray-900 dark:text-white">
+                        {formatPrice(product.price)}
+                      </span>
+                      <span className="rounded-full bg-gradient-to-r from-brand-600 to-orange-500 px-4 py-1.5 text-xs font-semibold text-white">
+                        Support This Dream
+                      </span>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* Impact — Section 2 "What your purchase creates" */}
         {story.impactStatement && (
@@ -307,6 +371,29 @@ export default async function DreamStoryPage({ params }: PageProps) {
           ) : (
             <p className="text-sm text-gray-500">
               {isOwner ? "Share your progress with supporters!" : "Check back soon for updates from the creator."}
+            </p>
+          )}
+        </section>
+
+        {/* Community Polls */}
+        <section className="mb-16">
+          <h2 className="mb-6 text-sm font-semibold uppercase tracking-wider text-brand-600">
+            Community Poll
+          </h2>
+          {isOwner && (
+            <div className="mb-6">
+              <PollForm storyId={story.id} />
+            </div>
+          )}
+          {polls.length > 0 ? (
+            <div className="space-y-4">
+              {polls.map((poll) => (
+                <PollCard key={poll.id} poll={poll} isCreator={isOwner} />
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm text-gray-500">
+              {isOwner ? "Create a poll to engage your community!" : "No polls yet. Check back later!"}
             </p>
           )}
         </section>

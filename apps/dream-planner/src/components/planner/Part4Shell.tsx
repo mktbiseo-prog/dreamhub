@@ -3,6 +3,7 @@
 import { usePlannerStore } from "@/lib/store";
 import { PART4_ACTIVITIES } from "@/types/part4";
 import { ActivitySidebar } from "./ActivitySidebar";
+import { AiInsightPanel } from "./AiInsightPanel";
 import { FirstTenFans } from "@/components/activities/part4/FirstTenFans";
 import { Dream5Network } from "@/components/activities/part4/Dream5Network";
 import { RejectionCollection } from "@/components/activities/part4/RejectionCollection";
@@ -34,6 +35,8 @@ export function Part4Shell() {
   const handleSelect = (id: number) => {
     store.setPart4Data({ currentActivity: id });
   };
+
+  const currentActivityMeta = PART4_ACTIVITIES.find((a) => a.id === p4.currentActivity);
 
   return (
     <div className="flex gap-8">
@@ -86,6 +89,15 @@ export function Part4Shell() {
         {p4.currentActivity === 19 && <TrafficLightAnalysis onNext={handleNext} />}
         {p4.currentActivity === 20 && <SustainabilityChecklist onNext={handleNext} />}
         {p4.currentActivity === 0 && <Part4Reflection />}
+
+        {/* AI Insight Panel */}
+        {currentActivityMeta && p4.currentActivity > 0 && (
+          <AiInsightPanel
+            activityId={p4.currentActivity}
+            activityName={currentActivityMeta.title}
+            className="mt-6"
+          />
+        )}
       </div>
     </div>
   );

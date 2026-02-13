@@ -102,10 +102,10 @@ function getAllCompleted(data: ReturnType<typeof usePlannerStore>["data"]): numb
   ];
 }
 
-export function AiCoach() {
+export function AiCoach({ inline = false }: { inline?: boolean }) {
   const pathname = usePathname();
   const { data, store } = usePlannerStore();
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(inline);
   const [messages, setMessages] = useState<CoachMessage[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -511,17 +511,141 @@ export function AiCoach() {
     }
   }, [isLoading, messages, sendToApi]);
 
-  // Don't show coach on dashboard
-  if (partNumber === 0) return null;
-
   const partColors: Record<number, string> = {
     1: "from-purple-500 to-brand-500",
     2: "from-brand-500 to-blue-500",
     3: "from-blue-500 to-cyan-500",
     4: "from-emerald-500 to-teal-500",
   };
-
   const gradient = partColors[partNumber] || "from-brand-500 to-blue-500";
+
+  // Don't show coach on dashboard
+  if (partNumber === 0) return null;
+
+  // Inline mode: render as static panel, always open
+  if (inline) {
+    return (
+      <div className="flex h-[calc(100vh-8rem)] flex-col overflow-hidden rounded-[16px] border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-900">
+        {/* Header */}
+        <div className={cn("flex items-center gap-2 border-b border-gray-200 bg-gradient-to-r px-4 py-3 dark:border-gray-700", gradient)}>
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/20">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
+              <path d="M12 2L2 7l10 5 10-5-10-5z" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M2 17l10 5 10-5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-white">AI Coach</p>
+            <p className="text-[10px] text-white/70">
+              PART {partNumber} &middot; {activityName}
+            </p>
+          </div>
+        </div>
+
+        {/* Messages */}
+        <div className="flex-1 space-y-3 overflow-y-auto p-4">
+          {messages.length === 0 && !isLoading && (
+            <div className="flex flex-col items-center justify-center py-8 text-center">
+              <div className={cn("mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-r", gradient)}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
+                </svg>
+              </div>
+              <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Your AI Coach is ready</p>
+              <p className="mt-1 text-xs text-gray-400">Ask questions, get tips, or just say hi!</p>
+              <button
+                type="button"
+                onClick={handleOpen}
+                className="mt-3 rounded-full bg-brand-100 px-4 py-1.5 text-xs font-medium text-brand-700 transition-colors hover:bg-brand-200 dark:bg-brand-900 dark:text-brand-300"
+              >
+                Start Conversation
+              </button>
+            </div>
+          )}
+
+          {messages.map((msg) => (
+            <div key={msg.id}>
+              {msg.type && msg.type !== "chat" && (
+                <div className="mb-1.5 mr-auto">
+                  <span className={cn(
+                    "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold",
+                    msg.type === "stuck" && "bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300",
+                    msg.type === "completion" && "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300",
+                    msg.type === "entry" && "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300",
+                  )}>
+                    {msg.type === "stuck" && "Nudge"}
+                    {msg.type === "completion" && "Completed!"}
+                    {msg.type === "entry" && "New PART"}
+                  </span>
+                </div>
+              )}
+              <div
+                className={cn(
+                  "max-w-[90%] rounded-[12px] px-3 py-2 text-sm",
+                  msg.role === "coach"
+                    ? "mr-auto bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300"
+                    : "ml-auto bg-brand-500 text-white"
+                )}
+              >
+                {msg.text}
+              </div>
+              {msg.role === "coach" && msg.suggestions && msg.suggestions.length > 0 && (
+                <div className="mr-auto mt-1.5 flex max-w-[90%] flex-wrap gap-1">
+                  {msg.suggestions.map((s, i) => (
+                    <button
+                      key={i}
+                      type="button"
+                      onClick={() => handleSuggestionClick(s)}
+                      disabled={isLoading}
+                      className="rounded-full border border-brand-200 bg-brand-50 px-2.5 py-1 text-[11px] text-brand-700 transition-colors hover:bg-brand-100 disabled:opacity-50 dark:border-brand-800 dark:bg-brand-950 dark:text-brand-300"
+                    >
+                      {s.length > 40 ? s.slice(0, 37) + "..." : s}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
+
+          {isLoading && (
+            <div className="mr-auto flex max-w-[85%] items-center gap-1 rounded-[12px] bg-gray-100 px-4 py-3 dark:bg-gray-800">
+              <div className="h-2 w-2 animate-bounce rounded-full bg-gray-400 [animation-delay:0ms]" />
+              <div className="h-2 w-2 animate-bounce rounded-full bg-gray-400 [animation-delay:150ms]" />
+              <div className="h-2 w-2 animate-bounce rounded-full bg-gray-400 [animation-delay:300ms]" />
+            </div>
+          )}
+
+          <div ref={messagesEndRef} />
+        </div>
+
+        {/* Input */}
+        <div className="border-t border-gray-200 p-3 dark:border-gray-700">
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && handleSend()}
+              placeholder="Ask your AI coach..."
+              disabled={isLoading}
+              className="flex-1 rounded-[8px] border border-gray-200 bg-gray-50 px-3 py-2 text-sm placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300"
+            />
+            <button
+              type="button"
+              onClick={handleSend}
+              disabled={!input.trim() || isLoading}
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[8px] bg-brand-500 text-white transition-colors hover:bg-brand-600 disabled:opacity-50"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   const hasNotification = !!pendingAutoMessage;
 
   return (

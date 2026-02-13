@@ -13,11 +13,20 @@ import {
 } from "lucide-react";
 import { completeOnboarding } from "@/lib/actions/onboarding";
 import { createThought } from "@/lib/actions/thoughts";
+import { categories, type CategoryId } from "@/lib/categories";
 
-const INTEREST_OPTIONS = [
-  "Technology", "Business", "Health", "Creativity",
-  "Finance", "Learning", "Relationships", "Dreams",
-  "Productivity", "Wellness", "AI", "Design",
+const BRAIN_CATEGORIES: CategoryId[] = [
+  "work", "ideas", "emotions", "daily", "learning",
+  "relationships", "health", "finance", "dreams",
+];
+
+const SUGGESTED_PROMPTS = [
+  "What's your biggest goal right now?",
+  "What did you learn recently?",
+  "What's been on your mind today?",
+  "Describe a dream or idea you keep coming back to",
+  "What are you grateful for?",
+  "What challenge are you trying to solve?",
 ];
 
 export function OnboardingWizard() {
@@ -161,23 +170,26 @@ export function OnboardingWizard() {
 
             <div>
               <label className="text-xs text-gray-400 mb-2 block">
-                Select your interests
+                Select your brain regions
               </label>
               <div className="flex flex-wrap gap-2">
-                {INTEREST_OPTIONS.map((interest) => {
-                  const isSelected = selectedInterests.includes(interest);
+                {BRAIN_CATEGORIES.map((catId) => {
+                  const cat = categories[catId];
+                  const Icon = cat.icon;
+                  const isSelected = selectedInterests.includes(catId);
                   return (
                     <button
-                      key={interest}
+                      key={catId}
                       type="button"
-                      onClick={() => toggleInterest(interest)}
-                      className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
+                      onClick={() => toggleInterest(catId)}
+                      className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
                         isSelected
-                          ? "bg-brand-500/20 text-brand-300 border border-brand-500/30"
+                          ? `${cat.bgColor} ${cat.color} border border-current/30`
                           : "bg-white/[0.04] text-gray-500 border border-white/[0.06] hover:bg-white/[0.08]"
                       }`}
                     >
-                      {interest}
+                      <Icon className="h-3.5 w-3.5" />
+                      {cat.label}
                     </button>
                   );
                 })}
@@ -216,6 +228,19 @@ export function OnboardingWizard() {
               <p className="text-sm text-gray-500">
                 What&apos;s been on your mind? Let AI analyze it.
               </p>
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              {SUGGESTED_PROMPTS.map((prompt) => (
+                <button
+                  key={prompt}
+                  type="button"
+                  onClick={() => setThoughtText(prompt)}
+                  className="rounded-lg border border-white/[0.06] bg-white/[0.04] px-3 py-1.5 text-xs text-gray-400 transition-colors hover:bg-white/[0.08] hover:text-gray-300"
+                >
+                  {prompt}
+                </button>
+              ))}
             </div>
 
             <textarea

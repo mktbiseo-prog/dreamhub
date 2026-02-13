@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Button, Input, cn } from "@dreamhub/ui";
 import {
   PieChart,
@@ -131,9 +131,115 @@ function ExpenseCard({
   );
 }
 
+function guessCategory(item: string): string {
+  const lower = item.toLowerCase();
+  const map: [string[], string][] = [
+    [["food", "restaurant", "cafe", "coffee", "lunch", "dinner", "meal", "eat", "grocery", "pizza", "burger", "sushi", "delivery", "ubereats", "doordash"], "Food & Dining"],
+    [["uber", "lyft", "taxi", "bus", "metro", "subway", "gas", "fuel", "parking", "toll", "train", "flight", "airline"], "Transportation"],
+    [["amazon", "shop", "cloth", "shoe", "fashion", "purchase", "buy", "store", "mall", "target", "walmart"], "Shopping"],
+    [["course", "book", "class", "learn", "tutor", "udemy", "skill", "coaching", "seminar", "training"], "Self-Development"],
+    [["movie", "netflix", "spotify", "game", "concert", "bar", "club", "theater", "stream", "hulu", "disney"], "Entertainment"],
+    [["rent", "mortgage", "electric", "water", "internet", "utility", "insurance", "home"], "Housing"],
+    [["doctor", "hospital", "pharmacy", "medicine", "gym", "health", "dental", "therapy", "vitamin"], "Health"],
+    [["subscription", "membership", "plan", "monthly", "annual", "premium", "apple", "google", "cloud"], "Subscriptions"],
+  ];
+  for (const [keywords, category] of map) {
+    if (keywords.some((k) => lower.includes(k))) return category;
+  }
+  return "Other";
+}
+
+function parseCSV(text: string): ExpenseItem[] {
+  const lines = text.split(/\r?\n/).filter((l) => l.trim());
+  if (lines.length < 2) return [];
+
+  const header = lines[0].toLowerCase();
+  // Detect column positions by header names
+  const cols = header.split(",").map((h) => h.trim().replace(/"/g, ""));
+  const dateIdx = cols.findIndex((c) => c.includes("date") || c.includes("날짜"));
+  const itemIdx = cols.findIndex((c) => c.includes("item") || c.includes("description") || c.includes("memo") || c.includes("내용") || c.includes("적요") || c.includes("merchant"));
+  const amountIdx = cols.findIndex((c) => c.includes("amount") || c.includes("금액") || c.includes("price") || c.includes("total") || c.includes("출금"));
+  const categoryIdx = cols.findIndex((c) => c.includes("category") || c.includes("카테고리") || c.includes("type"));
+
+  const results: ExpenseItem[] = [];
+
+  for (let i = 1; i < lines.length; i++) {
+    // Parse CSV line respecting quoted fields
+    const values: string[] = [];
+    let current = "";
+    let inQuotes = false;
+    for (const char of lines[i]) {
+      if (char === '"') { inQuotes = !inQuotes; continue; }
+      if (char === "," && !inQuotes) { values.push(current.trim()); current = ""; continue; }
+      current += char;
+    }
+    values.push(current.trim());
+
+    const rawDate = dateIdx >= 0 ? values[dateIdx] ?? "" : "";
+    const rawItem = itemIdx >= 0 ? values[itemIdx] ?? "" : values[1] ?? "";
+    const rawAmount = amountIdx >= 0 ? values[amountIdx] ?? "" : values[2] ?? "";
+    const rawCategory = categoryIdx >= 0 ? values[categoryIdx] ?? "" : "";
+
+    // Parse amount: remove currency symbols, commas, parentheses
+    const cleanAmount = rawAmount.replace(/[$€£₩,\s]/g, "").replace(/[()]/g, "");
+    const amount = Math.abs(parseFloat(cleanAmount) || 0);
+    if (amount === 0 && !rawItem) continue;
+
+    // Parse date
+    let date = "";
+    if (rawDate) {
+      const d = new Date(rawDate);
+      if (!isNaN(d.getTime())) {
+        date = d.toISOString().split("T")[0];
+      } else {
+        // Try YYYYMMDD or YYYY.MM.DD format
+        const cleaned = rawDate.replace(/[./\-]/g, "");
+        if (cleaned.length === 8) {
+          date = `${cleaned.slice(0, 4)}-${cleaned.slice(4, 6)}-${cleaned.slice(6, 8)}`;
+        }
+      }
+    }
+    if (!date) date = new Date().toISOString().split("T")[0];
+
+    const category = rawCategory || guessCategory(rawItem);
+
+    results.push({
+      id: crypto.randomUUID(),
+      date,
+      item: rawItem,
+      category,
+      amount,
+      satisfaction: "medium" as SatisfactionLevel,
+    });
+  }
+
+  return results;
+}
+
 export function MoneyFlow({ onNext }: { onNext: () => void }) {
   const { data, store } = usePlannerStore();
   const expenses = data.expenses;
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [csvImportCount, setCsvImportCount] = useState(0);
+
+  const handleCSVImport = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const text = ev.target?.result as string;
+      if (!text) return;
+      const parsed = parseCSV(text);
+      if (parsed.length > 0) {
+        store.setExpenses([...expenses, ...parsed]);
+        setCsvImportCount(parsed.length);
+        setTimeout(() => setCsvImportCount(0), 5000);
+      }
+    };
+    reader.readAsText(file);
+    // Reset input so the same file can be selected again
+    e.target.value = "";
+  };
 
   const addExpense = () => {
     store.setExpenses([
@@ -447,6 +553,83 @@ export function MoneyFlow({ onNext }: { onNext: () => void }) {
         </div>
       )}
 
+      {/* Dream Fund Simulator */}
+      {hasData && (() => {
+        const lowSatisfactionTotal = expenses
+          .filter((e) => e.satisfaction === "low")
+          .reduce((s, e) => s + e.amount, 0);
+        const medSatisfactionTotal = expenses
+          .filter((e) => e.satisfaction === "medium")
+          .reduce((s, e) => s + e.amount, 0);
+
+        if (lowSatisfactionTotal === 0 && medSatisfactionTotal === 0) return null;
+
+        const redirectLow = lowSatisfactionTotal;
+        const redirectMed = medSatisfactionTotal * 0.3; // Redirect 30% of medium
+        const monthlyFund = redirectLow + redirectMed;
+        const annual = monthlyFund * 12;
+        const threeYear = monthlyFund * 36;
+
+        return (
+          <div className="mb-8 rounded-card border border-emerald-200 bg-gradient-to-r from-emerald-50 to-teal-50 p-4 dark:border-emerald-800 dark:from-emerald-950 dark:to-teal-950">
+            <div className="mb-3 flex items-center gap-2">
+              <span className="rounded-md bg-emerald-100 px-1.5 py-0.5 text-[10px] font-bold text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300">AI</span>
+              <span className="text-xs font-medium text-emerald-700 dark:text-emerald-300">Dream Fund Simulator</span>
+            </div>
+            <p className="mb-3 text-xs text-gray-600 dark:text-gray-400">
+              What if you redirected low-satisfaction spending (100%) and 30% of medium-satisfaction spending toward your dream?
+            </p>
+            <div className="grid gap-2 sm:grid-cols-2">
+              <div className="rounded-[8px] bg-white p-3 dark:bg-gray-800">
+                <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-400">Redirect Sources</p>
+                <div className="mt-2 space-y-1">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-red-500">Low satisfaction (100%)</span>
+                    <span className="font-bold text-gray-700 dark:text-gray-300">${redirectLow.toFixed(0)}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-yellow-500">Medium satisfaction (30%)</span>
+                    <span className="font-bold text-gray-700 dark:text-gray-300">${redirectMed.toFixed(0)}</span>
+                  </div>
+                  <div className="mt-1 border-t border-gray-200 pt-1 dark:border-gray-700">
+                    <div className="flex items-center justify-between text-xs font-bold">
+                      <span className="text-emerald-600 dark:text-emerald-400">Monthly Dream Fund</span>
+                      <span className="text-emerald-700 dark:text-emerald-300">${monthlyFund.toFixed(0)}/mo</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="rounded-[8px] bg-white p-3 dark:bg-gray-800">
+                <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-400">Projection</p>
+                <div className="mt-2 space-y-2">
+                  {[
+                    { label: "6 months", val: monthlyFund * 6 },
+                    { label: "1 year", val: annual },
+                    { label: "3 years", val: threeYear },
+                  ].map((item) => (
+                    <div key={item.label}>
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="text-gray-500">{item.label}</span>
+                        <span className="font-bold text-gray-700 dark:text-gray-300">${item.val.toFixed(0)}</span>
+                      </div>
+                      <div className="mt-0.5 h-1.5 overflow-hidden rounded-full bg-gray-100 dark:bg-gray-700">
+                        <div
+                          className="h-full rounded-full bg-gradient-to-r from-emerald-400 to-emerald-600 transition-all"
+                          style={{ width: `${Math.min(100, (item.val / Math.max(threeYear, 1)) * 100)}%` }}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+            <p className="mt-3 text-center text-[10px] text-emerald-600 dark:text-emerald-400">
+              Small redirects compound into real funding for your dream. Start this month.
+            </p>
+          </div>
+        );
+      })()}
+
       {/* Total */}
       {totalAmount > 0 && (
         <div className="mb-6 rounded-card bg-gray-50 p-4 dark:bg-gray-800">
@@ -487,15 +670,39 @@ export function MoneyFlow({ onNext }: { onNext: () => void }) {
         )}
       </div>
 
-      {/* Add Button */}
-      <div className="mt-6">
-        <Button onClick={addExpense} className="w-full gap-2" variant="outline">
+      {/* Add Button + CSV Import */}
+      <div className="mt-6 flex gap-2">
+        <Button onClick={addExpense} className="flex-1 gap-2" variant="outline">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
             <path d="M12 5v14M5 12h14" />
           </svg>
           Add Expense
         </Button>
+        <Button
+          variant="outline"
+          className="gap-2"
+          onClick={() => fileInputRef.current?.click()}
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+            <polyline points="17 8 12 3 7 8" />
+            <line x1="12" y1="3" x2="12" y2="15" />
+          </svg>
+          Import CSV
+        </Button>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".csv,.txt"
+          onChange={handleCSVImport}
+          className="hidden"
+        />
       </div>
+      {csvImportCount > 0 && (
+        <div className="mt-2 rounded-[8px] bg-green-50 px-3 py-2 text-xs text-green-700 dark:bg-green-950 dark:text-green-300">
+          Successfully imported {csvImportCount} expenses from CSV. Review and adjust categories/satisfaction as needed.
+        </div>
+      )}
 
       {/* Footer */}
       <div className="mt-8 flex justify-end">

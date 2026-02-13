@@ -3,6 +3,7 @@
 import { usePlannerStore } from "@/lib/store";
 import { PART3_ACTIVITIES } from "@/types/part3";
 import { ActivitySidebar } from "./ActivitySidebar";
+import { AiInsightPanel } from "./AiInsightPanel";
 import { OneLineProposal } from "@/components/activities/part3/OneLineProposal";
 import { HypothesisBoard } from "@/components/activities/part3/HypothesisBoard";
 import { ZeroCostMvp } from "@/components/activities/part3/ZeroCostMvp";
@@ -32,6 +33,8 @@ export function Part3Shell() {
   const handleSelect = (id: number) => {
     store.setPart3Data({ currentActivity: id });
   };
+
+  const currentActivityMeta = PART3_ACTIVITIES.find((a) => a.id === p3.currentActivity);
 
   return (
     <div className="flex gap-8">
@@ -82,6 +85,15 @@ export function Part3Shell() {
         {p3.currentActivity === 13 && <ZeroCostMvp onNext={handleNext} />}
         {p3.currentActivity === 14 && <ValueLadder onNext={handleNext} />}
         {p3.currentActivity === 0 && <Part3Reflection />}
+
+        {/* AI Insight Panel */}
+        {currentActivityMeta && p3.currentActivity > 0 && (
+          <AiInsightPanel
+            activityId={p3.currentActivity}
+            activityName={currentActivityMeta.title}
+            className="mt-6"
+          />
+        )}
       </div>
     </div>
   );

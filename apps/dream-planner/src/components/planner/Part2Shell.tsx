@@ -3,6 +3,8 @@
 import { usePlannerStore } from "@/lib/store";
 import { PART2_ACTIVITIES } from "@/types/part2";
 import { ActivitySidebar } from "./ActivitySidebar";
+import { AiInsightPanel } from "./AiInsightPanel";
+import { CrossPartReference } from "./CrossPartReference";
 import { ExperienceMindMap } from "@/components/activities/part2/ExperienceMindMap";
 import { FailureResume } from "@/components/activities/part2/FailureResume";
 import { StrengthsRedefine } from "@/components/activities/part2/StrengthsRedefine";
@@ -32,6 +34,8 @@ export function Part2Shell() {
   const handleSelect = (id: number) => {
     store.setPart2Data({ currentActivity: id });
   };
+
+  const currentActivityMeta = PART2_ACTIVITIES.find((a) => a.id === p2.currentActivity);
 
   return (
     <div className="flex gap-8">
@@ -77,12 +81,24 @@ export function Part2Shell() {
       </div>
 
       <div className="min-w-0 flex-1">
+        {/* Cross-Part Reference from PART 1 */}
+        {p2.currentActivity !== 0 && <CrossPartReference activityId={p2.currentActivity} />}
+
         {p2.currentActivity === 6 && <ExperienceMindMap onNext={handleNext} />}
         {p2.currentActivity === 7 && <FailureResume onNext={handleNext} />}
         {p2.currentActivity === 8 && <StrengthsRedefine onNext={handleNext} />}
         {p2.currentActivity === 9 && <MarketScan onNext={handleNext} />}
         {p2.currentActivity === 10 && <WhyWhatBridge onNext={handleNext} />}
         {p2.currentActivity === 0 && <Part2Reflection />}
+
+        {/* AI Insight Panel */}
+        {currentActivityMeta && p2.currentActivity > 0 && (
+          <AiInsightPanel
+            activityId={p2.currentActivity}
+            activityName={currentActivityMeta.title}
+            className="mt-6"
+          />
+        )}
       </div>
     </div>
   );

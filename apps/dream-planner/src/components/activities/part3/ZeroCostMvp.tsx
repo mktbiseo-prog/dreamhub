@@ -419,34 +419,145 @@ export function ZeroCostMvp({ onNext }: { onNext: () => void }) {
         )}
       </div>
 
-      {/* AI MVP Template Library */}
-      {mvp.mvpType && mvp.steps.length === 0 && (
-        <div className="mb-6 rounded-card border border-blue-200 bg-gradient-to-r from-blue-50 to-cyan-50 p-4 dark:border-blue-800 dark:from-blue-950 dark:to-cyan-950">
-          <div className="mb-3 flex items-center gap-2">
-            <span className="rounded-md bg-blue-100 px-1.5 py-0.5 text-[10px] font-bold text-blue-700 dark:bg-blue-900 dark:text-blue-300">AI</span>
-            <span className="text-xs font-medium text-blue-700 dark:text-blue-300">Template Library</span>
+      {/* AI MVP Template Library — by Type + Industry */}
+      {mvp.mvpType && mvp.steps.length === 0 && (() => {
+        const INDUSTRY_TEMPLATES: Record<string, { label: string; steps: string[] }> = {
+          education: {
+            label: "Education / Coaching",
+            steps: [
+              "Identify your unique teaching angle or framework",
+              "Create a free mini-lesson (video, PDF, or post)",
+              "Share in 3 education communities",
+              "Collect 5 student testimonials or feedback forms",
+              "Design a simple curriculum outline (3-5 lessons)",
+              "Host a free live session (Zoom/YouTube Live)",
+              "Build an email list from attendees",
+              "Create a paid workshop or course outline",
+              "Launch a $10-$50 pilot to first 10 students",
+              "Iterate based on completion rates and feedback",
+            ],
+          },
+          food: {
+            label: "Food & Beverage",
+            steps: [
+              "Finalize your signature recipe or menu concept",
+              "Test with 5 friends/family — collect honest ratings",
+              "Create appetizing photos (natural light, simple setup)",
+              "Set up a simple ordering page (Google Forms/Instagram)",
+              "Do 3 small batch deliveries in your neighborhood",
+              "Collect reviews and iterate on recipes",
+              "Partner with a local cafe or market for popup",
+              "Design simple packaging/branding (Canva)",
+              "Launch weekend pre-orders (max 20 per batch)",
+              "Track costs, pricing, and customer return rate",
+            ],
+          },
+          tech: {
+            label: "Tech / SaaS",
+            steps: [
+              "Write a problem statement (who, what pain, how big)",
+              "Create a clickable prototype (Figma/Framer)",
+              "Build a landing page with waitlist signup",
+              "Demo to 5 target users — collect feedback",
+              "Build the core feature only (1 week sprint)",
+              "Deploy free beta (Vercel/Railway)",
+              "Onboard 10 beta users with personal setup calls",
+              "Track key metrics: DAU, retention, feature usage",
+              "Iterate based on user behavior data",
+              "Define pricing model based on value delivered",
+            ],
+          },
+          creative: {
+            label: "Creative / Content",
+            steps: [
+              "Define your creative niche and unique style",
+              "Create 5 portfolio pieces showcasing range",
+              "Set up presence on 2 platforms (Instagram, Behance, etc.)",
+              "Post consistently for 14 days",
+              "Reach out to 5 potential clients or collaborators",
+              "Offer a discounted first project ($50-$100)",
+              "Document your creative process (behind-the-scenes)",
+              "Collect testimonials and build case studies",
+              "Set standard pricing based on market research",
+              "Create a simple booking/inquiry system",
+            ],
+          },
+          service: {
+            label: "Service / Consulting",
+            steps: [
+              "Define your service offering and target client",
+              "Create a 1-page service menu with clear pricing",
+              "Build credibility: write 3 case studies or articles",
+              "Offer 3 free consultations to build testimonials",
+              "Set up scheduling (Calendly) and payment (Stripe)",
+              "Ask for referrals from free consultation clients",
+              "Create a lead magnet (free guide or checklist)",
+              "Partner with 1 complementary service provider",
+              "Standardize your delivery process",
+              "Track client satisfaction and retention rate",
+            ],
+          },
+        };
+
+        return (
+          <div className="mb-6 rounded-card border border-blue-200 bg-gradient-to-r from-blue-50 to-cyan-50 p-4 dark:border-blue-800 dark:from-blue-950 dark:to-cyan-950">
+            <div className="mb-3 flex items-center gap-2">
+              <span className="rounded-md bg-blue-100 px-1.5 py-0.5 text-[10px] font-bold text-blue-700 dark:bg-blue-900 dark:text-blue-300">AI</span>
+              <span className="text-xs font-medium text-blue-700 dark:text-blue-300">Template Library</span>
+            </div>
+
+            {/* Type-based template */}
+            <p className="mb-3 text-xs text-gray-600 dark:text-gray-400">
+              Here&apos;s a proven 10-step template for <strong>{MVP_TYPE_LABELS[mvp.mvpType]}</strong>:
+            </p>
+            <Button
+              size="sm"
+              variant="outline"
+              className="mb-4"
+              onClick={() => {
+                updateMvp({
+                  steps: MVP_TEMPLATES[mvp.mvpType as MvpType].map((text) => ({
+                    id: crypto.randomUUID(),
+                    text,
+                    done: false,
+                  })),
+                });
+                setWizardStep(1);
+              }}
+            >
+              Use {MVP_TYPE_LABELS[mvp.mvpType]} Template
+            </Button>
+
+            {/* Industry-specific templates */}
+            <div className="border-t border-blue-200 pt-3 dark:border-blue-800">
+              <p className="mb-2 text-xs font-semibold text-blue-600 dark:text-blue-400">
+                Or choose by industry:
+              </p>
+              <div className="grid gap-2 sm:grid-cols-3">
+                {Object.entries(INDUSTRY_TEMPLATES).map(([key, tpl]) => (
+                  <button
+                    key={key}
+                    type="button"
+                    onClick={() => {
+                      updateMvp({
+                        steps: tpl.steps.map((text) => ({
+                          id: crypto.randomUUID(),
+                          text,
+                          done: false,
+                        })),
+                      });
+                      setWizardStep(1);
+                    }}
+                    className="rounded-[8px] border border-blue-200 bg-white px-3 py-2 text-left text-xs font-medium text-blue-700 transition-all hover:border-blue-400 hover:bg-blue-50 dark:border-blue-800 dark:bg-gray-800 dark:text-blue-300 dark:hover:border-blue-600"
+                  >
+                    {tpl.label}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
-          <p className="mb-3 text-xs text-gray-600 dark:text-gray-400">
-            Here&apos;s a proven 10-step template for <strong>{MVP_TYPE_LABELS[mvp.mvpType]}</strong>. Click to use it as your starting plan.
-          </p>
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={() => {
-              updateMvp({
-                steps: MVP_TEMPLATES[mvp.mvpType as MvpType].map((text) => ({
-                  id: crypto.randomUUID(),
-                  text,
-                  done: false,
-                })),
-              });
-              setWizardStep(1);
-            }}
-          >
-            Use Template
-          </Button>
-        </div>
-      )}
+        );
+      })()}
 
       {/* AI MVP Readiness Check */}
       {mvp.steps.length > 0 && (() => {

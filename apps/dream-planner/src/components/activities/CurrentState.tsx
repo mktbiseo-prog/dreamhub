@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Button, cn } from "@dreamhub/ui";
 import { usePlannerStore } from "@/lib/store";
 import type { CurrentStateCard } from "@/types/planner";
+import type { SwotResult } from "@/app/api/swot/route";
 
 const ICONS: Record<string, React.ReactNode> = {
   briefcase: (
@@ -65,6 +66,142 @@ const CARD_COLORS: Record<string, { bg: string; icon: string; border: string }> 
     border: "border-emerald-200 dark:border-emerald-800",
   },
 };
+
+function SwotAnalysis({ cards }: { cards: CurrentStateCard[] }) {
+  const { data } = usePlannerStore();
+  const [swot, setSwot] = useState<SwotResult | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const getCardContent = (key: string) => cards.find((c) => c.key === key)?.content.trim() || "";
+
+  // Basic auto-SWOT from raw inputs (always shown)
+  const basicSwot = {
+    strengths: getCardContent("job") || getCardContent("role")
+      ? `${getCardContent("job") ? `Role: ${getCardContent("job").slice(0, 80)}` : ""}${getCardContent("role") ? `. Context: ${getCardContent("role").slice(0, 80)}` : ""}`
+      : "Fill in Job & Role cards.",
+    weaknesses: getCardContent("constraints") ? getCardContent("constraints").slice(0, 160) : "Fill in Constraints card.",
+    opportunities: getCardContent("opportunities") ? getCardContent("opportunities").slice(0, 160) : "Fill in Opportunities card.",
+    threats: getCardContent("concerns") ? getCardContent("concerns").slice(0, 160) : "Fill in Concerns card.",
+  };
+
+  const handleAiAnalysis = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch("/api/swot", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          job: getCardContent("job"),
+          role: getCardContent("role"),
+          constraints: getCardContent("constraints"),
+          concerns: getCardContent("concerns"),
+          opportunities: getCardContent("opportunities"),
+          skills: data.skills.filter((s) => s.proficiency >= 3).map((s) => s.name),
+        }),
+      });
+      if (res.ok) {
+        const result = (await res.json()) as SwotResult;
+        setSwot(result);
+      }
+    } catch {
+      // silently fail
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const quadrants = [
+    { key: "strengths" as const, label: "Strengths", color: "green", items: swot?.strengths },
+    { key: "weaknesses" as const, label: "Weaknesses", color: "red", items: swot?.weaknesses },
+    { key: "opportunities" as const, label: "Opportunities", color: "blue", items: swot?.opportunities },
+    { key: "threats" as const, label: "Threats", color: "amber", items: swot?.threats },
+  ];
+
+  const colorMap: Record<string, { bg: string; text: string; title: string }> = {
+    green: { bg: "bg-green-50 dark:bg-green-950", text: "text-green-800 dark:text-green-300", title: "text-green-600" },
+    red: { bg: "bg-red-50 dark:bg-red-950", text: "text-red-800 dark:text-red-300", title: "text-red-600" },
+    blue: { bg: "bg-blue-50 dark:bg-blue-950", text: "text-blue-800 dark:text-blue-300", title: "text-blue-600" },
+    amber: { bg: "bg-amber-50 dark:bg-amber-950", text: "text-amber-800 dark:text-amber-300", title: "text-amber-600" },
+  };
+
+  return (
+    <div className="mt-8">
+      <div className="mb-4 flex items-center justify-between">
+        <h3 className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-gray-400">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" /><rect x="3" y="14" width="7" height="7" /><rect x="14" y="14" width="7" height="7" />
+          </svg>
+          SWOT Analysis
+        </h3>
+        <button
+          type="button"
+          onClick={handleAiAnalysis}
+          disabled={loading}
+          className="flex items-center gap-1 rounded-md bg-brand-600 px-2.5 py-1 text-[10px] font-semibold text-white transition-colors hover:bg-brand-700 disabled:opacity-50"
+        >
+          {loading ? (
+            <>
+              <svg className="h-3 w-3 animate-spin" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" className="opacity-25" /><path fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" className="opacity-75" /></svg>
+              Analyzing...
+            </>
+          ) : swot ? (
+            "Regenerate AI SWOT"
+          ) : (
+            "AI Deep Analysis"
+          )}
+        </button>
+      </div>
+
+      <div className="grid grid-cols-2 gap-3">
+        {quadrants.map((q) => {
+          const c = colorMap[q.color];
+          return (
+            <div key={q.key} className={cn("rounded-[8px] p-4", c.bg)}>
+              <p className={cn("mb-2 text-xs font-bold uppercase tracking-wider", c.title)}>
+                {q.label}
+              </p>
+              {q.items ? (
+                <ul className="space-y-1">
+                  {q.items.map((item, i) => (
+                    <li key={i} className={cn("flex items-start gap-1.5 text-xs", c.text)}>
+                      <span className="mt-1 h-1 w-1 shrink-0 rounded-full bg-current opacity-50" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className={cn("text-xs", c.text)}>
+                  {basicSwot[q.key]}
+                </p>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      {/* AI Action Items */}
+      {swot?.actionItems && swot.actionItems.length > 0 && (
+        <div className="mt-3 rounded-[8px] border border-brand-200 bg-brand-50 p-4 dark:border-brand-800 dark:bg-brand-950">
+          <p className="mb-2 text-xs font-bold uppercase tracking-wider text-brand-600">Recommended Actions</p>
+          <ul className="space-y-1.5">
+            {swot.actionItems.map((action, i) => (
+              <li key={i} className="flex items-start gap-2 text-xs text-brand-800 dark:text-brand-300">
+                <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-brand-200 text-[9px] font-bold text-brand-700 dark:bg-brand-800 dark:text-brand-300">
+                  {i + 1}
+                </span>
+                {action}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      <p className="mt-2 text-center text-[10px] text-gray-400">
+        {swot ? "AI-analyzed SWOT based on your inputs" : "Basic SWOT from your cards — click AI Deep Analysis for detailed insights"}
+      </p>
+    </div>
+  );
+}
 
 function StateCard({
   card,
@@ -199,66 +336,8 @@ export function CurrentState({ onNext }: { onNext: () => void }) {
         ))}
       </div>
 
-      {/* Auto-SWOT Analysis */}
-      {filledCount >= 3 && (
-        <div className="mt-8">
-          <h3 className="mb-4 flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-gray-400">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" /><rect x="3" y="14" width="7" height="7" /><rect x="14" y="14" width="7" height="7" />
-            </svg>
-            Auto-generated SWOT
-          </h3>
-          <div className="grid grid-cols-2 gap-3">
-            {/* Strengths */}
-            <div className="rounded-[8px] bg-green-50 p-4 dark:bg-green-950">
-              <p className="mb-2 text-xs font-bold uppercase tracking-wider text-green-600">Strengths</p>
-              <p className="text-xs text-green-800 dark:text-green-300">
-                {(() => {
-                  const job = cards.find(c => c.key === "job")?.content.trim();
-                  const role = cards.find(c => c.key === "role")?.content.trim();
-                  const parts: string[] = [];
-                  if (job) parts.push(`Current role: ${job.slice(0, 80)}`);
-                  if (role) parts.push(`Network/context: ${role.slice(0, 80)}`);
-                  return parts.length > 0 ? parts.join(". ") : "Fill in Job & Role cards to see strengths.";
-                })()}
-              </p>
-            </div>
-            {/* Weaknesses */}
-            <div className="rounded-[8px] bg-red-50 p-4 dark:bg-red-950">
-              <p className="mb-2 text-xs font-bold uppercase tracking-wider text-red-600">Weaknesses</p>
-              <p className="text-xs text-red-800 dark:text-red-300">
-                {(() => {
-                  const constraints = cards.find(c => c.key === "constraints")?.content.trim();
-                  return constraints ? `Limitations: ${constraints.slice(0, 160)}` : "Fill in Constraints card.";
-                })()}
-              </p>
-            </div>
-            {/* Opportunities */}
-            <div className="rounded-[8px] bg-blue-50 p-4 dark:bg-blue-950">
-              <p className="mb-2 text-xs font-bold uppercase tracking-wider text-blue-600">Opportunities</p>
-              <p className="text-xs text-blue-800 dark:text-blue-300">
-                {(() => {
-                  const opps = cards.find(c => c.key === "opportunities")?.content.trim();
-                  return opps ? opps.slice(0, 160) : "Fill in Opportunities card.";
-                })()}
-              </p>
-            </div>
-            {/* Threats */}
-            <div className="rounded-[8px] bg-amber-50 p-4 dark:bg-amber-950">
-              <p className="mb-2 text-xs font-bold uppercase tracking-wider text-amber-600">Threats</p>
-              <p className="text-xs text-amber-800 dark:text-amber-300">
-                {(() => {
-                  const concerns = cards.find(c => c.key === "concerns")?.content.trim();
-                  return concerns ? concerns.slice(0, 160) : "Fill in Concerns card.";
-                })()}
-              </p>
-            </div>
-          </div>
-          <p className="mt-2 text-center text-[10px] text-gray-400">
-            This SWOT updates automatically as you fill in cards above
-          </p>
-        </div>
-      )}
+      {/* AI-Powered SWOT Analysis */}
+      {filledCount >= 3 && <SwotAnalysis cards={cards} />}
 
       {/* Footer */}
       <div className="mt-8 flex justify-end">

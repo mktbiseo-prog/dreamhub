@@ -27,6 +27,11 @@ model User {
   stripeCustomerId String?
   stripeConnectId  String?
 
+  // KYC / Trust
+  kycStatus        KycStatus @default(UNVERIFIED)
+  kycSubmittedAt   DateTime?
+  kycVerifiedAt    DateTime?
+
   accounts      Account[]
   sessions      Session[]
   dreamProfile  DreamProfile?
@@ -40,7 +45,14 @@ model User {
   following     Follow[]
   dreamUpdates  DreamUpdate[] @relation("DreamUpdates")
   dreamComments DreamComment[] @relation("DreamComments")
+  reviews       Review[]
+  bookmarks     Bookmark[]
   preferences   UserPreferences?
+  plannerSession PlannerSession?
+  buyerDisputes    Dispute[] @relation("DisputeBuyer")
+  sellerDisputes   Dispute[] @relation("DisputeSeller")
+  communityVotes   CommunityVote[]
+  storyEngagements StoryEngagement[]
 
   @@map("users")
 }
@@ -273,21 +285,59 @@ model TeamCheckIn {
 
 // ─── Dream Store ─────────────────────────────────────────────
 
+enum DreamStoryStatus {
+  DRAFT
+  PREVIEW    // "Coming Soon" — collect followers before launch
+  ACTIVE
+  ARCHIVED
+}
+
+enum ShippingStatus {
+  PENDING
+  SHIPPED
+  IN_TRANSIT
+  DELIVERED
+}
+
+enum EscrowStatus {
+  HELD
+  RELEASED
+  DISPUTED
+  REFUNDED
+}
+
+enum DisputeStatus {
+  OPEN
+  UNDER_REVIEW
+  RESOLVED_BUYER
+  RESOLVED_SELLER
+  CLOSED
+}
+
+enum KycStatus {
+  UNVERIFIED
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
 model DreamStory {
-  id              String   @id @default(cuid())
+  id              String           @id @default(cuid())
   userId          String
   title           String
-  statement       String   @db.Text
+  statement       String           @db.Text
   coverImage      String?
+  videoUrl        String?          // YouTube/Vimeo embed URL
   category        String?
-  originStory     String?  @db.Text  // "How this dream started"
-  processImages   String[] @default([])  // Behind-the-scenes photos
-  impactStatement String?  @db.Text  // "What one sale means for this dream"
-  isFeatured      Boolean  @default(false)
-  isStaffPick     Boolean  @default(false)
-  creatorStage    String?  // "early" | "growing" | "established"
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  originStory     String?          @db.Text  // "How this dream started"
+  processImages   String[]         @default([])  // Behind-the-scenes photos
+  impactStatement String?          @db.Text  // "What one sale means for this dream"
+  status          DreamStoryStatus @default(ACTIVE)
+  isFeatured      Boolean          @default(false)
+  isStaffPick     Boolean          @default(false)
+  creatorStage    String?          // "early" | "growing" | "established"
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
 
   user       User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   milestones Milestone[]
@@ -296,6 +346,11 @@ model DreamStory {
   followers  Follow[]
   updates    DreamUpdate[]
   comments   DreamComment[]
+  bookmarks  Bookmark[]
+  polls      Poll[]
+  engagements    StoryEngagement[]
+  communityVotes CommunityVote[]
+  weeklyDreams   WeeklyDream[]
 
   @@index([userId])
   @@map("dream_stories")
@@ -325,11 +380,15 @@ model Product {
   whyIMadeThis String?  @db.Text
   category     String?
   productType  String?  // "physical" | "digital" | "service" | "class"
+  shippingWeight Int?   // grams
+  shippingCost   Int?   @default(0) // cents (0 = free shipping)
+  isDigital      Boolean @default(false)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
   dreamStory DreamStory @relation(fields: [dreamStoryId], references: [id], onDelete: Cascade)
   orders     Order[]
+  reviews    Review[]
 
   @@map("products")
 }
@@ -347,18 +406,27 @@ model Order {
   productId        String
   dreamStoryId     String
   amount           Int         // cents
+  quantity         Int         @default(1)
   stripeFee        Int         @default(0)
   platformFee      Int         @default(0)
   creatorPayout    Int         @default(0)
   stripeSessionId  String?     @unique
   stripePaymentId  String?
   status           OrderStatus @default(PENDING)
+  // Shipping
+  shippingAddress  Json?       // { name, line1, line2, city, state, zip, country }
+  trackingNumber   String?
+  shippingStatus   ShippingStatus @default(PENDING)
+  // Escrow / Buyer Protection
+  escrowStatus     EscrowStatus @default(HELD)
+  escrowReleasedAt DateTime?
   createdAt        DateTime    @default(now())
   updatedAt        DateTime    @updatedAt
 
   buyer      User       @relation(fields: [buyerId], references: [id], onDelete: Cascade)
   product    Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
   dreamStory DreamStory @relation(fields: [dreamStoryId], references: [id], onDelete: Cascade)
+  disputes   Dispute[]
 
   @@index([buyerId])
   @@index([dreamStoryId])
@@ -408,6 +476,216 @@ model DreamComment {
 
   @@index([dreamStoryId, createdAt(sort: Desc)])
   @@map("dream_comments")
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  productId String
+  buyerId   String
+  rating    Int      // 1-5
+  content   String   @db.Text
+  images    String[] @default([])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  buyer   User    @relation(fields: [buyerId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, buyerId])
+  @@index([productId])
+  @@map("reviews")
+}
+
+model Bookmark {
+  id           String   @id @default(cuid())
+  userId       String
+  dreamStoryId String
+  createdAt    DateTime @default(now())
+
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  dreamStory DreamStory @relation(fields: [dreamStoryId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, dreamStoryId])
+  @@map("bookmarks")
+}
+
+model Poll {
+  id           String   @id @default(cuid())
+  dreamStoryId String
+  question     String
+  endsAt       DateTime?
+  createdAt    DateTime @default(now())
+
+  dreamStory DreamStory @relation(fields: [dreamStoryId], references: [id], onDelete: Cascade)
+  options    PollOption[]
+
+  @@index([dreamStoryId])
+  @@map("polls")
+}
+
+model PollOption {
+  id     String @id @default(cuid())
+  pollId String
+  label  String
+
+  poll  Poll       @relation(fields: [pollId], references: [id], onDelete: Cascade)
+  votes PollVote[]
+
+  @@map("poll_options")
+}
+
+model PollVote {
+  id       String   @id @default(cuid())
+  optionId String
+  userId   String
+  createdAt DateTime @default(now())
+
+  option PollOption @relation(fields: [optionId], references: [id], onDelete: Cascade)
+
+  @@unique([optionId, userId])
+  @@map("poll_votes")
+}
+
+// ─── Dream Store: Trust & Disputes ─────────────────────────────
+
+model Dispute {
+  id           String        @id @default(cuid())
+  orderId      String
+  buyerId      String
+  sellerId     String
+  reason       String        // "not_received" | "not_as_described" | "damaged" | "other"
+  description  String        @db.Text
+  evidence     String[]      @default([]) // image URLs
+  status       DisputeStatus @default(OPEN)
+  resolution   String?       @db.Text
+  resolvedAt   DateTime?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  order  Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  buyer  User  @relation("DisputeBuyer", fields: [buyerId], references: [id], onDelete: Cascade)
+  seller User  @relation("DisputeSeller", fields: [sellerId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
+  @@map("disputes")
+}
+
+// ─── Dream Store: Engagement & Recommendations ────────────────
+
+model StoryEngagement {
+  id           String   @id @default(cuid())
+  userId       String
+  dreamStoryId String
+  type         String   // "view" | "read_complete" | "video_watch" | "share"
+  createdAt    DateTime @default(now())
+
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  dreamStory DreamStory @relation(fields: [dreamStoryId], references: [id], onDelete: Cascade)
+
+  @@index([dreamStoryId, type])
+  @@index([userId])
+  @@map("story_engagements")
+}
+
+model CommunityVote {
+  id           String   @id @default(cuid())
+  userId       String
+  dreamStoryId String
+  createdAt    DateTime @default(now())
+
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  dreamStory DreamStory @relation(fields: [dreamStoryId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, dreamStoryId])
+  @@map("community_votes")
+}
+
+model WeeklyDream {
+  id           String   @id @default(cuid())
+  dreamStoryId String
+  weekStart    DateTime
+  weekEnd      DateTime
+  reason       String?  @db.Text
+  createdAt    DateTime @default(now())
+
+  dreamStory DreamStory @relation(fields: [dreamStoryId], references: [id], onDelete: Cascade)
+
+  @@unique([weekStart])
+  @@map("weekly_dreams")
+}
+
+// ─── Dream Planner ──────────────────────────────────────────────
+
+model PlannerSession {
+  id               String   @id @default(cuid())
+  userId           String   @unique
+  dreamStatement   String?  @db.Text
+  userName         String?
+  startedAt        DateTime @default(now())
+  lastVisitAt      DateTime @default(now())
+  streak           Int      @default(0)
+  maxStreak        Int      @default(0)
+  onboarded        Boolean  @default(false)
+
+  // All activity data stored as JSONB for flexibility
+  part1Data        Json     @default("{}")
+  part2Data        Json     @default("{}")
+  part3Data        Json     @default("{}")
+  part4Data        Json     @default("{}")
+
+  // Completed activity IDs per part
+  completedActivities Int[] @default([])
+  part2Completed      Int[] @default([])
+  part3Completed      Int[] @default([])
+  part4Completed      Int[] @default([])
+
+  // Reflection answers per part
+  reflectionAnswers   String[] @default([])
+  part2Reflections    String[] @default([])
+  part3Reflections    String[] @default([])
+  part4Reflections    String[] @default([])
+
+  // AI-generated insights cache
+  aiInsights       Json     @default("[]")
+
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  coachLogs        PlannerCoachLog[]
+  report           PlannerReport?
+
+  @@map("planner_sessions")
+}
+
+model PlannerCoachLog {
+  id               String   @id @default(cuid())
+  sessionId        String
+  partNumber       Int
+  activityId       Int
+  activityName     String
+  userMessage      String   @db.Text
+  coachMessage     String   @db.Text
+  suggestions      String[] @default([])
+  type             String   @default("chat") // "stuck" | "completion" | "entry" | "chat" | "insight"
+  createdAt        DateTime @default(now())
+
+  session          PlannerSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId, createdAt(sort: Desc)])
+  @@map("planner_coach_logs")
+}
+
+model PlannerReport {
+  id               String   @id @default(cuid())
+  sessionId        String   @unique
+  content          Json     // Structured journey report
+  generatedAt      DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  session          PlannerSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@map("planner_reports")
 }
 
 // ─── User Preferences ────────────────────────────────────────

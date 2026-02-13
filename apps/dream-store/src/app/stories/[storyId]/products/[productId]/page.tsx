@@ -1,9 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getProductById, getSupporters, formatPrice } from "@/lib/queries";
+import { Button } from "@dreamhub/ui";
+import { getProductById, getSupporters, getProductReviews, getAverageRating, formatPrice } from "@/lib/queries";
+import { getCurrentUserId } from "@/lib/auth";
 import { SupportButton } from "./SupportButton";
 import { ImageGallery } from "./ImageGallery";
+import { ReviewForm } from "./ReviewForm";
+import { ReviewList } from "./ReviewList";
 
 interface PageProps {
   params: Promise<{ storyId: string; productId: string }>;
@@ -25,14 +29,21 @@ export default async function ProductDetailPage({ params }: PageProps) {
   if (!result || result.story.id !== storyId) notFound();
 
   const { product, story } = result;
-  const supporters = await getSupporters(storyId);
+  const [supporters, reviews, ratingData, currentUserId] = await Promise.all([
+    getSupporters(storyId),
+    getProductReviews(productId),
+    getAverageRating(productId),
+    getCurrentUserId(),
+  ]);
   const recentSupporters = supporters.slice(0, 5);
+  const isOwner = currentUserId === story.userId;
 
   return (
     <main className="min-h-screen">
       <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
         {/* Breadcrumb */}
-        <nav className="mb-6 text-sm text-gray-500">
+        <nav className="mb-6 flex items-center justify-between">
+          <div className="text-sm text-gray-500">
           <Link href="/" className="hover:text-brand-600">
             Discover
           </Link>
@@ -47,6 +58,14 @@ export default async function ProductDetailPage({ params }: PageProps) {
           <span className="text-gray-900 dark:text-white">
             {product.title}
           </span>
+          </div>
+          {isOwner && (
+            <Link href={`/stories/${storyId}/products/${productId}/edit`}>
+              <Button variant="outline" size="sm">
+                Edit Product
+              </Button>
+            </Link>
+          )}
         </nav>
 
         <div className="grid gap-10 lg:grid-cols-2">
@@ -82,6 +101,40 @@ export default async function ProductDetailPage({ params }: PageProps) {
             <h1 className="mb-2 text-2xl font-bold text-gray-900 dark:text-white lg:text-3xl">
               {product.title}
             </h1>
+
+            {/* Average Rating */}
+            {ratingData.count > 0 && (
+              <div className="mb-3 flex items-center gap-2">
+                <div className="flex gap-0.5">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <svg
+                      key={star}
+                      className={`h-4 w-4 ${
+                        star <= Math.round(ratingData.average)
+                          ? "fill-yellow-400 text-yellow-400"
+                          : "fill-none text-gray-300 dark:text-gray-600"
+                      }`}
+                      viewBox="0 0 24 24"
+                      strokeWidth={1.5}
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z"
+                      />
+                    </svg>
+                  ))}
+                </div>
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  {ratingData.average}
+                </span>
+                <span className="text-sm text-gray-500">
+                  ({ratingData.count} {ratingData.count === 1 ? "review" : "reviews"})
+                </span>
+              </div>
+            )}
+
             <p className="mb-6 text-3xl font-bold text-gray-900 dark:text-white">
               {formatPrice(product.price)}
             </p>
@@ -166,6 +219,49 @@ export default async function ProductDetailPage({ params }: PageProps) {
               </p>
             </div>
           </div>
+        </div>
+
+        {/* Supporter Stories (Reviews) */}
+        <div className="mt-12 border-t border-gray-200 pt-10 dark:border-gray-800">
+          <div className="mb-8 flex items-center justify-between">
+            <div>
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+                Supporter Stories
+              </h2>
+              <p className="mt-1 text-sm text-gray-500">
+                Hear from people who have supported this dream
+              </p>
+            </div>
+            {ratingData.count > 0 && (
+              <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                <svg
+                  className="h-5 w-5 fill-yellow-400 text-yellow-400"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z"
+                  />
+                </svg>
+                <span className="font-semibold">{ratingData.average}</span>
+                <span>out of 5 ({ratingData.count} reviews)</span>
+              </div>
+            )}
+          </div>
+
+          {/* Review Form */}
+          <div className="mb-8 rounded-card border border-gray-200 bg-gray-50 p-6 dark:border-gray-800 dark:bg-gray-900">
+            <h3 className="mb-4 text-sm font-semibold text-gray-900 dark:text-white">
+              Share Your Experience
+            </h3>
+            <ReviewForm productId={productId} />
+          </div>
+
+          {/* Review List */}
+          <ReviewList reviews={reviews} currentUserId={currentUserId} />
         </div>
       </div>
     </main>

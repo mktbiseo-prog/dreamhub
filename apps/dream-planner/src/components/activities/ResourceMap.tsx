@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { Button, cn } from "@dreamhub/ui";
 import {
   Radar,
@@ -8,9 +9,18 @@ import {
   PolarAngleAxis,
   PolarRadiusAxis,
   ResponsiveContainer,
+  Legend,
 } from "recharts";
 import { usePlannerStore } from "@/lib/store";
 import type { ResourceItem } from "@/types/planner";
+
+interface ResourceSnapshot {
+  date: string;
+  label: string;
+  resources: { key: string; score: number }[];
+}
+
+const SNAPSHOT_KEY = "dream-planner-resource-snapshots";
 
 function ResourceSlider({
   resource,
@@ -72,6 +82,26 @@ function ResourceSlider({
 export function ResourceMap({ onNext }: { onNext: () => void }) {
   const { data, store } = usePlannerStore();
   const resources = data.resources;
+  const [snapshots, setSnapshots] = useState<ResourceSnapshot[]>([]);
+  const [compareIdx, setCompareIdx] = useState<number | null>(null);
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(SNAPSHOT_KEY);
+      if (raw) setSnapshots(JSON.parse(raw));
+    } catch { /* ignore */ }
+  }, []);
+
+  const saveSnapshot = () => {
+    const snap: ResourceSnapshot = {
+      date: new Date().toISOString(),
+      label: `Snapshot ${snapshots.length + 1}`,
+      resources: resources.map((r) => ({ key: r.key, score: r.score })),
+    };
+    const next = [...snapshots, snap].slice(-5); // Keep max 5
+    setSnapshots(next);
+    localStorage.setItem(SNAPSHOT_KEY, JSON.stringify(next));
+  };
 
   const updateResource = (key: string, updates: Partial<ResourceItem>) => {
     store.setResources(
@@ -79,11 +109,20 @@ export function ResourceMap({ onNext }: { onNext: () => void }) {
     );
   };
 
-  const chartData = resources.map((r) => ({
-    subject: r.label,
-    value: r.score,
-    fullMark: 5,
-  }));
+  const compareSnapshot = compareIdx !== null ? snapshots[compareIdx] : null;
+
+  const chartData = resources.map((r) => {
+    const entry: Record<string, string | number> = {
+      subject: r.label,
+      value: r.score,
+      fullMark: 5,
+    };
+    if (compareSnapshot) {
+      const snap = compareSnapshot.resources.find((s) => s.key === r.key);
+      entry.previous = snap?.score ?? 0;
+    }
+    return entry;
+  });
 
   const hasData = resources.some((r) => r.score > 0);
 
@@ -106,12 +145,37 @@ export function ResourceMap({ onNext }: { onNext: () => void }) {
         </p>
       </div>
 
-      {/* Radar Chart */}
+      {/* Radar Chart with Comparison Overlay */}
       {hasData && (
         <div className="mb-8 rounded-card border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-900">
-          <h4 className="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
-            Your Resource Radar
-          </h4>
+          <div className="mb-2 flex items-center justify-between">
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-400">
+              Your Resource Radar
+            </h4>
+            <div className="flex items-center gap-2">
+              {snapshots.length > 0 && (
+                <select
+                  value={compareIdx ?? ""}
+                  onChange={(e) => setCompareIdx(e.target.value === "" ? null : Number(e.target.value))}
+                  className="rounded-[6px] border border-gray-200 bg-gray-50 px-2 py-1 text-[10px] dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300"
+                >
+                  <option value="">No comparison</option>
+                  {snapshots.map((s, i) => (
+                    <option key={i} value={i}>
+                      {s.label} ({new Date(s.date).toLocaleDateString()})
+                    </option>
+                  ))}
+                </select>
+              )}
+              <button
+                type="button"
+                onClick={saveSnapshot}
+                className="rounded-[6px] bg-brand-100 px-2 py-1 text-[10px] font-semibold text-brand-700 hover:bg-brand-200 dark:bg-brand-900 dark:text-brand-300"
+              >
+                Save Snapshot
+              </button>
+            </div>
+          </div>
           <ResponsiveContainer width="100%" height={300}>
             <RadarChart data={chartData} cx="50%" cy="50%" outerRadius="70%">
               <PolarGrid stroke="#e5e7eb" />
@@ -125,16 +189,51 @@ export function ResourceMap({ onNext }: { onNext: () => void }) {
                 tickCount={6}
                 tick={{ fontSize: 10, fill: "#9ca3af" }}
               />
+              {compareSnapshot && (
+                <Radar
+                  name="Previous"
+                  dataKey="previous"
+                  stroke="#9ca3af"
+                  fill="#9ca3af"
+                  fillOpacity={0.1}
+                  strokeWidth={1.5}
+                  strokeDasharray="4 4"
+                />
+              )}
               <Radar
-                name="Resources"
+                name="Current"
                 dataKey="value"
                 stroke="#8b5cf6"
                 fill="#8b5cf6"
                 fillOpacity={0.2}
                 strokeWidth={2}
               />
+              {compareSnapshot && <Legend wrapperStyle={{ fontSize: 11 }} />}
             </RadarChart>
           </ResponsiveContainer>
+          {/* Comparison Delta */}
+          {compareSnapshot && (
+            <div className="mt-3 flex flex-wrap gap-2">
+              {resources.map((r) => {
+                const prev = compareSnapshot.resources.find((s) => s.key === r.key)?.score ?? 0;
+                const delta = r.score - prev;
+                if (delta === 0) return null;
+                return (
+                  <span
+                    key={r.key}
+                    className={cn(
+                      "rounded-full px-2 py-0.5 text-[10px] font-semibold",
+                      delta > 0
+                        ? "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300"
+                        : "bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300"
+                    )}
+                  >
+                    {r.label}: {delta > 0 ? "+" : ""}{delta}
+                  </span>
+                );
+              })}
+            </div>
+          )}
         </div>
       )}
 

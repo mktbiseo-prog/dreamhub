@@ -1,10 +1,6 @@
 "use client";
 
 import {
-  createContext,
-  useContext,
-  useCallback,
-  useRef,
   useSyncExternalStore,
 } from "react";
 import type {
@@ -13,7 +9,6 @@ import type {
   TimeBlock,
   ExpenseItem,
   CurrentStateCard,
-  ReflectionAnswer,
 } from "@/types/planner";
 import {
   RESOURCE_DEFAULTS,
@@ -96,9 +91,15 @@ class PlannerStore {
   private data: PlannerData;
   private listeners = new Set<() => void>();
   private saveTimeout: ReturnType<typeof setTimeout> | null = null;
+  private dbSaveTimeout: ReturnType<typeof setTimeout> | null = null;
+  private _isAuthenticated = false;
 
   constructor() {
     this.data = DEFAULT_DATA;
+  }
+
+  get isAuthenticated() {
+    return this._isAuthenticated;
   }
 
   hydrate() {
@@ -128,7 +129,6 @@ class PlannerStore {
           if (diffDays === 1) {
             this.data.streak += 1;
           } else if (diffDays > 1) {
-            // Streak broken — save previous best
             if (this.data.streak > this.data.maxStreak) {
               this.data.maxStreak = this.data.streak;
             }
@@ -137,7 +137,6 @@ class PlannerStore {
         } else {
           this.data.streak = 1;
         }
-        // Track best streak ever
         if (this.data.streak > this.data.maxStreak) {
           this.data.maxStreak = this.data.streak;
         }
@@ -147,6 +146,60 @@ class PlannerStore {
       }
     } catch {
       // ignore parse errors
+    }
+  }
+
+  // Load data from server (database) — merges with localStorage
+  async hydrateFromServer(): Promise<void> {
+    try {
+      const res = await fetch("/api/planner/load");
+      if (!res.ok) return;
+
+      const serverData = await res.json() as { data: PlannerData | null; authenticated: boolean };
+
+      this._isAuthenticated = serverData.authenticated;
+
+      if (serverData.data) {
+        // Server data takes priority over localStorage
+        this.data = {
+          ...DEFAULT_DATA,
+          ...serverData.data,
+          part2: { ...DEFAULT_PART2_DATA, ...(serverData.data.part2 || {}) },
+          part3: { ...DEFAULT_PART3_DATA, ...(serverData.data.part3 || {}) },
+          part4: { ...DEFAULT_PART4_DATA, ...(serverData.data.part4 || {}) },
+        };
+
+        // Update streak
+        const now = new Date();
+        const lastVisit = this.data.lastVisitAt
+          ? new Date(this.data.lastVisitAt)
+          : null;
+        if (lastVisit) {
+          const diffDays = Math.floor(
+            (now.getTime() - lastVisit.getTime()) / (1000 * 60 * 60 * 24)
+          );
+          if (diffDays === 1) {
+            this.data.streak += 1;
+          } else if (diffDays > 1) {
+            if (this.data.streak > this.data.maxStreak) {
+              this.data.maxStreak = this.data.streak;
+            }
+            this.data.streak = 1;
+          }
+        } else if (!this.data.startedAt) {
+          this.data.streak = 1;
+        }
+        if (this.data.streak > this.data.maxStreak) {
+          this.data.maxStreak = this.data.streak;
+        }
+        this.data.lastVisitAt = now.toISOString();
+
+        // Sync to localStorage as well
+        this.persist();
+        this.listeners.forEach((l) => l());
+      }
+    } catch {
+      // Server unavailable — continue with localStorage data
     }
   }
 
@@ -164,9 +217,24 @@ class PlannerStore {
     this.saveTimeout = setTimeout(() => this.persist(), 2000);
   }
 
+  private debouncedDbSync() {
+    if (!this._isAuthenticated) return;
+    if (this.dbSaveTimeout) clearTimeout(this.dbSaveTimeout);
+    this.dbSaveTimeout = setTimeout(() => {
+      fetch("/api/planner/save", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(this.data),
+      }).catch(() => {
+        // Silently fail — localStorage is the fallback
+      });
+    }, 5000); // 5s debounce for DB saves (less frequent than localStorage)
+  }
+
   private emit() {
     this.listeners.forEach((l) => l());
     this.debouncedPersist();
+    this.debouncedDbSync();
   }
 
   subscribe = (listener: () => void) => {
@@ -301,4 +369,4 @@ export function usePlannerStore() {
   return { data, store };
 }
 
-export { getStore };
+export { getStore, DEFAULT_DATA };

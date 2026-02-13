@@ -46,7 +46,9 @@ export function CreateDreamStoryForm() {
   const [statement, setStatement] = useState("");
   const [originStory, setOriginStory] = useState("");
   const [impactStatement, setImpactStatement] = useState("");
+  const [videoUrl, setVideoUrl] = useState("");
   const [creatorStage, setCreatorStage] = useState("early");
+  const [status, setStatus] = useState<"ACTIVE" | "PREVIEW">("ACTIVE");
   const [milestones, setMilestones] = useState<MilestoneField[]>([
     { title: "", targetDate: "" },
     { title: "", targetDate: "" },
@@ -81,7 +83,7 @@ export function CreateDreamStoryForm() {
     e.preventDefault();
     setErrors({});
 
-    const data = { title, statement, originStory, impactStatement, creatorStage, milestones };
+    const data = { title, statement, originStory, impactStatement, creatorStage, videoUrl, status, milestones };
     const result = createDreamStorySchema.safeParse(data);
     if (!result.success) {
       const fieldErrors: Record<string, string> = {};
@@ -169,6 +171,19 @@ export function CreateDreamStoryForm() {
                   </button>
                 ))}
               </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="videoUrl">Video URL (optional)</Label>
+              <Input
+                id="videoUrl"
+                placeholder="https://youtube.com/watch?v=..."
+                value={videoUrl}
+                onChange={(e) => setVideoUrl(e.target.value)}
+              />
+              <p className="text-xs text-gray-400">
+                Supports YouTube and Vimeo links
+              </p>
+              {errors.videoUrl && <p className="text-xs text-red-500">{errors.videoUrl}</p>}
             </div>
           </CardContent>
         </Card>
@@ -319,6 +334,53 @@ export function CreateDreamStoryForm() {
               <div>
                 <p className="text-xs font-medium text-gray-500">Creator Stage</p>
                 <p className="text-sm capitalize text-gray-700 dark:text-gray-300">{creatorStage}</p>
+              </div>
+              {videoUrl && (
+                <div>
+                  <p className="text-xs font-medium text-gray-500">Video URL</p>
+                  <p className="text-sm text-gray-700 dark:text-gray-300">{videoUrl}</p>
+                </div>
+              )}
+            </div>
+
+            {/* Launch mode toggle */}
+            <div className="mt-6">
+              <p className="mb-3 text-sm font-semibold text-gray-900 dark:text-white">
+                How would you like to launch?
+              </p>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <button
+                  type="button"
+                  onClick={() => setStatus("ACTIVE")}
+                  className={`rounded-card border p-4 text-left transition-colors ${
+                    status === "ACTIVE"
+                      ? "border-brand-500 bg-brand-50 dark:bg-brand-950/30"
+                      : "border-gray-200 hover:border-gray-300 dark:border-gray-800"
+                  }`}
+                >
+                  <p className="text-sm font-semibold text-gray-900 dark:text-white">
+                    Launch now
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    Your dream goes live immediately with products ready to sell
+                  </p>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setStatus("PREVIEW")}
+                  className={`rounded-card border p-4 text-left transition-colors ${
+                    status === "PREVIEW"
+                      ? "border-orange-500 bg-orange-50 dark:bg-orange-950/30"
+                      : "border-gray-200 hover:border-gray-300 dark:border-gray-800"
+                  }`}
+                >
+                  <p className="text-sm font-semibold text-gray-900 dark:text-white">
+                    Preview mode
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    Collect followers first — launch products when you are ready
+                  </p>
+                </button>
               </div>
             </div>
           </CardContent>

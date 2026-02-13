@@ -1,9 +1,10 @@
 import { prisma } from "@dreamhub/database";
-import type { DreamStory, Supporter, DreamUpdateView, DreamCommentView } from "./types";
+import type { DreamStory, Supporter, DreamUpdateView, DreamCommentView, ReviewView, PollView } from "./types";
 import {
   MOCK_STORIES,
   MOCK_SUPPORTERS,
   MOCK_COMMENTS,
+  MOCK_REVIEWS,
   getStoryById as mockGetStoryById,
   getProductById as mockGetProductById,
   formatPrice,
@@ -24,6 +25,7 @@ function mapDbStoryToView(
     title: story.title,
     statement: story.statement,
     coverImage: story.coverImage || "",
+    videoUrl: story.videoUrl || "",
     creatorName: story.user.name || "Anonymous Dreamer",
     creatorAvatar: story.user.avatar || "",
     creatorBio: story.user.bio || "",
@@ -33,6 +35,7 @@ function mapDbStoryToView(
     isFeatured: story.isFeatured,
     isStaffPick: story.isStaffPick,
     creatorStage: story.creatorStage || "early",
+    status: story.status as DreamStory["status"],
     category: story.category || "Other",
     supporterCount: story._count.orders,
     followerCount: story._count.followers,
@@ -78,8 +81,12 @@ async function fetchStoryById(id: string) {
 
 export async function getStories(category?: string): Promise<DreamStory[]> {
   try {
-    const where =
-      category && category !== "All" ? { category } : undefined;
+    const where: Record<string, unknown> = {
+      status: { in: ["ACTIVE", "PREVIEW"] },
+    };
+    if (category && category !== "All") {
+      where.category = category;
+    }
 
     const stories = await prisma.dreamStory.findMany({
       where,
@@ -223,6 +230,7 @@ export async function searchStories(query: string): Promise<DreamStory[]> {
   try {
     const stories = await prisma.dreamStory.findMany({
       where: {
+        status: { in: ["ACTIVE", "PREVIEW"] },
         OR: [
           { title: { contains: query, mode: "insensitive" } },
           { statement: { contains: query, mode: "insensitive" } },
@@ -288,7 +296,16 @@ export async function getDreamUpdates(
 
 export async function getCreatorDashboard(userId: string) {
   try {
-    const [stories, revenueAgg, orderCount, recentOrders] = await Promise.all([
+    const [
+      stories,
+      revenueAgg,
+      platformFeeAgg,
+      grossRevenueAgg,
+      orderCount,
+      recentOrders,
+      user,
+      completedOrders,
+    ] = await Promise.all([
       prisma.dreamStory.findMany({
         where: { userId },
         include: {
@@ -300,6 +317,14 @@ export async function getCreatorDashboard(userId: string) {
       prisma.order.aggregate({
         where: { dreamStory: { userId }, status: "COMPLETED" },
         _sum: { creatorPayout: true },
+      }),
+      prisma.order.aggregate({
+        where: { dreamStory: { userId }, status: "COMPLETED" },
+        _sum: { platformFee: true },
+      }),
+      prisma.order.aggregate({
+        where: { dreamStory: { userId }, status: "COMPLETED" },
+        _sum: { amount: true },
       }),
       prisma.order.count({
         where: { dreamStory: { userId }, status: "COMPLETED" },
@@ -314,6 +339,20 @@ export async function getCreatorDashboard(userId: string) {
         orderBy: { createdAt: "desc" },
         take: 10,
       }),
+      prisma.user.findUnique({
+        where: { id: userId },
+        select: { stripeConnectId: true },
+      }),
+      prisma.order.findMany({
+        where: { dreamStory: { userId }, status: "COMPLETED" },
+        select: {
+          amount: true,
+          platformFee: true,
+          creatorPayout: true,
+          dreamStoryId: true,
+          createdAt: true,
+        },
+      }),
     ]);
 
     const totalSupporters = new Set(
@@ -321,6 +360,70 @@ export async function getCreatorDashboard(userId: string) {
         .filter((o) => o.status === "COMPLETED")
         .map((o) => o.buyerId)
     ).size;
+
+    // Calculate per-dream revenue breakdown
+    const dreamRevenueMap = new Map<
+      string,
+      {
+        id: string;
+        title: string;
+        orderCount: number;
+        grossRevenue: number;
+        platformFees: number;
+        netEarnings: number;
+      }
+    >();
+
+    for (const story of stories) {
+      dreamRevenueMap.set(story.id, {
+        id: story.id,
+        title: story.title,
+        orderCount: 0,
+        grossRevenue: 0,
+        platformFees: 0,
+        netEarnings: 0,
+      });
+    }
+
+    for (const order of completedOrders) {
+      const entry = dreamRevenueMap.get(order.dreamStoryId);
+      if (entry) {
+        entry.orderCount += 1;
+        entry.grossRevenue += order.amount;
+        entry.platformFees += order.platformFee;
+        entry.netEarnings += order.creatorPayout;
+      }
+    }
+
+    const perDreamRevenue = Array.from(dreamRevenueMap.values()).filter(
+      (d) => d.orderCount > 0
+    );
+
+    // Calculate monthly revenue for last 6 months
+    const monthlyRevenue: Array<{ month: string; revenue: number }> = [];
+    const now = new Date();
+    for (let i = 5; i >= 0; i--) {
+      const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const monthLabel = date.toLocaleDateString("en-US", {
+        month: "short",
+        year: "numeric",
+      });
+      const monthStart = new Date(date.getFullYear(), date.getMonth(), 1);
+      const monthEnd = new Date(
+        date.getFullYear(),
+        date.getMonth() + 1,
+        0,
+        23,
+        59,
+        59
+      );
+
+      const monthRevenue = completedOrders
+        .filter((o) => o.createdAt >= monthStart && o.createdAt <= monthEnd)
+        .reduce((sum, o) => sum + o.creatorPayout, 0);
+
+      monthlyRevenue.push({ month: monthLabel, revenue: monthRevenue });
+    }
 
     return {
       stories: stories.map((s) => ({
@@ -334,9 +437,14 @@ export async function getCreatorDashboard(userId: string) {
         milestones: s.milestones,
         createdAt: s.createdAt.toISOString().split("T")[0],
       })),
-      totalRevenue: revenueAgg._sum.creatorPayout || 0,
+      totalRevenue: grossRevenueAgg._sum.amount || 0,
+      totalPlatformFees: platformFeeAgg._sum.platformFee || 0,
+      netEarnings: revenueAgg._sum.creatorPayout || 0,
       totalOrders: orderCount,
       totalSupporters,
+      stripeConnectId: user?.stripeConnectId || null,
+      perDreamRevenue,
+      monthlyRevenue,
       recentOrders: recentOrders.map((o) => ({
         id: o.id,
         buyerName: o.buyer.name || "Anonymous",
@@ -344,12 +452,167 @@ export async function getCreatorDashboard(userId: string) {
         productTitle: o.product.title,
         storyTitle: o.dreamStory.title,
         amount: o.amount,
+        platformFee: o.platformFee,
+        creatorPayout: o.creatorPayout,
         status: o.status,
         createdAt: o.createdAt.toISOString().split("T")[0],
       })),
     };
   } catch {
     return null;
+  }
+}
+
+// ─── Product Reviews ────────────────────────────────────
+
+export async function getProductReviews(productId: string): Promise<ReviewView[]> {
+  try {
+    const reviews = await prisma.review.findMany({
+      where: { productId },
+      include: { buyer: { select: { id: true, name: true, avatar: true } } },
+      orderBy: { createdAt: "desc" },
+    });
+
+    if (reviews.length === 0) {
+      return MOCK_REVIEWS.filter((r) => r.productId === productId);
+    }
+
+    return reviews.map((r) => ({
+      id: r.id,
+      productId: r.productId,
+      rating: r.rating,
+      content: r.content,
+      images: r.images,
+      buyerName: r.buyer.name || "Anonymous",
+      buyerAvatar: r.buyer.avatar || "",
+      buyerId: r.buyer.id,
+      createdAt: r.createdAt.toISOString().split("T")[0],
+    }));
+  } catch {
+    return MOCK_REVIEWS.filter((r) => r.productId === productId);
+  }
+}
+
+export async function getAverageRating(
+  productId: string
+): Promise<{ average: number; count: number }> {
+  try {
+    const result = await prisma.review.aggregate({
+      where: { productId },
+      _avg: { rating: true },
+      _count: { rating: true },
+    });
+
+    if (result._count.rating === 0) {
+      // Fallback to mock data
+      const mockReviews = MOCK_REVIEWS.filter((r) => r.productId === productId);
+      if (mockReviews.length === 0) return { average: 0, count: 0 };
+      const avg =
+        mockReviews.reduce((sum, r) => sum + r.rating, 0) / mockReviews.length;
+      return { average: Math.round(avg * 10) / 10, count: mockReviews.length };
+    }
+
+    return {
+      average: Math.round((result._avg.rating || 0) * 10) / 10,
+      count: result._count.rating,
+    };
+  } catch {
+    const mockReviews = MOCK_REVIEWS.filter((r) => r.productId === productId);
+    if (mockReviews.length === 0) return { average: 0, count: 0 };
+    const avg =
+      mockReviews.reduce((sum, r) => sum + r.rating, 0) / mockReviews.length;
+    return { average: Math.round(avg * 10) / 10, count: mockReviews.length };
+  }
+}
+
+// ─── Bookmarks ──────────────────────────────────────────
+
+export async function isBookmarked(
+  userId: string,
+  dreamStoryId: string
+): Promise<boolean> {
+  try {
+    const bookmark = await prisma.bookmark.findUnique({
+      where: {
+        userId_dreamStoryId: { userId, dreamStoryId },
+      },
+    });
+    return !!bookmark;
+  } catch {
+    return false;
+  }
+}
+
+export async function getUserBookmarks(userId: string): Promise<DreamStory[]> {
+  try {
+    const bookmarks = await prisma.bookmark.findMany({
+      where: { userId },
+      include: {
+        dreamStory: {
+          include: storyInclude,
+        },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+
+    if (bookmarks.length === 0) return [];
+
+    return bookmarks.map((b) => mapDbStoryToView(b.dreamStory));
+  } catch {
+    return [];
+  }
+}
+
+// ─── Polls ───────────────────────────────────────────────
+
+export async function getStoryPolls(
+  dreamStoryId: string,
+  userId?: string
+): Promise<PollView[]> {
+  try {
+    const polls = await prisma.poll.findMany({
+      where: { dreamStoryId },
+      include: {
+        options: {
+          include: {
+            votes: true,
+          },
+        },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+
+    return polls.map((poll) => {
+      const options = poll.options.map((opt) => ({
+        id: opt.id,
+        label: opt.label,
+        voteCount: opt.votes.length,
+      }));
+      const totalVotes = options.reduce((sum, o) => sum + o.voteCount, 0);
+
+      let userVotedOptionId: string | null = null;
+      if (userId) {
+        for (const opt of poll.options) {
+          const userVote = opt.votes.find((v) => v.userId === userId);
+          if (userVote) {
+            userVotedOptionId = opt.id;
+            break;
+          }
+        }
+      }
+
+      return {
+        id: poll.id,
+        question: poll.question,
+        endsAt: poll.endsAt ? poll.endsAt.toISOString() : null,
+        options,
+        totalVotes,
+        userVotedOptionId,
+        createdAt: poll.createdAt.toISOString().split("T")[0],
+      };
+    });
+  } catch {
+    return [];
   }
 }
 

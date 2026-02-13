@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import dynamic from "next/dynamic";
 import { Grid2x2, Box, Loader2 } from "lucide-react";
 import { BrainGraph } from "./BrainGraph";
+import { TimeSlider } from "./TimeSlider";
 import type { ThoughtData, ConnectionData } from "@/lib/data";
 
 const BrainGraph3D = dynamic(
@@ -27,7 +28,31 @@ interface BrainViewToggleProps {
 }
 
 export function BrainViewToggle({ thoughts, connections }: BrainViewToggleProps) {
-  const [view, setView] = useState<"2d" | "3d">("2d");
+  const [view, setView] = useState<"2d" | "3d">("3d");
+
+  const dateRange = useMemo(() => {
+    if (thoughts.length === 0) return null;
+    const dates = thoughts.map((t) => new Date(t.createdAt).getTime());
+    return {
+      min: new Date(Math.min(...dates)).toISOString(),
+      max: new Date(Math.max(...dates)).toISOString(),
+    };
+  }, [thoughts]);
+
+  const [cutoffDate, setCutoffDate] = useState<string | null>(null);
+
+  const effectiveCutoff = cutoffDate ?? dateRange?.max ?? null;
+
+  const filteredThoughts = useMemo(() => {
+    if (!effectiveCutoff) return thoughts;
+    return thoughts.filter((t) => new Date(t.createdAt) <= new Date(effectiveCutoff));
+  }, [thoughts, effectiveCutoff]);
+
+  const filteredConnections = useMemo(() => {
+    if (!effectiveCutoff) return connections;
+    const thoughtIds = new Set(filteredThoughts.map((t) => t.id));
+    return connections.filter((c) => thoughtIds.has(c.sourceId) && thoughtIds.has(c.targetId));
+  }, [connections, filteredThoughts, effectiveCutoff]);
 
   return (
     <div className="relative h-full w-full">
@@ -52,9 +77,21 @@ export function BrainViewToggle({ thoughts, connections }: BrainViewToggleProps)
 
       {/* Graph View */}
       {view === "2d" ? (
-        <BrainGraph thoughts={thoughts} connections={connections} />
+        <BrainGraph thoughts={filteredThoughts} connections={filteredConnections} />
       ) : (
-        <BrainGraph3D thoughts={thoughts} connections={connections} />
+        <BrainGraph3D thoughts={filteredThoughts} connections={filteredConnections} />
+      )}
+
+      {/* Time Slider */}
+      {dateRange && (
+        <div className="absolute bottom-4 left-4 right-4 z-20 rounded-xl bg-gray-900/80 border border-white/10 px-4 py-3 backdrop-blur-sm">
+          <TimeSlider
+            minDate={dateRange.min}
+            maxDate={dateRange.max}
+            value={effectiveCutoff!}
+            onChange={setCutoffDate}
+          />
+        </div>
       )}
     </div>
   );

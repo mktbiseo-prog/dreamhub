@@ -5,8 +5,12 @@ import Link from "next/link";
 import { Calendar } from "lucide-react";
 import { SearchBar } from "./SearchBar";
 import { CategoryFilter } from "./CategoryFilter";
+import { EmotionFilter } from "./EmotionFilter";
+import { DateRangeFilter, getDateRangeStart, type DateRange } from "./DateRangeFilter";
+import { EntityFilter } from "./EntityFilter";
 import { ViewFilter, type ViewFilterType } from "./ViewFilter";
 import { categories, type CategoryId } from "@/lib/categories";
+import type { EmotionType } from "@dreamhub/ai";
 import type { ThoughtData } from "@/lib/data";
 
 interface DayGroup {
@@ -66,9 +70,14 @@ interface TimelineViewProps {
 export function TimelineView({ initialThoughts }: TimelineViewProps) {
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<CategoryId | null>(null);
+  const [selectedEmotion, setSelectedEmotion] = useState<EmotionType | null>(null);
+  const [dateRange, setDateRange] = useState<DateRange>(null);
+  const [selectedPeople, setSelectedPeople] = useState<string[]>([]);
+  const [selectedPlaces, setSelectedPlaces] = useState<string[]>([]);
   const [viewFilter, setViewFilter] = useState<ViewFilterType>("all");
 
   const filtered = useMemo(() => {
+    const dateStart = getDateRangeStart(dateRange);
     return initialThoughts.filter((t) => {
       if (viewFilter === "favorites" && !t.isFavorite) return false;
       if (viewFilter === "pinned" && !t.isPinned) return false;
@@ -76,6 +85,10 @@ export function TimelineView({ initialThoughts }: TimelineViewProps) {
       if (viewFilter === "all" && t.isArchived) return false;
 
       if (selectedCategory && t.category !== selectedCategory) return false;
+      if (selectedEmotion && t.emotion !== selectedEmotion) return false;
+      if (dateStart && new Date(t.createdAt) < dateStart) return false;
+      if (selectedPeople.length > 0 && !t.peopleMentioned.some((p) => selectedPeople.includes(p))) return false;
+      if (selectedPlaces.length > 0 && !t.placesMentioned.some((p) => selectedPlaces.includes(p))) return false;
       if (search) {
         const q = search.toLowerCase();
         return (
@@ -87,7 +100,7 @@ export function TimelineView({ initialThoughts }: TimelineViewProps) {
       }
       return true;
     });
-  }, [search, selectedCategory, viewFilter, initialThoughts]);
+  }, [search, selectedCategory, selectedEmotion, dateRange, selectedPeople, selectedPlaces, viewFilter, initialThoughts]);
 
   const dayGroups = useMemo(() => groupByDay(filtered), [filtered]);
 
@@ -104,6 +117,18 @@ export function TimelineView({ initialThoughts }: TimelineViewProps) {
       <ViewFilter selected={viewFilter} onChange={setViewFilter} />
 
       <CategoryFilter selected={selectedCategory} onChange={setSelectedCategory} />
+
+      <EmotionFilter selected={selectedEmotion} onChange={setSelectedEmotion} />
+
+      <DateRangeFilter selected={dateRange} onChange={setDateRange} />
+
+      <EntityFilter
+        thoughts={initialThoughts}
+        selectedPeople={selectedPeople}
+        selectedPlaces={selectedPlaces}
+        onPeopleChange={setSelectedPeople}
+        onPlacesChange={setSelectedPlaces}
+      />
 
       {/* Timeline */}
       <div className="flex flex-col gap-6">

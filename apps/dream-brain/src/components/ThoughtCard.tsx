@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Star, Pin } from "lucide-react";
+import { Star, Pin, User, MapPin } from "lucide-react";
 import { categories } from "@/lib/categories";
 import { EmotionBadge } from "./EmotionBadge";
 import type { ThoughtData } from "@/lib/data";
@@ -72,6 +72,39 @@ export function ThoughtCard({ thought }: ThoughtCardProps) {
               </span>
             ))}
           </div>
+
+          {(thought.peopleMentioned.length > 0 || thought.placesMentioned.length > 0) && (
+            <div className="mt-2 flex flex-wrap gap-1.5">
+              {thought.peopleMentioned.slice(0, 2).map((name) => (
+                <span
+                  key={name}
+                  className="inline-flex items-center gap-1 rounded-md bg-violet-500/10 px-2 py-0.5 text-xs text-violet-300"
+                >
+                  <User className="h-3 w-3" />
+                  @{name}
+                </span>
+              ))}
+              {thought.peopleMentioned.length > 2 && (
+                <span className="inline-flex items-center rounded-md bg-violet-500/10 px-2 py-0.5 text-xs text-violet-400">
+                  +{thought.peopleMentioned.length - 2} more
+                </span>
+              )}
+              {thought.placesMentioned.slice(0, 2).map((place) => (
+                <span
+                  key={place}
+                  className="inline-flex items-center gap-1 rounded-md bg-teal-500/10 px-2 py-0.5 text-xs text-teal-300"
+                >
+                  <MapPin className="h-3 w-3" />
+                  {place}
+                </span>
+              ))}
+              {thought.placesMentioned.length > 2 && (
+                <span className="inline-flex items-center rounded-md bg-teal-500/10 px-2 py-0.5 text-xs text-teal-400">
+                  +{thought.placesMentioned.length - 2} more
+                </span>
+              )}
+            </div>
+          )}
         </div>
       </article>
     </Link>

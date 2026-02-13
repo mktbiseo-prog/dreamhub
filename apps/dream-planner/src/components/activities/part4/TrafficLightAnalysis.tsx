@@ -1,10 +1,19 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useState, useEffect } from "react";
 import { Button, cn } from "@dreamhub/ui";
 import { usePlannerStore } from "@/lib/store";
 import type { TrafficItem, TrafficColor } from "@/types/part4";
 import { TRAFFIC_COLORS } from "@/types/part4";
+
+interface TrafficSnapshot {
+  date: string;
+  green: number;
+  yellow: number;
+  red: number;
+}
+
+const TRAFFIC_SNAPSHOT_KEY = "dream-planner-traffic-snapshots";
 import {
   DndContext,
   closestCenter,
@@ -128,6 +137,26 @@ export function TrafficLightAnalysis({ onNext }: { onNext: () => void }) {
   const { data, store } = usePlannerStore();
   const traffic = data.part4.trafficLight;
   const [newItemText, setNewItemText] = useState("");
+  const [trafficSnapshots, setTrafficSnapshots] = useState<TrafficSnapshot[]>([]);
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(TRAFFIC_SNAPSHOT_KEY);
+      if (raw) setTrafficSnapshots(JSON.parse(raw));
+    } catch { /* ignore */ }
+  }, []);
+
+  const saveTrafficSnapshot = () => {
+    const snap: TrafficSnapshot = {
+      date: new Date().toISOString(),
+      green: traffic.items.filter((i) => i.color === "green").length,
+      yellow: traffic.items.filter((i) => i.color === "yellow").length,
+      red: traffic.items.filter((i) => i.color === "red").length,
+    };
+    const next = [...trafficSnapshots, snap].slice(-10);
+    setTrafficSnapshots(next);
+    localStorage.setItem(TRAFFIC_SNAPSHOT_KEY, JSON.stringify(next));
+  };
 
   const sensors = useSensors(useSensor(PointerSensor));
 
@@ -309,6 +338,68 @@ export function TrafficLightAnalysis({ onNext }: { onNext: () => void }) {
           </div>
         );
       })()}
+
+      {/* Snapshot & Trend */}
+      {traffic.items.length >= 3 && (
+        <div className="mb-6 rounded-card border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-900">
+          <div className="mb-3 flex items-center justify-between">
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-400">
+              Progress Over Time
+            </h4>
+            <button
+              type="button"
+              onClick={saveTrafficSnapshot}
+              className="rounded-[6px] bg-brand-100 px-2 py-1 text-[10px] font-semibold text-brand-700 hover:bg-brand-200 dark:bg-brand-900 dark:text-brand-300"
+            >
+              Save Snapshot
+            </button>
+          </div>
+          {trafficSnapshots.length > 0 ? (
+            <div className="space-y-2">
+              {trafficSnapshots.map((snap, i) => {
+                const total = snap.green + snap.yellow + snap.red;
+                return (
+                  <div key={i} className="flex items-center gap-3">
+                    <span className="w-16 shrink-0 text-[10px] text-gray-400">
+                      {new Date(snap.date).toLocaleDateString()}
+                    </span>
+                    <div className="flex h-4 flex-1 overflow-hidden rounded-full">
+                      {snap.green > 0 && (
+                        <div className="bg-green-400" style={{ width: `${(snap.green / total) * 100}%` }} />
+                      )}
+                      {snap.yellow > 0 && (
+                        <div className="bg-yellow-400" style={{ width: `${(snap.yellow / total) * 100}%` }} />
+                      )}
+                      {snap.red > 0 && (
+                        <div className="bg-red-400" style={{ width: `${(snap.red / total) * 100}%` }} />
+                      )}
+                    </div>
+                    <span className="w-20 shrink-0 text-right text-[10px] text-gray-400">
+                      {snap.green}G / {snap.yellow}Y / {snap.red}R
+                    </span>
+                  </div>
+                );
+              })}
+              {trafficSnapshots.length >= 2 && (() => {
+                const first = trafficSnapshots[0];
+                const last = trafficSnapshots[trafficSnapshots.length - 1];
+                const greenDelta = last.green - first.green;
+                const redDelta = last.red - first.red;
+                return (
+                  <p className="mt-2 text-[10px] text-gray-500">
+                    Trend: Green {greenDelta >= 0 ? "+" : ""}{greenDelta}, Red {redDelta >= 0 ? "+" : ""}{redDelta} since first snapshot.
+                    {greenDelta > 0 && redDelta < 0 ? " Great progress!" : greenDelta <= 0 && redDelta > 0 ? " Focus on converting red items." : ""}
+                  </p>
+                );
+              })()}
+            </div>
+          ) : (
+            <p className="text-xs text-gray-400">
+              Save your first snapshot to start tracking progress over time.
+            </p>
+          )}
+        </div>
+      )}
 
       <div className="flex justify-end">
         <Button onClick={onNext} className="gap-2">

@@ -146,39 +146,155 @@ function createTextSprite(text: string): THREE.Sprite {
   return sprite;
 }
 
+// ─── 3D value noise for organic fold generation ────────────────────
+function hash3(ix: number, iy: number, iz: number): number {
+  let h = (ix * 374761393 + iy * 668265263 + iz * 1274126177) | 0;
+  h = ((h ^ (h >> 13)) * 1274126177) | 0;
+  h = h ^ (h >> 16);
+  return (h & 0x7fffffff) / 0x7fffffff;
+}
+
+function smoothstep(t: number): number {
+  return t * t * (3 - 2 * t);
+}
+
+function lerp(a: number, b: number, t: number): number {
+  return a + (b - a) * t;
+}
+
+function noise3D(x: number, y: number, z: number): number {
+  const ix = Math.floor(x);
+  const iy = Math.floor(y);
+  const iz = Math.floor(z);
+  const fx = smoothstep(x - ix);
+  const fy = smoothstep(y - iy);
+  const fz = smoothstep(z - iz);
+
+  return lerp(
+    lerp(
+      lerp(hash3(ix, iy, iz), hash3(ix + 1, iy, iz), fx),
+      lerp(hash3(ix, iy + 1, iz), hash3(ix + 1, iy + 1, iz), fx),
+      fy
+    ),
+    lerp(
+      lerp(hash3(ix, iy, iz + 1), hash3(ix + 1, iy, iz + 1), fx),
+      lerp(hash3(ix, iy + 1, iz + 1), hash3(ix + 1, iy + 1, iz + 1), fx),
+      fy
+    ),
+    fz
+  );
+}
+
+/** Fractal Brownian Motion — layered noise for organic detail */
+function fbm(x: number, y: number, z: number, octaves: number): number {
+  let value = 0;
+  let amplitude = 0.5;
+  let freq = 1;
+  for (let i = 0; i < octaves; i++) {
+    value += amplitude * (noise3D(x * freq, y * freq, z * freq) - 0.5) * 2;
+    amplitude *= 0.5;
+    freq *= 2.2;
+  }
+  return value;
+}
+
 // ─── Deform sphere to look like a brain hemisphere ─────────────────
-function createHemisphere(
-  isLeft: boolean
-): THREE.BufferGeometry {
-  const geometry = new THREE.SphereGeometry(5, 64, 64);
+function createHemisphere(isLeft: boolean): THREE.BufferGeometry {
+  // High-resolution sphere so folds are smooth and detailed
+  const geometry = new THREE.SphereGeometry(5, 96, 96);
   const positions = geometry.attributes.position;
+  const sign = isLeft ? -1 : 1;
 
   for (let i = 0; i < positions.count; i++) {
     let x = positions.getX(i);
     let y = positions.getY(i);
     let z = positions.getZ(i);
 
-    // Elongate front-to-back
-    z *= 1.25;
-    // Flatten top-to-bottom slightly
-    y *= 0.9;
-
-    // Sulci/gyri folds via layered sine waves
-    const fold =
-      Math.sin(y * 3.5) * 0.15 +
-      Math.sin(z * 2.8 + x * 1.5) * 0.12 +
-      Math.sin(x * 4.0 + y * 2.0) * 0.08;
-
     const len = Math.sqrt(x * x + y * y + z * z);
-    if (len > 0) {
-      const scale = 1 + fold;
-      x *= scale;
-      y *= scale;
-      z *= scale;
+    if (len === 0) continue;
+    const nx = x / len;
+    const ny = y / len;
+    const nz = z / len;
+
+    // ── Base shape: elongated front-to-back ──
+    z *= 1.3;
+    x *= 0.92;
+    y *= 0.82;
+
+    // ── Flatten bottom (brain base is flat) ──
+    if (ny < -0.2) {
+      const flatAmt = Math.pow(Math.abs(ny) - 0.2, 0.8) * 0.6;
+      y += flatAmt * len;
     }
 
-    // Offset for longitudinal fissure
-    x += isLeft ? -0.3 : 0.3;
+    // ── Longitudinal fissure: deep medial groove ──
+    const medialDist = Math.abs(x);
+    const fissureDepth = Math.exp(-medialDist * 3.0) * 2.2;
+    x += sign * fissureDepth;
+
+    // ── Frontal lobe: rounded bulge at front ──
+    if (nz > 0.2) {
+      const frontalStr = Math.pow(Math.max(0, nz - 0.2), 1.2);
+      z += frontalStr * 1.0;
+      // Frontal lobe rounds outward
+      x *= 1.0 + frontalStr * 0.15;
+      y *= 1.0 + frontalStr * 0.05;
+    }
+
+    // ── Temporal lobe: prominent downward & outward bulge ──
+    const temporalZone = Math.max(0, (1 - Math.abs(nz)) * Math.max(0, -ny + 0.15) * Math.abs(nx));
+    if (temporalZone > 0) {
+      x += sign * temporalZone * 2.0;
+      y -= temporalZone * 1.5;
+      z += nz * temporalZone * 0.3;
+    }
+
+    // ── Occipital lobe: tapers at back ──
+    if (nz < -0.5) {
+      const occStr = Math.pow(-nz - 0.5, 1.5) * 0.5;
+      x *= 1 - occStr * 0.35;
+    }
+
+    // ── Parietal dome: raised top-back ──
+    if (ny > 0.2 && nz < 0.2) {
+      const parStr = Math.max(0, ny - 0.2) * Math.max(0, 0.2 - nz) * 1.2;
+      y += parStr;
+    }
+
+    // ── Deep sulci & gyri using 3D noise (the key to realistic look) ──
+    // Use the original sphere normal for consistent noise sampling
+    const noiseX = nx * 3.2 + (isLeft ? 0 : 7.7);
+    const noiseY = ny * 3.2;
+    const noiseZ = nz * 3.2;
+
+    // Large-scale folds (major sulci) — deep valleys between gyri
+    const largeFold = fbm(noiseX * 1.0, noiseY * 1.0, noiseZ * 1.0, 3) * 0.45;
+    // Medium-scale wrinkles
+    const medFold = fbm(noiseX * 2.1 + 5.3, noiseY * 2.1, noiseZ * 2.1, 3) * 0.2;
+    // Fine surface texture
+    const fineFold = fbm(noiseX * 4.5 + 11.1, noiseY * 4.5, noiseZ * 4.5, 2) * 0.08;
+
+    // Central sulcus (Rolandic fissure) — prominent groove running top to side
+    const centralSulcus =
+      Math.exp(-Math.pow(nz + 0.05, 2) * 40) *
+      Math.max(0, ny + 0.2) * 0.35;
+
+    // Lateral sulcus (Sylvian fissure) — deep horizontal groove on side
+    const lateralSulcus =
+      Math.exp(-Math.pow(ny + 0.15, 2) * 25) *
+      Math.max(0, Math.abs(nx) - 0.3) *
+      Math.max(0, 1 - Math.abs(nz) * 0.8) * 0.3;
+
+    const totalFold = largeFold + medFold + fineFold - centralSulcus - lateralSulcus;
+
+    // Apply fold as radial displacement
+    const currentLen = Math.sqrt(x * x + y * y + z * z);
+    if (currentLen > 0) {
+      const displace = 1 + totalFold;
+      x *= displace;
+      y *= displace;
+      z *= displace;
+    }
 
     positions.setXYZ(i, x, y, z);
   }
@@ -189,7 +305,7 @@ function createHemisphere(
 
 // ─── Create cerebellum geometry ────────────────────────────────────
 function createCerebellum(): THREE.BufferGeometry {
-  const geometry = new THREE.SphereGeometry(2, 32, 32);
+  const geometry = new THREE.SphereGeometry(2.2, 48, 48);
   const positions = geometry.attributes.position;
 
   for (let i = 0; i < positions.count; i++) {
@@ -197,21 +313,32 @@ function createCerebellum(): THREE.BufferGeometry {
     let y = positions.getY(i);
     let z = positions.getZ(i);
 
-    // Flatten
-    y *= 0.7;
-
-    // Tighter folds
-    const fold =
-      Math.sin(y * 6.0) * 0.1 +
-      Math.sin(z * 5.0 + x * 3.0) * 0.08;
-
     const len = Math.sqrt(x * x + y * y + z * z);
-    if (len > 0) {
-      const scale = 1 + fold;
-      x *= scale;
-      y *= scale;
-      z *= scale;
-    }
+    if (len === 0) continue;
+    const nx = x / len;
+    const ny = y / len;
+
+    // Flatten vertically, widen
+    y *= 0.5;
+    x *= 1.25;
+    z *= 0.85;
+
+    // Two-lobe shape: deep medial vermis groove
+    const medialGroove = Math.exp(-Math.abs(nx) * 5) * 0.4;
+    y -= medialGroove;
+
+    // Characteristic horizontal folia — tight layered ridges
+    const folia =
+      Math.sin(ny * 25.0) * 0.1 +
+      Math.sin(ny * 18.0 + nx * 2.0) * 0.07 +
+      Math.sin(ny * 12.0 + nx * 4.0 + len * 3.0) * 0.05;
+
+    x *= 1 + folia;
+    y *= 1 + folia;
+    z *= 1 + folia;
+
+    // Flatten top where it meets cerebrum
+    if (y > 0) y *= 0.5;
 
     positions.setXYZ(i, x, y, z);
   }
@@ -259,28 +386,36 @@ export function BrainGraph3D({ thoughts, connections }: BrainGraph3DProps) {
       0.1,
       100
     );
-    camera.position.set(0, 5, 20);
+    camera.position.set(0, 8, 22);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setSize(container.clientWidth, container.clientHeight);
     container.appendChild(renderer.domElement);
 
-    // ── Lighting ─────────────────────────────────────────────────
-    const ambient = new THREE.AmbientLight(0x404060, 0.4);
+    // ── Lighting — multiple angles to reveal fold depth ────────
+    const ambient = new THREE.AmbientLight(0x404060, 0.6);
     scene.add(ambient);
 
-    const keyLight = new THREE.DirectionalLight(0x8b7cb8, 1.0);
-    keyLight.position.set(5, 8, 10);
+    // Key light — front-above, warm purple
+    const keyLight = new THREE.DirectionalLight(0xb8a0e8, 1.2);
+    keyLight.position.set(5, 10, 8);
     scene.add(keyLight);
 
-    const fillLight = new THREE.DirectionalLight(0x4a6fa5, 0.5);
-    fillLight.position.set(-5, -5, -10);
+    // Fill light — opposite side, cooler
+    const fillLight = new THREE.DirectionalLight(0x4a6fa5, 0.6);
+    fillLight.position.set(-8, -3, -8);
     scene.add(fillLight);
 
-    const rimLight = new THREE.PointLight(0xa78bfa, 0.3);
-    rimLight.position.set(0, 12, 0);
+    // Top rim for parietal/top highlight
+    const rimLight = new THREE.PointLight(0xa78bfa, 0.5);
+    rimLight.position.set(0, 14, 0);
     scene.add(rimLight);
+
+    // Side light to catch sulci shadows
+    const sideLight = new THREE.DirectionalLight(0x7060b0, 0.4);
+    sideLight.position.set(-10, 2, 3);
+    scene.add(sideLight);
 
     // ── OrbitControls ────────────────────────────────────────────
     const controls = new OrbitControls(camera, renderer.domElement);
@@ -305,56 +440,94 @@ export function BrainGraph3D({ thoughts, connections }: BrainGraph3DProps) {
 
     controls.addEventListener("start", pauseAutoRotate);
 
-    // ── Brain wireframe geometry ─────────────────────────────────
-    const brainMaterial = new THREE.MeshPhysicalMaterial({
-      color: 0x8b7cb8,
+    // ── Brain materials ──────────────────────────────────────────
+    // Solid lit surface — shows fold depth via shading
+    const brainSolidMaterial = new THREE.MeshStandardMaterial({
+      color: 0x9080c0,
+      transparent: true,
+      opacity: 0.18,
+      roughness: 0.7,
+      metalness: 0.05,
+      side: THREE.DoubleSide,
+      depthWrite: false,
+    });
+
+    // Wireframe overlay — subtle structural lines
+    const brainWireMaterial = new THREE.MeshBasicMaterial({
+      color: 0xb0a0e0,
       wireframe: true,
       transparent: true,
-      opacity: 0.12,
+      opacity: 0.06,
+      depthWrite: false,
+    });
+
+    // Emissive Fresnel-like rim — glowing edges for x-ray look
+    const brainGlowMaterial = new THREE.MeshPhysicalMaterial({
+      color: 0x6050a0,
       emissive: 0x8b7cb8,
-      emissiveIntensity: 0.15,
-      depthWrite: false,
-    });
-
-    const brainFillMaterial = new THREE.MeshPhysicalMaterial({
-      color: 0x8b7cb8,
+      emissiveIntensity: 0.35,
       transparent: true,
-      opacity: 0.04,
+      opacity: 0.12,
+      roughness: 1.0,
+      metalness: 0.0,
+      side: THREE.BackSide,
       depthWrite: false,
-      side: THREE.DoubleSide,
     });
 
-    // Left hemisphere
+    // Cerebellum materials (denser ridges visible)
+    const cerebellumSolid = new THREE.MeshStandardMaterial({
+      color: 0x8070b0,
+      transparent: true,
+      opacity: 0.2,
+      roughness: 0.6,
+      metalness: 0.05,
+      side: THREE.DoubleSide,
+      depthWrite: false,
+    });
+    const cerebellumWire = new THREE.MeshBasicMaterial({
+      color: 0xa090d0,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.07,
+      depthWrite: false,
+    });
+
+    // Left hemisphere — 3 layers: solid + wireframe + glow
     const leftGeo = createHemisphere(true);
-    const leftWire = new THREE.Mesh(leftGeo, brainMaterial);
-    const leftFill = new THREE.Mesh(leftGeo, brainFillMaterial);
-    scene.add(leftWire);
-    scene.add(leftFill);
+    scene.add(new THREE.Mesh(leftGeo, brainSolidMaterial));
+    scene.add(new THREE.Mesh(leftGeo, brainWireMaterial));
+    scene.add(new THREE.Mesh(leftGeo, brainGlowMaterial));
 
-    // Right hemisphere
+    // Right hemisphere — 3 layers
     const rightGeo = createHemisphere(false);
-    const rightWire = new THREE.Mesh(rightGeo, brainMaterial);
-    const rightFill = new THREE.Mesh(rightGeo, brainFillMaterial);
-    scene.add(rightWire);
-    scene.add(rightFill);
+    scene.add(new THREE.Mesh(rightGeo, brainSolidMaterial));
+    scene.add(new THREE.Mesh(rightGeo, brainWireMaterial));
+    scene.add(new THREE.Mesh(rightGeo, brainGlowMaterial));
 
-    // Cerebellum
+    // Cerebellum — positioned snug under occipital lobe
     const cerebellumGeo = createCerebellum();
-    const cerebellumWire = new THREE.Mesh(cerebellumGeo, brainMaterial.clone());
-    cerebellumWire.position.set(0, -3.5, -4);
-    const cerebellumFill = new THREE.Mesh(cerebellumGeo, brainFillMaterial.clone());
-    cerebellumFill.position.set(0, -3.5, -4);
-    scene.add(cerebellumWire);
-    scene.add(cerebellumFill);
+    const cbPos = new THREE.Vector3(0, -3.0, -5.0);
+    const cbSolid = new THREE.Mesh(cerebellumGeo, cerebellumSolid);
+    cbSolid.position.copy(cbPos);
+    const cbWire = new THREE.Mesh(cerebellumGeo, cerebellumWire);
+    cbWire.position.copy(cbPos);
+    const cbGlow = new THREE.Mesh(cerebellumGeo, brainGlowMaterial.clone());
+    cbGlow.position.copy(cbPos);
+    scene.add(cbSolid);
+    scene.add(cbWire);
+    scene.add(cbGlow);
 
-    // Brain stem
-    const stemGeo = new THREE.CylinderGeometry(0.8, 0.5, 3, 16);
-    const stemWire = new THREE.Mesh(stemGeo, brainMaterial.clone());
-    stemWire.position.set(0, -6, -3);
-    const stemFill = new THREE.Mesh(stemGeo, brainFillMaterial.clone());
-    stemFill.position.set(0, -6, -3);
-    scene.add(stemWire);
-    scene.add(stemFill);
+    // Brain stem — tapered cylinder angled slightly back
+    const stemGeo = new THREE.CylinderGeometry(0.7, 0.4, 3.5, 16);
+    const stemPos = new THREE.Vector3(0, -5.5, -4.0);
+    const stemSolid = new THREE.Mesh(stemGeo, cerebellumSolid.clone());
+    stemSolid.position.copy(stemPos);
+    stemSolid.rotation.x = 0.15;
+    const stemWireM = new THREE.Mesh(stemGeo, cerebellumWire.clone());
+    stemWireM.position.copy(stemPos);
+    stemWireM.rotation.x = 0.15;
+    scene.add(stemSolid);
+    scene.add(stemWireM);
 
     // ── Shared geometries / textures ─────────────────────────────
     const sharedNodeGeo = new THREE.SphereGeometry(1, 16, 16);
@@ -704,8 +877,11 @@ export function BrainGraph3D({ thoughts, connections }: BrainGraph3DProps) {
       particleGeo.dispose();
 
       // Dispose materials
-      brainMaterial.dispose();
-      brainFillMaterial.dispose();
+      brainSolidMaterial.dispose();
+      brainWireMaterial.dispose();
+      brainGlowMaterial.dispose();
+      cerebellumSolid.dispose();
+      cerebellumWire.dispose();
       particleMat.dispose();
 
       for (const mesh of nodeMeshes) {

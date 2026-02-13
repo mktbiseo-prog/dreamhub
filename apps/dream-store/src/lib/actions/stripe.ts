@@ -38,10 +38,39 @@ export async function createConnectAccount() {
   // Create onboarding link
   const accountLink = await stripe.accountLinks.create({
     account: account.id,
-    refresh_url: `${process.env.NEXTAUTH_URL || "http://localhost:3002"}/stories/create`,
-    return_url: `${process.env.NEXTAUTH_URL || "http://localhost:3002"}/stories/create?stripe_connected=true`,
+    refresh_url: `${process.env.NEXTAUTH_URL || "http://localhost:3002"}/dashboard`,
+    return_url: `${process.env.NEXTAUTH_URL || "http://localhost:3002"}/dashboard?stripe_connected=true`,
     type: "account_onboarding",
   });
 
   return { url: accountLink.url };
+}
+
+export async function createStripeConnectLink(): Promise<{
+  success: boolean;
+  url?: string;
+  message?: string;
+}> {
+  try {
+    const stripe = getStripe();
+
+    if (!stripe) {
+      // Stripe not configured - return a helpful message
+      return {
+        success: false,
+        message:
+          "Stripe is not configured yet. To receive payouts, please contact support to set up Stripe Connect for your account.",
+      };
+    }
+
+    const result = await createConnectAccount();
+    return { success: true, url: result.url };
+  } catch (error: unknown) {
+    const message =
+      error instanceof Error ? error.message : "An unexpected error occurred";
+    return {
+      success: false,
+      message: `Unable to set up Stripe Connect: ${message}`,
+    };
+  }
 }

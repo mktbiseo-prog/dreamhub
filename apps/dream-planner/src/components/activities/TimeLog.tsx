@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Button, Input, cn } from "@dreamhub/ui";
 import {
   PieChart,
@@ -115,9 +115,180 @@ function TimeBlockCard({
   );
 }
 
+// ── Time Log Templates ──
+const TIME_TEMPLATES: {
+  key: string;
+  label: string;
+  description: string;
+  blocks: Omit<TimeBlock, "id">[];
+}[] = [
+  {
+    key: "worker",
+    label: "Office Worker",
+    description: "Typical 9-5 with commute, meals, and evening wind-down",
+    blocks: [
+      { day: 0, startHour: 7, duration: 1, activity: "Commute", type: "essential" },
+      { day: 0, startHour: 9, duration: 4, activity: "Work (Morning)", type: "productive" },
+      { day: 0, startHour: 13, duration: 1, activity: "Lunch Break", type: "essential" },
+      { day: 0, startHour: 14, duration: 4, activity: "Work (Afternoon)", type: "productive" },
+      { day: 0, startHour: 18, duration: 1, activity: "Commute Home", type: "essential" },
+      { day: 0, startHour: 19, duration: 1, activity: "Dinner / Family", type: "essential" },
+      { day: 0, startHour: 20, duration: 2, activity: "Streaming / Scrolling", type: "consumption" },
+      { day: 5, startHour: 10, duration: 2, activity: "Errands / Chores", type: "essential" },
+      { day: 5, startHour: 14, duration: 3, activity: "Hobbies / Side project", type: "productive" },
+      { day: 5, startHour: 19, duration: 3, activity: "Social / Entertainment", type: "consumption" },
+    ],
+  },
+  {
+    key: "freelancer",
+    label: "Freelancer",
+    description: "Flexible schedule with morning deep work and scattered tasks",
+    blocks: [
+      { day: 0, startHour: 6, duration: 1, activity: "Morning Routine", type: "essential" },
+      { day: 0, startHour: 7, duration: 3, activity: "Deep Work", type: "productive" },
+      { day: 0, startHour: 10, duration: 1, activity: "Email / Admin", type: "productive" },
+      { day: 0, startHour: 12, duration: 1, activity: "Lunch", type: "essential" },
+      { day: 0, startHour: 13, duration: 2, activity: "Client Calls", type: "productive" },
+      { day: 0, startHour: 15, duration: 1.5, activity: "Social Media / Content", type: "productive" },
+      { day: 0, startHour: 17, duration: 1, activity: "Exercise", type: "essential" },
+      { day: 0, startHour: 19, duration: 2, activity: "Learning / Reading", type: "productive" },
+      { day: 0, startHour: 21, duration: 1.5, activity: "YouTube / Netflix", type: "consumption" },
+      { day: 6, startHour: 10, duration: 4, activity: "Rest / Recharge", type: "consumption" },
+    ],
+  },
+  {
+    key: "student",
+    label: "Student",
+    description: "Class schedule with study blocks and campus life",
+    blocks: [
+      { day: 0, startHour: 8, duration: 2, activity: "Lecture", type: "productive" },
+      { day: 0, startHour: 10, duration: 1.5, activity: "Study / Library", type: "productive" },
+      { day: 0, startHour: 12, duration: 1, activity: "Lunch with Friends", type: "essential" },
+      { day: 0, startHour: 13, duration: 2, activity: "Lecture / Lab", type: "productive" },
+      { day: 0, startHour: 15, duration: 1.5, activity: "Part-time Job", type: "productive" },
+      { day: 0, startHour: 17, duration: 1, activity: "Exercise / Club", type: "essential" },
+      { day: 0, startHour: 19, duration: 2, activity: "Homework / Projects", type: "productive" },
+      { day: 0, startHour: 21, duration: 2, activity: "Social Media / Games", type: "consumption" },
+      { day: 5, startHour: 11, duration: 3, activity: "Side Project / Hustle", type: "productive" },
+      { day: 6, startHour: 14, duration: 3, activity: "Weekend Hangout", type: "consumption" },
+    ],
+  },
+];
+
+// ── Golden Time Heatmap ──
+function GoldenTimeHeatmap({ blocks }: { blocks: TimeBlock[] }) {
+  const heatData = useMemo(() => {
+    // Build a 7-day x 17-hour grid (6AM-10PM)
+    const grid: Record<string, number> = {};
+    blocks
+      .filter((b) => b.type === "productive")
+      .forEach((b) => {
+        for (let h = b.startHour; h < b.startHour + b.duration && h <= 22; h++) {
+          const key = `${b.day}-${Math.floor(h)}`;
+          grid[key] = (grid[key] || 0) + 1;
+        }
+      });
+
+    // Find max for normalization
+    const vals = Object.values(grid);
+    const maxVal = vals.length > 0 ? Math.max(...vals) : 1;
+
+    // Find golden windows (top 3 hours)
+    const hourTotals: Record<number, number> = {};
+    blocks.filter((b) => b.type === "productive").forEach((b) => {
+      for (let h = b.startHour; h < b.startHour + b.duration && h <= 22; h++) {
+        hourTotals[Math.floor(h)] = (hourTotals[Math.floor(h)] || 0) + b.duration;
+      }
+    });
+    const goldenHours = Object.entries(hourTotals)
+      .sort(([, a], [, b]) => b - a)
+      .slice(0, 3)
+      .map(([h]) => Number(h));
+
+    return { grid, maxVal, goldenHours };
+  }, [blocks]);
+
+  const displayHours = Array.from({ length: 9 }, (_, i) => i * 2 + 6); // 6,8,10,...,22
+
+  return (
+    <div className="mb-6 rounded-card border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-900">
+      <div className="mb-3 flex items-center justify-between">
+        <h4 className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-gray-400">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="5" />
+            <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
+          </svg>
+          Golden Time Heatmap
+        </h4>
+        {heatData.goldenHours.length > 0 && (
+          <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-semibold text-amber-700 dark:bg-amber-900 dark:text-amber-300">
+            Peak: {heatData.goldenHours.map((h) => `${h}:00`).join(", ")}
+          </span>
+        )}
+      </div>
+      <div className="overflow-x-auto">
+        <div className="min-w-[400px]">
+          {/* Header row */}
+          <div className="mb-1 flex">
+            <div className="w-10 shrink-0" />
+            {DAYS.map((d) => (
+              <div key={d} className="flex-1 text-center text-[10px] font-medium text-gray-400">
+                {d}
+              </div>
+            ))}
+          </div>
+          {/* Hour rows */}
+          {displayHours.map((hour) => (
+            <div key={hour} className="flex items-center gap-0.5">
+              <div className="w-10 shrink-0 text-right text-[10px] text-gray-400 pr-1">
+                {hour.toString().padStart(2, "0")}:00
+              </div>
+              {DAYS.map((_, dayIdx) => {
+                const val = heatData.grid[`${dayIdx}-${hour}`] || 0;
+                const intensity = heatData.maxVal > 0 ? val / heatData.maxVal : 0;
+                const isGolden = heatData.goldenHours.includes(hour) && val > 0;
+                return (
+                  <div
+                    key={dayIdx}
+                    className={cn(
+                      "flex-1 mx-0.5 h-5 rounded-[3px] transition-colors",
+                      val === 0
+                        ? "bg-gray-100 dark:bg-gray-800"
+                        : isGolden
+                          ? "bg-amber-400 dark:bg-amber-600"
+                          : intensity > 0.6
+                            ? "bg-green-500 dark:bg-green-600"
+                            : intensity > 0.3
+                              ? "bg-green-300 dark:bg-green-700"
+                              : "bg-green-100 dark:bg-green-900"
+                    )}
+                    title={val > 0 ? `${DAYS[dayIdx]} ${hour}:00 — ${val}h productive` : `${DAYS[dayIdx]} ${hour}:00`}
+                  />
+                );
+              })}
+            </div>
+          ))}
+          {/* Legend */}
+          <div className="mt-2 flex items-center justify-end gap-2 text-[10px] text-gray-400">
+            <span>Less</span>
+            <span className="h-3 w-3 rounded-[2px] bg-gray-100 dark:bg-gray-800" />
+            <span className="h-3 w-3 rounded-[2px] bg-green-100 dark:bg-green-900" />
+            <span className="h-3 w-3 rounded-[2px] bg-green-300 dark:bg-green-700" />
+            <span className="h-3 w-3 rounded-[2px] bg-green-500 dark:bg-green-600" />
+            <span className="h-3 w-3 rounded-[2px] bg-amber-400 dark:bg-amber-600" />
+            <span>Golden</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function TimeLog({ onNext }: { onNext: () => void }) {
   const { data, store } = usePlannerStore();
   const blocks = data.timeBlocks;
+
+  const [showTemplates, setShowTemplates] = useState(false);
 
   const addBlock = () => {
     store.setTimeBlocks([
@@ -131,6 +302,17 @@ export function TimeLog({ onNext }: { onNext: () => void }) {
         type: "productive" as TimeBlockType,
       },
     ]);
+  };
+
+  const applyTemplate = (templateKey: string) => {
+    const tpl = TIME_TEMPLATES.find((t) => t.key === templateKey);
+    if (!tpl) return;
+    const newBlocks: TimeBlock[] = tpl.blocks.map((b) => ({
+      ...b,
+      id: crypto.randomUUID(),
+    }));
+    store.setTimeBlocks([...blocks, ...newBlocks]);
+    setShowTemplates(false);
   };
 
   const updateBlock = (id: string, updates: Partial<TimeBlock>) => {
@@ -267,6 +449,11 @@ export function TimeLog({ onNext }: { onNext: () => void }) {
         </div>
       )}
 
+      {/* Golden Time Heatmap */}
+      {blocks.filter((b) => b.type === "productive").length >= 2 && (
+        <GoldenTimeHeatmap blocks={blocks} />
+      )}
+
       {/* Pattern Insights */}
       {blocks.length >= 3 && (() => {
         const insights: { icon: string; text: string; type: "success" | "warning" | "info" }[] = [];
@@ -384,14 +571,63 @@ export function TimeLog({ onNext }: { onNext: () => void }) {
         )}
       </div>
 
+      {/* Template Picker */}
+      {blocks.length === 0 && !showTemplates && (
+        <div className="mt-4 rounded-card border border-blue-200 bg-gradient-to-r from-blue-50 to-cyan-50 p-4 dark:border-blue-800 dark:from-blue-950 dark:to-cyan-950">
+          <div className="mb-2 flex items-center gap-2">
+            <span className="rounded-md bg-blue-100 px-1.5 py-0.5 text-[10px] font-bold text-blue-700 dark:bg-blue-900 dark:text-blue-300">TIP</span>
+            <span className="text-xs font-medium text-blue-700 dark:text-blue-300">Start with a Template</span>
+          </div>
+          <p className="mb-3 text-xs text-gray-600 dark:text-gray-400">
+            Choose a preset that matches your lifestyle, then customize it to fit your actual schedule.
+          </p>
+          <Button size="sm" variant="outline" onClick={() => setShowTemplates(true)}>
+            Browse Templates
+          </Button>
+        </div>
+      )}
+
+      {showTemplates && (
+        <div className="mt-4 space-y-3">
+          <div className="flex items-center justify-between">
+            <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300">Choose a Template</h4>
+            <button type="button" onClick={() => setShowTemplates(false)} className="text-xs text-gray-400 hover:text-gray-600">
+              Cancel
+            </button>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-3">
+            {TIME_TEMPLATES.map((tpl) => (
+              <button
+                key={tpl.key}
+                type="button"
+                onClick={() => applyTemplate(tpl.key)}
+                className="rounded-card border-2 border-gray-200 bg-white p-4 text-left transition-all hover:border-brand-400 hover:shadow-md dark:border-gray-700 dark:bg-gray-900 dark:hover:border-brand-500"
+              >
+                <p className="mb-1 text-sm font-semibold text-gray-900 dark:text-gray-100">{tpl.label}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">{tpl.description}</p>
+                <p className="mt-2 text-[10px] text-brand-500">{tpl.blocks.length} blocks</p>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Add Button */}
-      <div className="mt-6">
-        <Button onClick={addBlock} className="w-full gap-2" variant="outline">
+      <div className="mt-6 flex gap-2">
+        <Button onClick={addBlock} className="flex-1 gap-2" variant="outline">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
             <path d="M12 5v14M5 12h14" />
           </svg>
           Add Time Block
         </Button>
+        {blocks.length > 0 && (
+          <Button variant="outline" onClick={() => setShowTemplates(!showTemplates)} className="gap-2">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" /><rect x="3" y="14" width="7" height="7" /><rect x="14" y="14" width="7" height="7" />
+            </svg>
+            Templates
+          </Button>
+        )}
       </div>
 
       {/* Footer */}

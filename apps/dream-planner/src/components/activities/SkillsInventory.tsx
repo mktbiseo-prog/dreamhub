@@ -7,6 +7,109 @@ import { usePlannerStore } from "@/lib/store";
 import type { SkillItem, SkillCategory } from "@/types/planner";
 import { SKILL_TABS } from "@/types/planner";
 
+interface ValueProposition {
+  title: string;
+  description: string;
+  skills: string[];
+}
+
+function AiValuePropositions({ skills, combinations }: { skills: SkillItem[]; combinations: string[] }) {
+  const [propositions, setPropositions] = useState<ValueProposition[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [generated, setGenerated] = useState(false);
+
+  const handleGenerate = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch("/api/skills/combine", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          skills: skills.filter((s) => s.name.trim() && s.proficiency >= 2).map((s) => ({
+            name: s.name,
+            category: s.category,
+            proficiency: s.proficiency,
+          })),
+        }),
+      });
+      if (res.ok) {
+        const data = await res.json() as { valuePropositions: ValueProposition[] };
+        setPropositions(data.valuePropositions);
+        setGenerated(true);
+      }
+    } catch {
+      // silently fail
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="mt-4 rounded-card border border-emerald-200 bg-gradient-to-r from-emerald-50 to-teal-50 p-4 dark:border-emerald-800 dark:from-emerald-950 dark:to-teal-950">
+      <div className="mb-2 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <span className="rounded-md bg-emerald-100 px-1.5 py-0.5 text-[10px] font-bold text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300">AI</span>
+          <span className="text-xs font-medium text-emerald-700 dark:text-emerald-300">
+            {generated ? "Value You Can Provide" : "Your Unique Skill Combinations"}
+          </span>
+        </div>
+        <button
+          type="button"
+          onClick={handleGenerate}
+          disabled={loading}
+          className="flex items-center gap-1 rounded-md bg-emerald-600 px-2.5 py-1 text-[10px] font-semibold text-white transition-colors hover:bg-emerald-700 disabled:opacity-50"
+        >
+          {loading ? (
+            <>
+              <svg className="h-3 w-3 animate-spin" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" className="opacity-25" /><path fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" className="opacity-75" /></svg>
+              Analyzing...
+            </>
+          ) : generated ? "Regenerate" : "Generate Value Ideas"}
+        </button>
+      </div>
+
+      {!generated && (
+        <>
+          <p className="mb-3 text-xs text-gray-500 dark:text-gray-400">
+            Cross-category skills create unique value. Click &quot;Generate Value Ideas&quot; for AI-powered suggestions.
+          </p>
+          <div className="grid gap-2 sm:grid-cols-2">
+            {combinations.map((combo, i) => (
+              <div key={i} className="flex items-center gap-2 rounded-[8px] bg-white px-3 py-2 dark:bg-gray-800">
+                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-[10px] font-bold text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300">{i + 1}</span>
+                <span className="text-xs font-medium text-gray-700 dark:text-gray-300">{combo}</span>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+
+      {generated && propositions.length > 0 && (
+        <div className="space-y-2">
+          {propositions.map((prop, i) => (
+            <div key={i} className="rounded-[8px] bg-white p-3 dark:bg-gray-800">
+              <div className="mb-1 flex items-start gap-2">
+                <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-500 text-[10px] font-bold text-white">{i + 1}</span>
+                <div>
+                  <p className="text-xs font-semibold text-gray-900 dark:text-gray-100">{prop.title}</p>
+                  <p className="mt-0.5 text-xs text-gray-500 dark:text-gray-400">{prop.description}</p>
+                  {prop.skills.length > 0 && (
+                    <div className="mt-1.5 flex flex-wrap gap-1">
+                      {prop.skills.map((s) => (
+                        <span key={s} className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-medium text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300">{s}</span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function TagCloud({ skills }: { skills: SkillItem[] }) {
   const namedSkills = skills.filter((s) => s.name.trim());
   if (namedSkills.length === 0) return null;
@@ -216,25 +319,9 @@ export function SkillsInventory({ onNext }: { onNext: () => void }) {
         </div>
       )}
 
-      {/* AI Combination Engine */}
+      {/* AI Value Proposition Engine */}
       {combinations.length > 0 && (
-        <div className="mt-4 rounded-card border border-emerald-200 bg-gradient-to-r from-emerald-50 to-teal-50 p-4 dark:border-emerald-800 dark:from-emerald-950 dark:to-teal-950">
-          <div className="mb-2 flex items-center gap-2">
-            <span className="rounded-md bg-emerald-100 px-1.5 py-0.5 text-[10px] font-bold text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300">AI</span>
-            <span className="text-xs font-medium text-emerald-700 dark:text-emerald-300">Your unique skill combinations</span>
-          </div>
-          <p className="mb-3 text-xs text-gray-500 dark:text-gray-400">
-            Cross-category skills create unique value. Here are combinations from your top-rated skills:
-          </p>
-          <div className="grid gap-2 sm:grid-cols-2">
-            {combinations.map((combo, i) => (
-              <div key={i} className="flex items-center gap-2 rounded-[8px] bg-white px-3 py-2 dark:bg-gray-800">
-                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-[10px] font-bold text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300">{i + 1}</span>
-                <span className="text-xs font-medium text-gray-700 dark:text-gray-300">{combo}</span>
-              </div>
-            ))}
-          </div>
-        </div>
+        <AiValuePropositions skills={skills} combinations={combinations} />
       )}
 
       <div className="mt-8 flex items-center justify-between">

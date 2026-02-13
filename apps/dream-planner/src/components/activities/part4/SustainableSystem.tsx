@@ -1,9 +1,9 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { Button, cn } from "@dreamhub/ui";
 import { usePlannerStore } from "@/lib/store";
-import type { CoreActivity, DistractionItem, RewardItem } from "@/types/part4";
+import type { CoreActivity, DistractionItem, RewardItem, HabitCheck } from "@/types/part4";
 
 export function SustainableSystem({ onNext }: { onNext: () => void }) {
   const { data, store } = usePlannerStore();
@@ -261,6 +261,110 @@ export function SustainableSystem({ onNext }: { onNext: () => void }) {
           })}
         </div>
       </div>
+
+      {/* Habit Tracker */}
+      {system.coreActivities.some((a) => a.name.trim()) && (() => {
+        const today = new Date().toISOString().split("T")[0];
+        const checks = system.habitChecks || [];
+        const todayCheck = checks.find((c) => c.date === today);
+
+        // Calculate streak
+        const sortedChecks = [...checks]
+          .filter((c) => c.completed)
+          .sort((a, b) => b.date.localeCompare(a.date));
+        let streak = 0;
+        const checkDate = new Date();
+        for (let i = 0; i < 365; i++) {
+          const dateStr = checkDate.toISOString().split("T")[0];
+          if (sortedChecks.some((c) => c.date === dateStr)) {
+            streak++;
+            checkDate.setDate(checkDate.getDate() - 1);
+          } else if (i === 0) {
+            // Today not checked yet is OK
+            checkDate.setDate(checkDate.getDate() - 1);
+          } else {
+            break;
+          }
+        }
+
+        // Last 30 days grid
+        const last30: { date: string; done: boolean }[] = [];
+        for (let i = 29; i >= 0; i--) {
+          const d = new Date();
+          d.setDate(d.getDate() - i);
+          const ds = d.toISOString().split("T")[0];
+          last30.push({ date: ds, done: checks.some((c) => c.date === ds && c.completed) });
+        }
+        const completedDays = last30.filter((d) => d.done).length;
+
+        const toggleToday = () => {
+          const existing = checks.find((c) => c.date === today);
+          let next: HabitCheck[];
+          if (existing) {
+            next = checks.map((c) =>
+              c.date === today ? { ...c, completed: !c.completed } : c
+            );
+          } else {
+            next = [...checks, { date: today, completed: true }];
+          }
+          updateSystem({ habitChecks: next });
+        };
+
+        return (
+          <div className="mb-6 rounded-card border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-900">
+            <div className="mb-3 flex items-center justify-between">
+              <h3 className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
+                  <path d="M22 4L12 14.01l-3-3" />
+                </svg>
+                Daily Habit Tracker
+              </h3>
+              <div className="flex items-center gap-2">
+                {streak > 0 && (
+                  <span className="rounded-full bg-orange-100 px-2 py-0.5 text-xs font-bold text-orange-600 dark:bg-orange-900 dark:text-orange-300">
+                    {streak} day streak
+                  </span>
+                )}
+                <button
+                  type="button"
+                  onClick={toggleToday}
+                  className={cn(
+                    "rounded-full px-3 py-1 text-xs font-semibold transition-all",
+                    todayCheck?.completed
+                      ? "bg-emerald-500 text-white hover:bg-emerald-600"
+                      : "bg-gray-100 text-gray-600 hover:bg-emerald-100 hover:text-emerald-700 dark:bg-gray-800 dark:text-gray-400"
+                  )}
+                >
+                  {todayCheck?.completed ? "Done Today" : "Check In"}
+                </button>
+              </div>
+            </div>
+
+            {/* 30-day grid */}
+            <div className="mb-2 flex flex-wrap gap-1">
+              {last30.map((day) => (
+                <div
+                  key={day.date}
+                  className={cn(
+                    "h-4 w-4 rounded-[3px] transition-colors",
+                    day.done
+                      ? "bg-emerald-400 dark:bg-emerald-600"
+                      : day.date === today
+                        ? "border-2 border-dashed border-emerald-300 bg-white dark:border-emerald-700 dark:bg-gray-800"
+                        : "bg-gray-100 dark:bg-gray-800"
+                  )}
+                  title={`${day.date}${day.done ? " — completed" : ""}`}
+                />
+              ))}
+            </div>
+            <div className="flex items-center justify-between text-[10px] text-gray-400">
+              <span>Last 30 days</span>
+              <span>{completedDays}/30 days ({Math.round((completedDays / 30) * 100)}%)</span>
+            </div>
+          </div>
+        );
+      })()}
 
       {/* AI System Health Check */}
       {system.coreActivities.some((a) => a.name.trim()) && (() => {

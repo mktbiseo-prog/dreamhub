@@ -1,13 +1,15 @@
-import type { DreamStory, Supporter, DreamCommentView } from "./types";
+import type { DreamStory, Supporter, DreamCommentView, ReviewView } from "./types";
 
 const storyDefaults = {
   creatorBio: "",
   originStory: "",
   processImages: [] as string[],
   impactStatement: "",
+  videoUrl: "",
   isFeatured: false,
   isStaffPick: false,
   creatorStage: "early" as string,
+  status: "ACTIVE" as const,
   followerCount: 0,
 };
 
@@ -16,6 +18,7 @@ export const MOCK_STORIES: DreamStory[] = [
     ...storyDefaults,
     id: "story-1",
     userId: "user-1",
+    videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
     title: "Handcrafted Ceramics from My Home Studio",
     statement:
       "I dream of turning my passion for ceramics into a full-time career. Every piece I create is shaped by hand with love and intention. My goal is to build a sustainable studio where I can teach others and create pieces that bring warmth to people's homes.",
@@ -295,6 +298,42 @@ export const MOCK_SUPPORTERS: Supporter[] = [
   { id: "s6", name: "Taylor Swift", avatar: "https://images.unsplash.com/photo-1607746882042-944635dfe10e?w=80&h=80&fit=crop&crop=face", supportedAt: "2026-01-03", amount: 5800 },
   { id: "s7", name: "Jamie Fox", avatar: "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=80&h=80&fit=crop&crop=face", supportedAt: "2025-12-28", amount: 3500 },
   { id: "s8", name: "Morgan Yu", avatar: "https://images.unsplash.com/photo-1645830166230-187caf791b90?w=80&h=80&fit=crop&crop=face", supportedAt: "2025-12-25", amount: 3500 },
+];
+
+export const MOCK_REVIEWS: ReviewView[] = [
+  {
+    id: "rev-1",
+    productId: "prod-1",
+    rating: 5,
+    content: "This mug is absolutely gorgeous! The sunrise glaze is even more beautiful in person. I use it every morning and it brings me so much joy. You can tell it was made with real love and craftsmanship.",
+    images: [],
+    buyerName: "Alex Rivera",
+    buyerAvatar: "https://images.unsplash.com/photo-1599566150163-29194dcabd9c?w=80&h=80&fit=crop&crop=face",
+    buyerId: "s1",
+    createdAt: "2026-01-18",
+  },
+  {
+    id: "rev-2",
+    productId: "prod-1",
+    rating: 4,
+    content: "Beautiful mug with a unique glaze pattern. Slightly smaller than expected, but the quality is outstanding. Love supporting Maya's dream of opening a studio!",
+    images: [],
+    buyerName: "Sam Patel",
+    buyerAvatar: "https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=80&h=80&fit=crop&crop=face",
+    buyerId: "s3",
+    createdAt: "2026-01-14",
+  },
+  {
+    id: "rev-3",
+    productId: "prod-1",
+    rating: 5,
+    content: "Bought this as a gift for my partner and they absolutely loved it. The handmade quality is evident — each imperfection makes it feel special and personal. Already planning to order the bowl set next!",
+    images: [],
+    buyerName: "Casey Kim",
+    buyerAvatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=80&h=80&fit=crop&crop=face",
+    buyerId: "s4",
+    createdAt: "2026-01-10",
+  },
 ];
 
 export const MOCK_COMMENTS: DreamCommentView[] = [

@@ -123,10 +123,16 @@ export interface RewardItem {
   reward: string;
 }
 
+export interface HabitCheck {
+  date: string; // YYYY-MM-DD
+  completed: boolean;
+}
+
 export interface SustainableSystemData {
   coreActivities: CoreActivity[];
   distractions: DistractionItem[];
   rewards: RewardItem[];
+  habitChecks: HabitCheck[];
 }
 
 // ── Activity 19: Traffic Light Analysis ──
@@ -240,6 +246,7 @@ export const DEFAULT_PART4_DATA: Part4Data = {
     coreActivities: [],
     distractions: [],
     rewards: [],
+    habitChecks: [],
   },
   trafficLight: { items: [] },
   sustainabilityChecklist: {

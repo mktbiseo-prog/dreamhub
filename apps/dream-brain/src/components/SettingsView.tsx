@@ -11,7 +11,7 @@ import {
   Trash2,
   Check,
 } from "lucide-react";
-import { updateUserPreferences, exportUserData, deleteAllUserData } from "@/lib/actions/settings";
+import { updateUserPreferences, exportUserData, exportUserDataMarkdown, deleteAllUserData } from "@/lib/actions/settings";
 import type { UserPreferencesData } from "@/lib/queries";
 
 interface SettingsViewProps {
@@ -86,6 +86,19 @@ export function SettingsView({ preferences, isDemo }: SettingsViewProps) {
       const a = document.createElement("a");
       a.href = url;
       a.download = `dream-brain-export-${new Date().toISOString().split("T")[0]}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+  }
+
+  function handleExportMarkdown() {
+    startTransition(async () => {
+      const data = await exportUserDataMarkdown();
+      const blob = new Blob([data], { type: "text/markdown" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `dream-brain-export-${new Date().toISOString().split("T")[0]}.md`;
       a.click();
       URL.revokeObjectURL(url);
     });
@@ -254,6 +267,15 @@ export function SettingsView({ preferences, isDemo }: SettingsViewProps) {
             >
               <Download className="h-4 w-4" />
               Export all data (JSON)
+            </button>
+            <button
+              type="button"
+              onClick={handleExportMarkdown}
+              disabled={isPending}
+              className="inline-flex items-center gap-2 rounded-xl border border-white/10 px-4 py-2.5 text-sm text-gray-300 transition-colors hover:bg-white/5 disabled:opacity-50"
+            >
+              <Download className="h-4 w-4" />
+              Export as Markdown (.md)
             </button>
             <button
               type="button"

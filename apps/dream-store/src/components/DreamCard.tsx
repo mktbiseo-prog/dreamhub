@@ -1,12 +1,14 @@
 import Link from "next/link";
 import type { DreamStory } from "@/lib/types";
 import { formatPrice } from "@/lib/mockData";
+import { BookmarkButton } from "@/components/BookmarkButton";
 
 interface DreamCardProps {
   story: DreamStory;
+  isBookmarked?: boolean;
 }
 
-export function DreamCard({ story }: DreamCardProps) {
+export function DreamCard({ story, isBookmarked = false }: DreamCardProps) {
   const completedMilestones = story.milestones.filter((m) => m.completed).length;
   const progressPercent = Math.round(
     (completedMilestones / story.milestones.length) * 100
@@ -31,8 +33,13 @@ export function DreamCard({ story }: DreamCardProps) {
         <span className="absolute left-3 top-3 rounded-full bg-white/90 px-2.5 py-1 text-xs font-medium text-gray-700 dark:bg-gray-900/90 dark:text-gray-300">
           {story.category}
         </span>
-        {/* Staff Pick / Featured badges */}
-        <div className="absolute right-3 top-3 flex flex-col gap-1">
+        {/* Staff Pick / Featured / Coming Soon badges */}
+        <div className="absolute right-3 top-3 flex flex-col items-end gap-1">
+          {story.status === "PREVIEW" && (
+            <span className="rounded-full bg-orange-500 px-2 py-0.5 text-[10px] font-bold text-white shadow-sm">
+              Coming Soon
+            </span>
+          )}
           {story.isStaffPick && (
             <span className="rounded-full bg-yellow-400 px-2 py-0.5 text-[10px] font-bold text-yellow-900 shadow-sm">
               Staff Pick
@@ -43,6 +50,13 @@ export function DreamCard({ story }: DreamCardProps) {
               Featured
             </span>
           )}
+        </div>
+        {/* Bookmark Button */}
+        <div className="absolute bottom-3 right-3">
+          <BookmarkButton
+            dreamStoryId={story.id}
+            initialBookmarked={isBookmarked}
+          />
         </div>
       </div>
 
@@ -89,11 +103,17 @@ export function DreamCard({ story }: DreamCardProps) {
           </div>
         </div>
 
-        {/* Price */}
-        {lowestPrice > 0 && (
-          <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
-            From {formatPrice(lowestPrice)}
+        {/* Price — hidden for Coming Soon */}
+        {story.status === "PREVIEW" ? (
+          <p className="text-sm font-medium text-orange-600 dark:text-orange-400">
+            Coming Soon
           </p>
+        ) : (
+          lowestPrice > 0 && (
+            <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              From {formatPrice(lowestPrice)}
+            </p>
+          )
         )}
       </div>
     </Link>

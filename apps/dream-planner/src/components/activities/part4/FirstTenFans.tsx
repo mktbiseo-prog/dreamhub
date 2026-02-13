@@ -1,11 +1,147 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { Button, cn } from "@dreamhub/ui";
 import { usePlannerStore } from "@/lib/store";
 import { CrossPartRef } from "@/components/planner/CrossPartRef";
 import type { FanCandidate, FanStage } from "@/types/part4";
 import { FAN_STAGES } from "@/types/part4";
+import type { PersonaResult } from "@/app/api/persona/route";
+
+function AiPersonaCard({ fans }: { fans: FanCandidate[] }) {
+  const { data } = usePlannerStore();
+  const [persona, setPersona] = useState<PersonaResult | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const generatePersona = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch("/api/persona", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          fans: fans.map((f) => ({
+            name: f.name,
+            where: f.where,
+            problem: f.problem,
+            stage: f.stage,
+          })),
+          dreamStatement: data.dreamStatement,
+        }),
+      });
+      if (res.ok) {
+        setPersona(await res.json() as PersonaResult);
+      }
+    } catch {
+      // silently fail
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="mt-3 border-t border-emerald-200 pt-3 dark:border-emerald-800">
+      {!persona ? (
+        <button
+          type="button"
+          onClick={generatePersona}
+          disabled={loading}
+          className="flex w-full items-center justify-center gap-2 rounded-[8px] bg-emerald-600 px-3 py-2 text-xs font-semibold text-white transition-colors hover:bg-emerald-700 disabled:opacity-50"
+        >
+          {loading ? (
+            <>
+              <svg className="h-3 w-3 animate-spin" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" className="opacity-25" />
+                <path fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" className="opacity-75" />
+              </svg>
+              Generating Persona...
+            </>
+          ) : (
+            <>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+              </svg>
+              Generate Target Persona
+            </>
+          )}
+        </button>
+      ) : (
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <p className="text-xs font-bold text-emerald-700 dark:text-emerald-300">
+              Target Customer Persona
+            </p>
+            <button
+              type="button"
+              onClick={generatePersona}
+              disabled={loading}
+              className="text-[10px] text-emerald-500 hover:text-emerald-700 disabled:opacity-50"
+            >
+              {loading ? "..." : "Regenerate"}
+            </button>
+          </div>
+
+          <div className="rounded-[8px] bg-white p-3 dark:bg-gray-800">
+            <p className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-gray-400">
+              Who They Are
+            </p>
+            <p className="text-xs text-gray-700 dark:text-gray-300">{persona.demographics}</p>
+          </div>
+
+          <div className="grid gap-2 sm:grid-cols-2">
+            <div className="rounded-[8px] bg-white p-3 dark:bg-gray-800">
+              <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-red-500">
+                Pain Points
+              </p>
+              <ul className="space-y-1">
+                {persona.painPoints.map((p, i) => (
+                  <li key={i} className="flex items-start gap-1.5 text-xs text-gray-600 dark:text-gray-400">
+                    <span className="mt-1 h-1 w-1 shrink-0 rounded-full bg-red-400" />
+                    {p}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="rounded-[8px] bg-white p-3 dark:bg-gray-800">
+              <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-emerald-500">
+                Desires
+              </p>
+              <ul className="space-y-1">
+                {persona.desires.map((d, i) => (
+                  <li key={i} className="flex items-start gap-1.5 text-xs text-gray-600 dark:text-gray-400">
+                    <span className="mt-1 h-1 w-1 shrink-0 rounded-full bg-emerald-400" />
+                    {d}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          <div className="rounded-[8px] bg-white p-3 dark:bg-gray-800">
+            <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-blue-500">
+              Best Channels
+            </p>
+            <div className="flex flex-wrap gap-1.5">
+              {persona.channels.map((c, i) => (
+                <span key={i} className="rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-medium text-blue-700 dark:bg-blue-900 dark:text-blue-300">
+                  {c}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          <div className="rounded-[8px] bg-amber-50 p-3 dark:bg-amber-950">
+            <p className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-amber-600">
+              Messaging Tip
+            </p>
+            <p className="text-xs text-amber-800 dark:text-amber-300">{persona.messagingTip}</p>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 
 export function FirstTenFans({ onNext }: { onNext: () => void }) {
   const { data, store } = usePlannerStore();
@@ -185,7 +321,6 @@ export function FirstTenFans({ onNext }: { onNext: () => void }) {
         const sourceFreq: Record<string, number> = {};
         sources.forEach((s) => { sourceFreq[s] = (sourceFreq[s] || 0) + 1; });
         const topSource = Object.entries(sourceFreq).sort((a, b) => b[1] - a[1])[0];
-        const problems = named.map((f) => f.problem).filter(Boolean);
 
         return (
           <div className="mb-6 rounded-card border border-emerald-200 bg-gradient-to-r from-emerald-50 to-teal-50 p-4 dark:border-emerald-800 dark:from-emerald-950 dark:to-teal-950">
@@ -210,15 +345,10 @@ export function FirstTenFans({ onNext }: { onNext: () => void }) {
                   </p>
                 </div>
               )}
-              {problems.length >= 2 && (
-                <div className="rounded-[8px] bg-white p-3 dark:bg-gray-800">
-                  <p className="text-xs font-semibold text-brand-600 dark:text-brand-400">Common Problems</p>
-                  <p className="mt-1 text-xs text-gray-600 dark:text-gray-400">
-                    Your fans share these pain points — this is your target customer persona.
-                  </p>
-                </div>
-              )}
             </div>
+
+            {/* AI Persona Generator */}
+            <AiPersonaCard fans={named} />
           </div>
         );
       })()}

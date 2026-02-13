@@ -1,4 +1,5 @@
 export { prisma } from "./client";
+export { Prisma } from "@prisma/client";
 export type {
   User,
   Account,
@@ -8,6 +9,7 @@ export type {
   ThoughtCategory,
   InputMethod,
   DreamStory,
+  DreamStoryStatus,
   Milestone,
   Product,
   DreamProfile,
@@ -20,4 +22,12 @@ export type {
   DreamComment,
   OrderStatus,
   InsightReport,
+  Review,
+  Bookmark,
+  Poll,
+  PollOption,
+  PollVote,
+  PlannerSession,
+  PlannerCoachLog,
+  PlannerReport,
 } from "@prisma/client";

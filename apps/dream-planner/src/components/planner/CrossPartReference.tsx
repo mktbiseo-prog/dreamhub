@@ -17,6 +17,83 @@ function getReferenceData(
 ): ReferenceSection[] {
   const sections: ReferenceSection[] = [];
 
+  // PART 2 activities (6-10) reference PART 1
+  if (activityId >= 6 && activityId <= 10) {
+    // Skills data for mind map and why-what bridge
+    const topSkills = data.skills.filter((s) => s.proficiency >= 3).slice(0, 5);
+    if (topSkills.length > 0) {
+      sections.push({
+        title: "Your Skills & Experience",
+        part: "PART 1",
+        color: "purple",
+        items: [
+          { label: "Top Skills", value: topSkills.map((s) => `${s.name} (${s.proficiency}/5)`).join(", ") },
+        ],
+      });
+    }
+
+    // Current state for context
+    const constraints = data.currentState.find((c) => c.key === "constraints" && c.content.trim());
+    const opportunities = data.currentState.find((c) => c.key === "opportunities" && c.content.trim());
+    if (constraints || opportunities) {
+      const items: { label: string; value: string }[] = [];
+      if (constraints) items.push({ label: "Constraints", value: constraints.content });
+      if (opportunities) items.push({ label: "Opportunities", value: opportunities.content });
+      sections.push({ title: "Your Current Reality", part: "PART 1", color: "amber", items });
+    }
+
+    // Time and money data
+    const prodHours = data.timeBlocks.filter((t) => t.type === "productive").reduce((s, t) => s + t.duration, 0);
+    const lowSatExpenses = data.expenses.filter((e) => e.satisfaction === "low");
+    if (prodHours > 0 || lowSatExpenses.length > 0) {
+      const items: { label: string; value: string }[] = [];
+      if (prodHours > 0) items.push({ label: "Available Time", value: `${prodHours}h productive per week` });
+      if (lowSatExpenses.length > 0) {
+        const total = lowSatExpenses.reduce((s, e) => s + e.amount, 0);
+        items.push({ label: "Redirectable Funds", value: `$${total}/month from low-satisfaction spending` });
+      }
+      sections.push({ title: "Resources You Can Leverage", part: "PART 1", color: "blue", items });
+    }
+
+    // Activity-specific: Strengths Redefine (8) → reference Failure Resume (7)
+    if (activityId === 8 && data.part2.failureEntries.length > 0) {
+      const lessons = data.part2.failureEntries.filter((f) => f.lesson.trim()).slice(0, 3);
+      if (lessons.length > 0) {
+        sections.push({
+          title: "Lessons from Failures",
+          part: "PART 2",
+          color: "brand",
+          items: lessons.map((f) => ({ label: f.year, value: f.lesson })),
+        });
+      }
+    }
+
+    // Activity-specific: Why-What Bridge (10) → reference all PART 2 data
+    if (activityId === 10) {
+      if (data.part2.strengths.length > 0) {
+        sections.push({
+          title: "Your Strengths",
+          part: "PART 2",
+          color: "brand",
+          items: [{ label: "Identified Strengths", value: data.part2.strengths.join(", ") }],
+        });
+      }
+      const allScanNotes = [
+        ...data.part2.marketScan.youtube,
+        ...data.part2.marketScan.bookstore,
+        ...data.part2.marketScan.community,
+      ].filter((n) => n.text.trim());
+      if (allScanNotes.length > 0) {
+        sections.push({
+          title: "Market Discoveries",
+          part: "PART 2",
+          color: "blue",
+          items: allScanNotes.slice(0, 3).map((n) => ({ label: n.type, value: n.text })),
+        });
+      }
+    }
+  }
+
   // PART 3 activities (11-14) reference PART 1 + PART 2
   if (activityId >= 11 && activityId <= 14) {
     // PART 1: Skills & Resources

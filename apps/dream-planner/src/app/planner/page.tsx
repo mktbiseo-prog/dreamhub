@@ -733,6 +733,38 @@ export default function DashboardPage() {
         );
       })()}
 
+      {/* Journey Report */}
+      {totalCompleted >= 5 && (
+        <div className="mt-8">
+          <Link href="/planner/report">
+            <div className="rounded-xl border border-purple-200 bg-gradient-to-r from-purple-50 to-blue-50 p-5 transition-all hover:shadow-md dark:border-purple-800 dark:from-purple-950/50 dark:to-blue-950/50">
+              <div className="flex items-center gap-4">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-purple-500 to-blue-500">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+                    <polyline points="14 2 14 8 20 8" />
+                    <line x1="16" y1="13" x2="8" y2="13" />
+                    <line x1="16" y1="17" x2="8" y2="17" />
+                    <polyline points="10 9 9 9 8 9" />
+                  </svg>
+                </div>
+                <div className="min-w-0 flex-1">
+                  <h4 className="text-sm font-semibold text-gray-900 dark:text-white">
+                    Your Dream Journey Report
+                  </h4>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    AI-generated comprehensive analysis of your entire journey across all 4 PARTs.
+                  </p>
+                </div>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 text-purple-400">
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+              </div>
+            </div>
+          </Link>
+        </div>
+      )}
+
       {/* Quick Action */}
       <div className="mt-8 flex gap-3">
         <Link href={activeHref} className="flex-1">

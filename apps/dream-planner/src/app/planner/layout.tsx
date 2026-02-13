@@ -13,6 +13,7 @@ const NAV_ITEMS = [
   { href: "/planner/part2", label: "PART 2", part: 2 },
   { href: "/planner/part3", label: "PART 3", part: 3 },
   { href: "/planner/part4", label: "PART 4", part: 4 },
+  { href: "/planner/report", label: "Report" },
 ];
 
 export default function PlannerLayout({
@@ -57,6 +58,9 @@ export default function PlannerLayout({
 
   // Notification count (coach insights not yet seen)
   const insightCount = data.recentInsights.length;
+
+  // Check if current page is an activity page (part1-4)
+  const isActivityPage = /\/planner\/part[1-4]/.test(pathname);
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
@@ -131,11 +135,30 @@ export default function PlannerLayout({
         </div>
       </header>
 
-      {/* Content */}
-      <main className="mx-auto max-w-6xl px-6 py-10">{children}</main>
+      {/* Content — 70/30 split on activity pages (desktop) */}
+      {isActivityPage ? (
+        <div className="mx-auto flex max-w-7xl gap-0 px-6 py-10">
+          {/* 70% Work Area */}
+          <main className="min-w-0 flex-1 xl:pr-6">{children}</main>
+          {/* 30% AI Coach Panel — desktop only */}
+          <aside className="hidden w-[340px] shrink-0 xl:block">
+            <div className="sticky top-20">
+              <AiCoach inline />
+            </div>
+          </aside>
+        </div>
+      ) : (
+        <main className="mx-auto max-w-6xl px-6 py-10">{children}</main>
+      )}
 
-      {/* AI Coach */}
-      <AiCoach />
+      {/* Floating AI Coach — mobile / non-activity pages */}
+      {isActivityPage ? (
+        <div className="xl:hidden">
+          <AiCoach />
+        </div>
+      ) : (
+        <AiCoach />
+      )}
     </div>
   );
 }

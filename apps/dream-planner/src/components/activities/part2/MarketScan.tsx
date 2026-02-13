@@ -5,6 +5,143 @@ import { Button, cn } from "@dreamhub/ui";
 import { usePlannerStore } from "@/lib/store";
 import type { ScanNote, ScanTab } from "@/types/part2";
 import { SCAN_TAB_LABELS } from "@/types/part2";
+import type { MarketAnalysisResult } from "@/app/api/market-analysis/route";
+
+function AiMarketReport({
+  scan,
+  tabs,
+  totalNotes,
+}: {
+  scan: Record<ScanTab, ScanNote[]>;
+  tabs: ScanTab[];
+  totalNotes: number;
+}) {
+  const { data } = usePlannerStore();
+  const allNotes = [...scan.youtube, ...scan.bookstore, ...scan.community];
+  const discoveries = allNotes.filter((n) => n.type === "discovery").length;
+  const reactions = allNotes.filter((n) => n.type === "reaction").length;
+  const missed = allNotes.filter((n) => n.type === "missed").length;
+  const channelCount = tabs.filter((t) => scan[t].length > 0).length;
+
+  const [report, setReport] = useState<MarketAnalysisResult | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const generateReport = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch("/api/market-analysis", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          youtube: scan.youtube.map((n) => ({ text: n.text, type: n.type })),
+          bookstore: scan.bookstore.map((n) => ({ text: n.text, type: n.type })),
+          community: scan.community.map((n) => ({ text: n.text, type: n.type })),
+          dreamStatement: data.dreamStatement,
+        }),
+      });
+      if (res.ok) {
+        setReport(await res.json() as MarketAnalysisResult);
+      }
+    } catch {
+      // silently fail
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="mb-6 rounded-card border border-brand-200 bg-gradient-to-r from-brand-50 to-blue-50 p-4 dark:border-brand-800 dark:from-brand-950 dark:to-blue-950">
+      <div className="mb-3 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <span className="rounded-md bg-brand-100 px-1.5 py-0.5 text-[10px] font-bold text-brand-700 dark:bg-brand-900 dark:text-brand-300">AI</span>
+          <span className="text-xs font-medium text-brand-700 dark:text-brand-300">Market Analysis Report</span>
+        </div>
+        <button
+          type="button"
+          onClick={generateReport}
+          disabled={loading}
+          className="flex items-center gap-1 rounded-md bg-brand-600 px-2.5 py-1 text-[10px] font-semibold text-white transition-colors hover:bg-brand-700 disabled:opacity-50"
+        >
+          {loading ? (
+            <>
+              <svg className="h-3 w-3 animate-spin" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" className="opacity-25" />
+                <path fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" className="opacity-75" />
+              </svg>
+              Analyzing...
+            </>
+          ) : report ? (
+            "Regenerate Report"
+          ) : (
+            "AI Deep Analysis"
+          )}
+        </button>
+      </div>
+
+      {/* Basic stats (always shown) */}
+      <div className="space-y-2">
+        <div className="rounded-[8px] bg-white p-3 dark:bg-gray-800">
+          <p className="text-xs font-semibold text-blue-600 dark:text-blue-400">Research Coverage</p>
+          <p className="mt-1 text-xs text-gray-600 dark:text-gray-400">
+            {channelCount}/3 channels scanned with {totalNotes} observations ({discoveries} discoveries, {reactions} reactions, {missed} gaps).
+            {channelCount === 3 ? " Multi-channel research gives you the full picture." : ` Scan ${3 - channelCount} more channel(s) for a complete view.`}
+          </p>
+        </div>
+      </div>
+
+      {/* AI Deep Analysis Results */}
+      {report && (
+        <div className="mt-3 space-y-2 border-t border-brand-200 pt-3 dark:border-brand-800">
+          <div className="rounded-[8px] bg-white p-3 dark:bg-gray-800">
+            <p className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-emerald-500">Market Opportunity</p>
+            <p className="text-xs text-gray-700 dark:text-gray-300">{report.marketOpportunity}</p>
+          </div>
+
+          <div className="rounded-[8px] bg-white p-3 dark:bg-gray-800">
+            <p className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-amber-500">Competitive Landscape</p>
+            <p className="text-xs text-gray-700 dark:text-gray-300">{report.competitiveLandscape}</p>
+          </div>
+
+          <div className="rounded-[8px] bg-white p-3 dark:bg-gray-800">
+            <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-blue-500">Your Differentiators</p>
+            <ul className="space-y-1">
+              {report.differentiators.map((d, i) => (
+                <li key={i} className="flex items-start gap-1.5 text-xs text-gray-600 dark:text-gray-400">
+                  <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-blue-100 text-[9px] font-bold text-blue-700 dark:bg-blue-900 dark:text-blue-300">
+                    {i + 1}
+                  </span>
+                  {d}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="rounded-[8px] bg-white p-3 dark:bg-gray-800">
+            <p className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-brand-500">Target Niche</p>
+            <p className="text-xs text-gray-700 dark:text-gray-300">{report.targetNiche}</p>
+          </div>
+
+          <div className="rounded-[8px] bg-emerald-50 p-3 dark:bg-emerald-950">
+            <p className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-emerald-600">Entry Strategy</p>
+            <p className="text-xs text-emerald-800 dark:text-emerald-300">{report.entryStrategy}</p>
+          </div>
+
+          <div className="rounded-[8px] bg-red-50 p-3 dark:bg-red-950">
+            <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-red-500">Key Risks</p>
+            <ul className="space-y-1">
+              {report.risks.map((r, i) => (
+                <li key={i} className="flex items-start gap-1.5 text-xs text-red-700 dark:text-red-300">
+                  <span className="mt-1 h-1 w-1 shrink-0 rounded-full bg-red-400" />
+                  {r}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 
 export function MarketScan({ onNext }: { onNext: () => void }) {
   const { data, store } = usePlannerStore();
@@ -235,54 +372,7 @@ export function MarketScan({ onNext }: { onNext: () => void }) {
       )}
 
       {/* AI Market Report */}
-      {totalNotes >= 3 && (() => {
-        const allNotes = [...scan.youtube, ...scan.bookstore, ...scan.community];
-        const discoveries = allNotes.filter((n) => n.type === "discovery").length;
-        const reactions = allNotes.filter((n) => n.type === "reaction").length;
-        const missed = allNotes.filter((n) => n.type === "missed").length;
-        const channelCount = tabs.filter((t) => scan[t].length > 0).length;
-
-        return (
-          <div className="mb-6 rounded-card border border-brand-200 bg-gradient-to-r from-brand-50 to-blue-50 p-4 dark:border-brand-800 dark:from-brand-950 dark:to-blue-950">
-            <div className="mb-3 flex items-center gap-2">
-              <span className="rounded-md bg-brand-100 px-1.5 py-0.5 text-[10px] font-bold text-brand-700 dark:bg-brand-900 dark:text-brand-300">AI</span>
-              <span className="text-xs font-medium text-brand-700 dark:text-brand-300">Market Analysis Report</span>
-            </div>
-            <div className="space-y-2">
-              <div className="rounded-[8px] bg-white p-3 dark:bg-gray-800">
-                <p className="text-xs font-semibold text-blue-600 dark:text-blue-400">Research Coverage</p>
-                <p className="mt-1 text-xs text-gray-600 dark:text-gray-400">
-                  {channelCount}/3 channels scanned with {totalNotes} total observations.
-                  {channelCount === 3 ? " Great — multi-channel research gives you the full picture." : ` Consider scanning ${3 - channelCount} more channel(s) for a complete view.`}
-                </p>
-              </div>
-              {discoveries > 0 && (
-                <div className="rounded-[8px] bg-white p-3 dark:bg-gray-800">
-                  <p className="text-xs font-semibold text-emerald-600 dark:text-emerald-400">Market Opportunity</p>
-                  <p className="mt-1 text-xs text-gray-600 dark:text-gray-400">
-                    You found {discoveries} discovery notes — these are signals of market demand.
-                    {missed > 0 ? ` Combined with ${missed} gaps you spotted, there's a clear opportunity to fill.` : " Look for patterns across discoveries to find your niche."}
-                  </p>
-                </div>
-              )}
-              {reactions > 0 && (
-                <div className="rounded-[8px] bg-white p-3 dark:bg-gray-800">
-                  <p className="text-xs font-semibold text-amber-600 dark:text-amber-400">Competitive Landscape</p>
-                  <p className="mt-1 text-xs text-gray-600 dark:text-gray-400">
-                    {reactions} reaction notes collected. People&apos;s responses reveal what resonates and what doesn&apos;t — use this to differentiate.
-                  </p>
-                </div>
-              )}
-              <div className="rounded-[8px] bg-white p-3 dark:bg-gray-800">
-                <p className="text-xs font-semibold text-brand-600 dark:text-brand-400">Next Step</p>
-                <p className="mt-1 text-xs text-gray-600 dark:text-gray-400">
-                  {missed > discoveries ? "You've identified more gaps than existing solutions — that's a strong signal. Use these gaps in PART 3's hypothesis board." : "Combine your discoveries with your Why from the next activity to find your unique angle."}
-                </p>
-              </div>
-            </div>
-          </div>
-        );
-      })()}
+      {totalNotes >= 3 && <AiMarketReport scan={scan} tabs={tabs} totalNotes={totalNotes} />}
 
       <div className="flex justify-end">
         <Button onClick={onNext} className="gap-2">

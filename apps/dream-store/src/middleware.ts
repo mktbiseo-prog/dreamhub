@@ -7,6 +7,10 @@ function isProtectedPath(pathname: string): boolean {
   if (protectedPaths.some((p) => pathname.startsWith(p))) return true;
   // /stories/*/products/create
   if (/^\/stories\/[^/]+\/products\/create/.test(pathname)) return true;
+  // /stories/*/edit
+  if (/^\/stories\/[^/]+\/edit/.test(pathname)) return true;
+  // /stories/*/products/*/edit
+  if (/^\/stories\/[^/]+\/products\/[^/]+\/edit/.test(pathname)) return true;
   return false;
 }
 
@@ -30,5 +34,12 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/stories/create", "/stories/:storyId/products/create", "/dashboard", "/my-dreams"],
+  matcher: [
+    "/stories/create",
+    "/stories/:storyId/edit",
+    "/stories/:storyId/products/create",
+    "/stories/:storyId/products/:productId/edit",
+    "/dashboard",
+    "/my-dreams",
+  ],
 };

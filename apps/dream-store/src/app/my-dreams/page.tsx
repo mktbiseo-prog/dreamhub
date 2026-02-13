@@ -3,7 +3,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Button } from "@dreamhub/ui";
 import { getCurrentUser } from "@/lib/auth";
-import { getSupporterDashboard, formatPrice } from "@/lib/queries";
+import { getSupporterDashboard, getUserBookmarks, formatPrice } from "@/lib/queries";
+import { DreamCard } from "@/components/DreamCard";
 
 export const metadata: Metadata = {
   title: "My Supported Dreams | Dream Store",
@@ -14,7 +15,10 @@ export default async function MyDreamsPage() {
   const user = await getCurrentUser();
   if (!user?.id) redirect("/auth/sign-in?callbackUrl=/my-dreams");
 
-  const data = await getSupporterDashboard(user.id);
+  const [data, bookmarkedStories] = await Promise.all([
+    getSupporterDashboard(user.id),
+    getUserBookmarks(user.id),
+  ]);
 
   return (
     <main className="min-h-screen">
@@ -111,6 +115,47 @@ export default async function MyDreamsPage() {
               </p>
               <Link href="/">
                 <Button>Discover Dreams</Button>
+              </Link>
+            </div>
+          )}
+        </section>
+
+        {/* Saved Dreams */}
+        <section className="mb-12">
+          <h2 className="mb-6 text-xl font-bold text-gray-900 dark:text-white">
+            Saved Dreams
+          </h2>
+
+          {bookmarkedStories.length > 0 ? (
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {bookmarkedStories.map((story) => (
+                <DreamCard
+                  key={story.id}
+                  story={story}
+                  isBookmarked={true}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="rounded-card border-2 border-dashed border-gray-300 p-12 text-center dark:border-gray-700">
+              <svg
+                className="mx-auto mb-3 h-10 w-10 text-gray-400"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"
+                />
+              </svg>
+              <p className="mb-4 text-gray-500">
+                No saved dreams yet. Browse and save dreams you love!
+              </p>
+              <Link href="/">
+                <Button variant="outline">Discover Dreams</Button>
               </Link>
             </div>
           )}

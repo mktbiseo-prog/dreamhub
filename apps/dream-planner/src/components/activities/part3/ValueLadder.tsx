@@ -1,10 +1,162 @@
 "use client";
 
-import { useMemo } from "react";
+import { useState, useMemo } from "react";
 import { Button, cn } from "@dreamhub/ui";
 import { usePlannerStore } from "@/lib/store";
 import { CrossPartRef } from "@/components/planner/CrossPartRef";
 import { LADDER_TIERS } from "@/types/part3";
+
+interface ValueLadderItem {
+  tier: string;
+  productName: string;
+  price: number;
+  customerValue: string;
+}
+
+function RevenueSimulator({ ladder }: { ladder: ValueLadderItem[] }) {
+  const [leads, setLeads] = useState(100);
+  const [convLow, setConvLow] = useState(10);
+  const [convMid, setConvMid] = useState(3);
+  const [convHigh, setConvHigh] = useState(1);
+
+  const low = ladder[1];
+  const mid = ladder[2];
+  const high = ladder[3];
+
+  // Price gap alerts
+  const gaps: string[] = [];
+  if (low.price > 0 && ladder[0].price === 0 && low.price > 50) {
+    gaps.push(`Big jump from free to $${low.price}. Consider a $${Math.round(low.price * 0.3)} option in between.`);
+  }
+  if (mid.price > 0 && low.price > 0 && mid.price > low.price * 5) {
+    gaps.push(`${mid.productName || "Mid tier"} is ${Math.round(mid.price / low.price)}x the low tier. A 2-3x jump is more typical.`);
+  }
+
+  const lowRev = low.price * leads * (convLow / 100);
+  const midRev = mid.price * leads * (convMid / 100);
+  const highRev = high.price * leads * (convHigh / 100);
+  const monthlyRevenue = lowRev + midRev + highRev;
+  const yearlyRevenue = monthlyRevenue * 12;
+
+  const lowCustomers = Math.round(leads * (convLow / 100));
+  const midCustomers = Math.round(leads * (convMid / 100));
+  const highCustomers = Math.round(leads * (convHigh / 100));
+
+  return (
+    <div className="mb-6 rounded-card border border-blue-200 bg-gradient-to-r from-blue-50 to-cyan-50 p-4 dark:border-blue-800 dark:from-blue-950 dark:to-cyan-950">
+      <div className="mb-3 flex items-center gap-2">
+        <span className="rounded-md bg-blue-100 px-1.5 py-0.5 text-[10px] font-bold text-blue-700 dark:bg-blue-900 dark:text-blue-300">AI</span>
+        <span className="text-xs font-medium text-blue-700 dark:text-blue-300">Revenue Simulator</span>
+      </div>
+
+      {gaps.length > 0 && (
+        <div className="mb-3 rounded-[8px] bg-white p-3 dark:bg-gray-800">
+          <p className="text-xs font-semibold text-amber-600 dark:text-amber-400">Pricing Gap Alert</p>
+          {gaps.map((g, i) => (
+            <p key={i} className="mt-1 text-xs text-gray-600 dark:text-gray-400">{g}</p>
+          ))}
+        </div>
+      )}
+
+      {/* Configurable Inputs */}
+      <div className="mb-4 rounded-[8px] bg-white p-3 dark:bg-gray-800">
+        <p className="mb-2 text-xs font-semibold text-gray-700 dark:text-gray-300">Simulation Parameters</p>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div>
+            <label className="mb-1 flex items-center justify-between text-[10px] text-gray-500">
+              <span>Monthly Freebie Leads</span>
+              <span className="font-semibold text-gray-700 dark:text-gray-300">{leads}</span>
+            </label>
+            <input type="range" min="10" max="1000" step="10" value={leads} onChange={(e) => setLeads(Number(e.target.value))} className="w-full accent-blue-500" />
+          </div>
+          <div>
+            <label className="mb-1 flex items-center justify-between text-[10px] text-gray-500">
+              <span>Low Tier Conversion</span>
+              <span className="font-semibold text-gray-700 dark:text-gray-300">{convLow}%</span>
+            </label>
+            <input type="range" min="1" max="30" value={convLow} onChange={(e) => setConvLow(Number(e.target.value))} className="w-full accent-blue-500" />
+          </div>
+          <div>
+            <label className="mb-1 flex items-center justify-between text-[10px] text-gray-500">
+              <span>Mid Tier Conversion</span>
+              <span className="font-semibold text-gray-700 dark:text-gray-300">{convMid}%</span>
+            </label>
+            <input type="range" min="1" max="15" value={convMid} onChange={(e) => setConvMid(Number(e.target.value))} className="w-full accent-blue-500" />
+          </div>
+          <div>
+            <label className="mb-1 flex items-center justify-between text-[10px] text-gray-500">
+              <span>High Tier Conversion</span>
+              <span className="font-semibold text-gray-700 dark:text-gray-300">{convHigh}%</span>
+            </label>
+            <input type="range" min="0" max="10" value={convHigh} onChange={(e) => setConvHigh(Number(e.target.value))} className="w-full accent-blue-500" />
+          </div>
+        </div>
+      </div>
+
+      {/* Revenue Breakdown */}
+      <div className="rounded-[8px] bg-white p-3 dark:bg-gray-800">
+        <p className="mb-2 text-xs font-semibold text-emerald-600 dark:text-emerald-400">Revenue Projection</p>
+
+        {/* Funnel Visualization */}
+        <div className="mb-3 space-y-1">
+          <div className="flex items-center gap-2">
+            <span className="w-16 text-right text-[10px] text-gray-400">Freebie</span>
+            <div className="h-4 flex-1 rounded-full bg-green-100 dark:bg-green-900">
+              <div className="flex h-full items-center rounded-full bg-green-400 px-2 text-[10px] font-bold text-white" style={{ width: "100%" }}>
+                {leads}
+              </div>
+            </div>
+          </div>
+          {low.price > 0 && (
+            <div className="flex items-center gap-2">
+              <span className="w-16 text-right text-[10px] text-gray-400">${low.price}</span>
+              <div className="h-4 flex-1 rounded-full bg-blue-100 dark:bg-blue-900">
+                <div className="flex h-full items-center rounded-full bg-blue-400 px-2 text-[10px] font-bold text-white" style={{ width: `${Math.max(10, convLow * 3)}%` }}>
+                  {lowCustomers} = ${Math.round(lowRev)}
+                </div>
+              </div>
+            </div>
+          )}
+          {mid.price > 0 && (
+            <div className="flex items-center gap-2">
+              <span className="w-16 text-right text-[10px] text-gray-400">${mid.price}</span>
+              <div className="h-4 flex-1 rounded-full bg-purple-100 dark:bg-purple-900">
+                <div className="flex h-full items-center rounded-full bg-purple-400 px-2 text-[10px] font-bold text-white" style={{ width: `${Math.max(10, convMid * 5)}%` }}>
+                  {midCustomers} = ${Math.round(midRev)}
+                </div>
+              </div>
+            </div>
+          )}
+          {high.price > 0 && (
+            <div className="flex items-center gap-2">
+              <span className="w-16 text-right text-[10px] text-gray-400">${high.price}</span>
+              <div className="h-4 flex-1 rounded-full bg-amber-100 dark:bg-amber-900">
+                <div className="flex h-full items-center rounded-full bg-amber-400 px-2 text-[10px] font-bold text-white" style={{ width: `${Math.max(10, convHigh * 8)}%` }}>
+                  {highCustomers} = ${Math.round(highRev)}
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Totals */}
+        <div className="grid grid-cols-2 gap-2">
+          <div className="rounded-[6px] bg-gray-50 p-2 dark:bg-gray-900">
+            <p className="text-[10px] text-gray-400">Monthly Revenue</p>
+            <p className="text-lg font-bold text-gray-900 dark:text-gray-100">${Math.round(monthlyRevenue).toLocaleString()}</p>
+          </div>
+          <div className="rounded-[6px] bg-gray-50 p-2 dark:bg-gray-900">
+            <p className="text-[10px] text-gray-400">Yearly Revenue</p>
+            <p className="text-lg font-bold text-gray-900 dark:text-gray-100">${Math.round(yearlyRevenue).toLocaleString()}</p>
+          </div>
+        </div>
+        <p className="mt-2 text-[10px] text-gray-400">
+          Adjust the sliders above to see different scenarios. Total customers: {lowCustomers + midCustomers + highCustomers}/mo
+        </p>
+      </div>
+    </div>
+  );
+}
 
 export function ValueLadder({ onNext }: { onNext: () => void }) {
   const { data, store } = usePlannerStore();
@@ -183,67 +335,10 @@ export function ValueLadder({ onNext }: { onNext: () => void }) {
         })}
       </div>
 
-      {/* AI Pricing & Revenue Simulation */}
-      {ladder.some((s) => s.price > 0) && (() => {
-        const priced = ladder.filter((s) => s.price > 0);
-        const freebie = ladder[0];
-        const low = ladder[1];
-        const mid = ladder[2];
-        const high = ladder[3];
-        // Check price gap issues
-        const gaps: string[] = [];
-        if (low.price > 0 && freebie.price === 0 && low.price > 50) {
-          gaps.push(`Big jump from free to $${low.price}. Consider a $${Math.round(low.price * 0.3)} option in between.`);
-        }
-        if (mid.price > 0 && low.price > 0 && mid.price > low.price * 5) {
-          gaps.push(`${mid.productName || "Mid tier"} is ${Math.round(mid.price / low.price)}x the low tier. A 2-3x jump is more typical.`);
-        }
-        // Revenue simulation: 100 freebie leads → conversion funnel
-        const leads = 100;
-        const convToLow = 0.10;
-        const convToMid = 0.03;
-        const convToHigh = 0.01;
-        const monthlyRevenue = (low.price * leads * convToLow) + (mid.price * leads * convToMid) + (high.price * leads * convToHigh);
-        const yearlyRevenue = monthlyRevenue * 12;
-
-        return (
-          <div className="mb-6 rounded-card border border-blue-200 bg-gradient-to-r from-blue-50 to-cyan-50 p-4 dark:border-blue-800 dark:from-blue-950 dark:to-cyan-950">
-            <div className="mb-3 flex items-center gap-2">
-              <span className="rounded-md bg-blue-100 px-1.5 py-0.5 text-[10px] font-bold text-blue-700 dark:bg-blue-900 dark:text-blue-300">AI</span>
-              <span className="text-xs font-medium text-blue-700 dark:text-blue-300">Pricing & Revenue Simulation</span>
-            </div>
-            <div className="space-y-2">
-              {gaps.length > 0 && (
-                <div className="rounded-[8px] bg-white p-3 dark:bg-gray-800">
-                  <p className="text-xs font-semibold text-amber-600 dark:text-amber-400">Pricing Gap Alert</p>
-                  {gaps.map((g, i) => (
-                    <p key={i} className="mt-1 text-xs text-gray-600 dark:text-gray-400">{g}</p>
-                  ))}
-                </div>
-              )}
-              <div className="rounded-[8px] bg-white p-3 dark:bg-gray-800">
-                <p className="text-xs font-semibold text-emerald-600 dark:text-emerald-400">Revenue Simulation</p>
-                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                  Based on {leads} monthly freebie leads:
-                </p>
-                <div className="mt-2 grid grid-cols-2 gap-2">
-                  <div className="rounded-[6px] bg-gray-50 p-2 dark:bg-gray-900">
-                    <p className="text-xs text-gray-400">Monthly</p>
-                    <p className="text-sm font-bold text-gray-900 dark:text-gray-100">${Math.round(monthlyRevenue)}</p>
-                  </div>
-                  <div className="rounded-[6px] bg-gray-50 p-2 dark:bg-gray-900">
-                    <p className="text-xs text-gray-400">Yearly</p>
-                    <p className="text-sm font-bold text-gray-900 dark:text-gray-100">${Math.round(yearlyRevenue).toLocaleString()}</p>
-                  </div>
-                </div>
-                <p className="mt-2 text-[10px] text-gray-400">
-                  Conversion rates: {priced.length} tiers at 10%/3%/1% funnel
-                </p>
-              </div>
-            </div>
-          </div>
-        );
-      })()}
+      {/* Revenue Simulation */}
+      {ladder.some((s) => s.price > 0) && (
+        <RevenueSimulator ladder={ladder} />
+      )}
 
       <div className="flex justify-end">
         <Button onClick={onNext} className="gap-2">
