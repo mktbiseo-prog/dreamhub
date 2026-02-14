@@ -23,7 +23,7 @@ export class NotificationRepository extends BaseRepository {
         type: data.type,
         title: data.title,
         body: data.body,
-        data: data.data ?? {},
+        data: data.data ? JSON.parse(JSON.stringify(data.data)) : undefined,
         channels: data.channels ?? [],
         read: data.read ?? false,
       },

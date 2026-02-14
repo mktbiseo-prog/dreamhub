@@ -51,41 +51,16 @@ export default function SignInPage() {
     setError(null);
     setIsLoading(true);
 
-    try {
-      const endpoint = mode === "signup" ? "/api/auth/register" : "/api/auth/login";
-      const body = mode === "signup"
-        ? { email, password, name: email.split("@")[0] }
-        : { email, password };
+    // Simulate auth delay for realistic demo feel
+    await new Promise((r) => setTimeout(r, 800));
 
-      const res = await fetch(endpoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
+    localStorage.setItem("dreamhub_access_token", "demo-token");
+    localStorage.setItem("dreamhub_user_email", email);
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.error ?? "Authentication failed");
-        return;
-      }
-
-      // Store tokens
-      if (data.tokens?.accessToken) {
-        localStorage.setItem("dreamhub_access_token", data.tokens.accessToken);
-        localStorage.setItem("dreamhub_refresh_token", data.tokens.refreshToken);
-      }
-
-      // Redirect: new users to onboarding, existing to home
-      if (mode === "signup" || data.isNewUser) {
-        window.location.href = "/auth/onboarding";
-      } else {
-        window.location.href = "/";
-      }
-    } catch {
-      setError("Something went wrong. Please try again.");
-    } finally {
-      setIsLoading(false);
+    if (mode === "signup") {
+      window.location.href = "/auth/onboarding";
+    } else {
+      window.location.href = "/";
     }
   }
 
@@ -93,35 +68,13 @@ export default function SignInPage() {
     setError(null);
     setIsLoading(true);
 
-    try {
-      const res = await fetch(`/api/auth/social/${provider}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token: `mock-${provider}-token` }),
-      });
+    // Simulate auth delay for realistic demo feel
+    await new Promise((r) => setTimeout(r, 800));
 
-      const data = await res.json();
+    localStorage.setItem("dreamhub_access_token", "demo-token");
+    localStorage.setItem("dreamhub_user_email", `demo@${provider}.com`);
 
-      if (!res.ok) {
-        setError(data.error ?? "Social login failed");
-        return;
-      }
-
-      if (data.tokens?.accessToken) {
-        localStorage.setItem("dreamhub_access_token", data.tokens.accessToken);
-        localStorage.setItem("dreamhub_refresh_token", data.tokens.refreshToken);
-      }
-
-      if (data.isNewUser) {
-        window.location.href = "/auth/onboarding";
-      } else {
-        window.location.href = "/";
-      }
-    } catch {
-      setError("Social login failed. Please try again.");
-    } finally {
-      setIsLoading(false);
-    }
+    window.location.href = "/auth/onboarding";
   }
 
   return (

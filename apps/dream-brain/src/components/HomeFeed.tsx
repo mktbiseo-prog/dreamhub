@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useRef } from "react";
+import { useVirtualizer } from "@tanstack/react-virtual";
 import { Brain } from "lucide-react";
 import { NoteCard } from "./brain/NoteCard";
 import type { ThoughtData } from "@/lib/data";
@@ -22,6 +23,15 @@ export function HomeFeed({ initialThoughts, todayInsight }: HomeFeedProps) {
     [initialThoughts],
   );
 
+  const parentRef = useRef<HTMLDivElement>(null);
+
+  const virtualizer = useVirtualizer({
+    count: thoughts.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 72, // estimated NoteCard height
+    overscan: 10,
+  });
+
   return (
     <div className="flex flex-col">
       {/* Today's insight (optional) */}
@@ -36,11 +46,37 @@ export function HomeFeed({ initialThoughts, todayInsight }: HomeFeedProps) {
         </div>
       )}
 
-      {/* Notes feed */}
+      {/* Notes feed — virtualized for performance */}
       {thoughts.length > 0 ? (
-        thoughts.map((thought) => (
-          <NoteCard key={thought.id} thought={thought} />
-        ))
+        <div ref={parentRef} className="flex-1 overflow-auto" style={{ maxHeight: "calc(100vh - 260px)" }}>
+          <div
+            style={{
+              height: `${virtualizer.getTotalSize()}px`,
+              width: "100%",
+              position: "relative",
+            }}
+          >
+            {virtualizer.getVirtualItems().map((virtualRow) => {
+              const thought = thoughts[virtualRow.index];
+              return (
+                <div
+                  key={thought.id}
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    transform: `translateY(${virtualRow.start}px)`,
+                  }}
+                  ref={virtualizer.measureElement}
+                  data-index={virtualRow.index}
+                >
+                  <NoteCard thought={thought} />
+                </div>
+              );
+            })}
+          </div>
+        </div>
       ) : (
         <div className="flex flex-col items-center justify-center py-24 px-8 text-center">
           <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-violet-500/10">

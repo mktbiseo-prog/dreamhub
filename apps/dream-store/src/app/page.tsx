@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { CATEGORIES, PRODUCT_TYPES, CREATOR_STAGES } from "@/lib/types";
 import { getStories, searchStories, getRecommendedStories, getWeeklyDream, getMostInspiringDreams } from "@/lib/queries";
@@ -7,6 +8,9 @@ import { DreamCard, ProductCard } from "@/components/DreamCard";
 import { CommunityVoteButton } from "@/components/CommunityVoteButton";
 import { CategoryFilter } from "./CategoryFilter";
 import { SearchBar } from "./SearchBar";
+
+// ISR: Regenerate home page every 60 seconds for fresh content
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Discover Dreams | Dream Store",
@@ -163,10 +167,14 @@ export default async function DiscoverPage({ searchParams }: PageProps) {
                 className="group relative block overflow-hidden rounded-[16px]"
               >
                 <div className="relative aspect-[4/5] max-h-[600px] overflow-hidden sm:aspect-[16/9] sm:max-h-[500px]">
-                  <img
+                  <Image
                     src={heroStory.coverImage}
                     alt={heroStory.title}
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    fill
+                    sizes="100vw"
+                    priority
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    quality={80}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
 
@@ -189,10 +197,12 @@ export default async function DiscoverPage({ searchParams }: PageProps) {
                       {heroStory.statement}
                     </p>
                     <div className="flex items-center gap-3">
-                      <img
+                      <Image
                         src={heroStory.creatorAvatar}
                         alt={heroStory.creatorName}
-                        className="h-10 w-10 rounded-full border-2 border-white/60 object-cover"
+                        width={40}
+                        height={40}
+                        className="rounded-full border-2 border-white/60 object-cover"
                       />
                       <div>
                         <p className="text-sm font-medium text-white">{heroStory.creatorName}</p>
@@ -304,10 +314,13 @@ export default async function DiscoverPage({ searchParams }: PageProps) {
                 >
                   <div className="grid md:grid-cols-5">
                     <div className="relative h-64 md:col-span-2 md:h-auto">
-                      <img
+                      <Image
                         src={weeklyDream.coverImage}
                         alt={weeklyDream.title}
-                        className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                        fill
+                        sizes="(max-width: 768px) 100vw, 40vw"
+                        className="object-cover transition-transform duration-300 group-hover:scale-105"
+                        quality={80}
                       />
                       <span
                         className="absolute left-4 top-4 rounded-full px-3 py-1 text-xs font-bold text-white shadow"
@@ -318,10 +331,12 @@ export default async function DiscoverPage({ searchParams }: PageProps) {
                     </div>
                     <div className="flex flex-col justify-center p-8 md:col-span-3 lg:p-10">
                       <div className="mb-3 flex items-center gap-3">
-                        <img
+                        <Image
                           src={weeklyDream.creatorAvatar}
                           alt={weeklyDream.creatorName}
-                          className="h-10 w-10 rounded-full border-2 object-cover"
+                          width={40}
+                          height={40}
+                          className="rounded-full border-2 object-cover"
                           style={{ borderColor: "var(--dream-color-primary-light)" }}
                         />
                         <div>

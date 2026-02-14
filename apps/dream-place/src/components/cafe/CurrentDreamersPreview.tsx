@@ -33,7 +33,7 @@ export function CurrentDreamersPreview({ dreamers }: CurrentDreamersPreviewProps
               )}
               title={dreamer.name}
             >
-              {dreamer.name.charAt(0)}
+              {dreamer.name?.[0] ?? "?"}
             </div>
           ))}
           {dreamers.length > 6 && (

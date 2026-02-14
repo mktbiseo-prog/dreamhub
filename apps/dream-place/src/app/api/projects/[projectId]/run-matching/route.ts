@@ -23,15 +23,18 @@ const runMatchingSchema = z.object({
 /** Generate a mock DreamDna for a given id */
 function makeDna(id: string, skillBias: number): DreamDna {
   return {
+    userId: id,
+    timestamp: new Date().toISOString(),
     identity: {
       visionEmbedding: [0.5 + skillBias * 0.3, 0.5, 0.4],
       coreValues: ["innovation"],
       shadowTraits: [],
-      emotion: { valence: 0.6, arousal: 0.5 },
+      emotionValence: 0.6,
+      emotionArousal: 0.5,
     },
     capability: {
-      hardSkills: [{ name: "skill-" + id, proficiency: 0.8 }],
-      softSkills: [],
+      hardSkills: { ["skill-" + id]: 0.8 },
+      softSkills: {},
       skillVector: [skillBias, 1 - skillBias, 0.5, 0.3, skillBias * 0.7],
     },
     execution: {
@@ -46,7 +49,6 @@ function makeDna(id: string, skillBias: number): DreamDna {
       deliveryCompliance: 0.8,
       compositeTrust: 0.65,
     },
-    updatedAt: new Date(),
   };
 }
 

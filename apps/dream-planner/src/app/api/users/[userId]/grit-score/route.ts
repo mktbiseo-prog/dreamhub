@@ -18,7 +18,7 @@ export async function GET(
     // TODO: Query real planner progress from DB when available
     // For now, use reasonable defaults representing an active user
     const input = {
-      part3Activities: 3,
+      part3CompletedActivities: 3,
       totalActivities: 23,
       streakDays: 7,
       mvpLaunched: false,

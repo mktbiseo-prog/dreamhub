@@ -19,15 +19,18 @@ import { i18nMiddleware } from "@dreamhub/i18n/middleware";
 function makeMockDna(seed: number): DreamDna {
   const base = (seed * 0.1) % 1;
   return {
+    userId: `mock-${seed}`,
+    timestamp: new Date().toISOString(),
     identity: {
       visionEmbedding: [base, 1 - base, base * 0.5],
       coreValues: ["innovation", "collaboration"],
       shadowTraits: [],
-      emotion: { valence: 0.6 + base * 0.3, arousal: 0.5 },
+      emotionValence: 0.6 + base * 0.3,
+      emotionArousal: 0.5,
     },
     capability: {
-      hardSkills: [{ name: "TypeScript", proficiency: 0.8 }],
-      softSkills: [{ name: "leadership", proficiency: 0.7 }],
+      hardSkills: { TypeScript: 0.8 },
+      softSkills: { leadership: 0.7 },
       skillVector: [base, 1 - base, 0.5, base * 0.7, 0.3],
     },
     execution: {
@@ -42,7 +45,6 @@ function makeMockDna(seed: number): DreamDna {
       deliveryCompliance: 0.8,
       compositeTrust: 0.6 + base * 0.2,
     },
-    updatedAt: new Date(),
   };
 }
 

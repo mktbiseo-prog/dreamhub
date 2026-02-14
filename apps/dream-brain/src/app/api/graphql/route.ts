@@ -182,5 +182,3 @@ async function handler(req: Request): Promise<Response> {
 export const POST = handler;
 export const GET = handler;
 
-// Export for testing
-export { server, typeDefs, resolvers, thoughtStore };

@@ -30,21 +30,21 @@ export async function GET(
     // For now, we use the doorbell trust as the Place signal and mock others.
     const signals: ServiceTrustSignal[] = [
       {
-        service: "dream-place",
+        service: "place",
         score: Math.min(doorbellTrust / 10, 1), // Normalize to 0–1
         mean: 0.5,
         std: 0.2,
         reliability: 0.8,
       },
       {
-        service: "dream-brain",
+        service: "brain",
         score: 0.6,
         mean: 0.55,
         std: 0.15,
         reliability: 0.7,
       },
       {
-        service: "dream-planner",
+        service: "planner",
         score: 0.55,
         mean: 0.5,
         std: 0.2,

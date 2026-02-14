@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { BrainViewToggle } from "@/components/BrainViewToggle";
 import { BottomNav } from "@/components/BottomNav";
 import { fetchGraphData } from "@/lib/queries";

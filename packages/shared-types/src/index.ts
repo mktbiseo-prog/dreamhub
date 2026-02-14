@@ -20,6 +20,7 @@ export type {
   UserRegisteredEvent,
   UserUpdatedEvent,
   UserDeletedEvent,
+  MessageTranslatedEvent,
   DreamEvent,
   DreamEventType,
 } from "./events";

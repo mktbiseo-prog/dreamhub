@@ -14,8 +14,14 @@ import {
 } from "@dreamhub/ui";
 import { createDreamStorySchema } from "@/lib/validations";
 import { createDreamStory } from "@/lib/actions/stories";
+import dynamic from "next/dynamic";
 import { SingleImageUpload, ImageUpload } from "@/components/ImageUpload";
-import { AiStoryAssistant } from "@/components/AiStoryAssistant";
+
+// Lazy-load AiStoryAssistant — AI feature only used in specific form steps
+const AiStoryAssistant = dynamic(
+  () => import("@/components/AiStoryAssistant").then((m) => m.AiStoryAssistant),
+  { ssr: false },
+);
 
 interface MilestoneField {
   title: string;

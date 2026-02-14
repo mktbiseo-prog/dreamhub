@@ -47,7 +47,7 @@ export default function OnboardingCompletePage() {
             className="flex items-center gap-4 rounded-card border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-950"
           >
             <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand-400 to-blue-500 text-lg font-bold text-white">
-              {match.profile.name.charAt(0)}
+              {match.profile.name?.[0] ?? "?"}
             </div>
 
             <div className="min-w-0 flex-1">

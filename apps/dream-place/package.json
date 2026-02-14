@@ -13,6 +13,7 @@
     "@dreamhub/design-system": "workspace:*",
     "@dreamhub/database": "workspace:*",
     "@dreamhub/event-bus": "workspace:*",
+    "@dreamhub/file-storage": "workspace:*",
     "@dreamhub/i18n": "workspace:*",
     "@dreamhub/shared-types": "workspace:*",
     "@dreamhub/flywheel-metrics": "workspace:*",

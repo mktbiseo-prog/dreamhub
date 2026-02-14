@@ -188,4 +188,3 @@ async function handler(req: Request): Promise<Response> {
 export const POST = handler;
 export const GET = handler;
 
-export { server, typeDefs, resolvers };

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { Input } from "@dreamhub/ui";
 import { Button } from "@dreamhub/ui";
 import { MatchCard } from "@/components/discover/MatchCard";
@@ -119,16 +119,16 @@ export default function DiscoverPage() {
   const remaining = DAILY_BATCH_SIZE - actedOnCount;
   const isBatchExhausted = dailyBatch.length > 0 && filtered.length === 0 && actedOnCount >= dailyBatch.length;
 
-  function handleInterested(matchId: string) {
+  const handleInterested = useCallback((matchId: string) => {
     setResonateMatchId(matchId);
-  }
+  }, []);
 
-  function handleResonateSubmit(elements: string[]) {
+  const handleResonateSubmit = useCallback((elements: string[]) => {
     if (resonateMatchId) {
       expressInterest(resonateMatchId, elements.length > 0 ? elements : undefined);
     }
     setResonateMatchId(null);
-  }
+  }, [resonateMatchId, expressInterest]);
 
   return (
     <div className="mx-auto max-w-lg px-4 py-6">

@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { Header } from "@/components/Header";
 import { ProfileView } from "@/components/ProfileView";
 import { BottomNav } from "@/components/BottomNav";

@@ -35,8 +35,8 @@ export default function TeamsPage() {
   const allTeamSkills = teams.flatMap((t) =>
     t.members.flatMap(() => [] as string[])
   );
-  const coveredSkills = new Set([...currentUser.skillsOffered, ...allTeamSkills]);
-  const neededSkills = currentUser.skillsNeeded.filter((s) => !coveredSkills.has(s));
+  const coveredSkills = new Set([...(currentUser?.skillsOffered ?? []), ...allTeamSkills]);
+  const neededSkills = (currentUser?.skillsNeeded ?? []).filter((s) => !coveredSkills.has(s));
 
   // Matches that could fill skill gaps
   const gapFillers = acceptedMatches.filter((m) =>
@@ -95,7 +95,7 @@ export default function TeamsPage() {
                   className="flex items-center gap-3 rounded-[12px] border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-950"
                 >
                   <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-400 to-blue-600 text-lg font-bold text-white">
-                    {m.profile.name.charAt(0)}
+                    {m.profile.name?.[0] ?? "?"}
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-1.5">
@@ -227,7 +227,7 @@ export default function TeamsPage() {
                       className="flex items-center gap-3 rounded-[8px] border border-gray-200 bg-white p-3 transition-shadow hover:shadow-sm dark:border-gray-800 dark:bg-gray-950"
                     >
                       <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-400 to-blue-600 text-sm font-bold text-white">
-                        {m.profile.name.charAt(0)}
+                        {m.profile.name?.[0] ?? "?"}
                       </div>
                       <div className="min-w-0 flex-1">
                         <p className="text-sm font-medium text-gray-900 dark:text-gray-100">

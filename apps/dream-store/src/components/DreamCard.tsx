@@ -1,4 +1,6 @@
+import Image from "next/image";
 import Link from "next/link";
+import { memo } from "react";
 import type { DreamStory, Product } from "@/lib/types";
 import { formatPrice } from "@/lib/mockData";
 import { BookmarkButton } from "@/components/BookmarkButton";
@@ -10,7 +12,7 @@ interface StoryCardProps {
   isBookmarked?: boolean;
 }
 
-export function DreamCard({ story, isBookmarked = false }: StoryCardProps) {
+export const DreamCard = memo(function DreamCard({ story, isBookmarked = false }: StoryCardProps) {
   const completedMilestones = story.milestones.filter((m) => m.completed).length;
   const progressPercent = story.milestones.length > 0
     ? Math.round((completedMilestones / story.milestones.length) * 100)
@@ -23,10 +25,13 @@ export function DreamCard({ story, isBookmarked = false }: StoryCardProps) {
     >
       {/* Cover — portrait ratio */}
       <div className="relative aspect-[4/5] overflow-hidden">
-        <img
+        <Image
           src={story.coverImage}
           alt={story.title}
-          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+          fill
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          className="object-cover transition-transform duration-300 group-hover:scale-105"
+          quality={80}
         />
         {/* Gradient overlay for text readability */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
@@ -65,10 +70,12 @@ export function DreamCard({ story, isBookmarked = false }: StoryCardProps) {
         <div className="absolute bottom-0 left-0 right-0 p-4">
           {/* Creator */}
           <div className="mb-2 flex items-center gap-2">
-            <img
+            <Image
               src={story.creatorAvatar}
               alt={story.creatorName}
-              className="h-6 w-6 rounded-full border border-white/60 object-cover"
+              width={24}
+              height={24}
+              className="rounded-full border border-white/60 object-cover"
             />
             <span className="text-xs font-medium text-white/90">
               {story.creatorName}
@@ -98,7 +105,7 @@ export function DreamCard({ story, isBookmarked = false }: StoryCardProps) {
       </div>
     </Link>
   );
-}
+});
 
 /* ─── Product Card ────────────────────────────────────────────────────────── */
 
@@ -107,7 +114,7 @@ interface ProductCardProps {
   story: DreamStory;
 }
 
-export function ProductCard({ product, story }: ProductCardProps) {
+export const ProductCard = memo(function ProductCard({ product, story }: ProductCardProps) {
   return (
     <Link
       href={`/stories/${story.id}/products/${product.id}`}
@@ -115,10 +122,13 @@ export function ProductCard({ product, story }: ProductCardProps) {
     >
       {/* 1:1 product photo */}
       <div className="relative aspect-square overflow-hidden">
-        <img
+        <Image
           src={product.images[0]}
           alt={product.title}
-          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+          fill
+          sizes="(max-width: 640px) 50vw, 33vw"
+          className="object-cover transition-transform duration-300 group-hover:scale-105"
+          quality={80}
         />
         {product.productType && product.productType !== "Physical Product" && (
           <span className="absolute right-2 top-2 rounded-full bg-black/60 px-2 py-0.5 text-[10px] text-white backdrop-blur-sm">
@@ -130,10 +140,12 @@ export function ProductCard({ product, story }: ProductCardProps) {
       <div className="p-4">
         {/* Creator line */}
         <div className="mb-2 flex items-center gap-2">
-          <img
+          <Image
             src={story.creatorAvatar}
             alt={story.creatorName}
-            className="h-5 w-5 rounded-full border border-gray-200 object-cover dark:border-gray-700"
+            width={20}
+            height={20}
+            className="rounded-full border border-gray-200 object-cover dark:border-gray-700"
           />
           <span className="text-[11px] text-gray-500 dark:text-gray-400">
             From {story.creatorName}&apos;s dream
@@ -150,4 +162,4 @@ export function ProductCard({ product, story }: ProductCardProps) {
       </div>
     </Link>
   );
-}
+});

@@ -122,7 +122,7 @@ export default function DashboardPage() {
                 className="flex w-40 shrink-0 flex-col items-center rounded-[12px] border border-gray-200 bg-white p-4 transition-shadow hover:shadow-md dark:border-gray-800 dark:bg-gray-950"
               >
                 <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-blue-400 to-blue-600 text-lg font-bold text-white">
-                  {m.profile.name.charAt(0)}
+                  {m.profile.name?.[0] ?? "?"}
                 </div>
                 <p className="mt-2 text-center text-sm font-medium text-gray-900 dark:text-gray-100">
                   {m.profile.name}
@@ -161,7 +161,7 @@ export default function DashboardPage() {
                 className="flex items-center gap-3 rounded-[8px] border border-gray-200 bg-white p-3 transition-shadow hover:shadow-sm dark:border-gray-800 dark:bg-gray-950"
               >
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-400 to-blue-600 text-sm font-bold text-white">
-                  {m.profile.name.charAt(0)}
+                  {m.profile.name?.[0] ?? "?"}
                 </div>
                 <div className="flex-1 overflow-hidden">
                   <p className="truncate text-sm font-medium text-gray-900 dark:text-gray-100">
@@ -192,7 +192,7 @@ export default function DashboardPage() {
                 className="flex items-center gap-3 rounded-[8px] border border-gray-200 bg-white p-3 transition-shadow hover:shadow-sm dark:border-gray-800 dark:bg-gray-950"
               >
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-400 to-blue-600 text-sm font-bold text-white">
-                  {c.partner.name.charAt(0)}
+                  {c.partner.name?.[0] ?? "?"}
                 </div>
                 <div className="flex-1 overflow-hidden">
                   <p className="truncate text-sm font-medium text-gray-900 dark:text-gray-100">

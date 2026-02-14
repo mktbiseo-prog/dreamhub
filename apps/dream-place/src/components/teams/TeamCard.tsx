@@ -36,7 +36,7 @@ export function TeamCard({ team }: TeamCardProps) {
               className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-white bg-gradient-to-br from-brand-400 to-blue-500 text-xs font-bold text-white dark:border-gray-950"
               title={m.name}
             >
-              {m.name.charAt(0)}
+              {m.name?.[0] ?? "?"}
             </div>
           ))}
           {team.members.length > 4 && (

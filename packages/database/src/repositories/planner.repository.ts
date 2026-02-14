@@ -27,8 +27,8 @@ export class PlannerRepository extends BaseRepository {
   ): Promise<PlannerSession> {
     return this.prisma.plannerSession.upsert({
       where: { userId },
-      create: { user: { connect: { id: userId } }, ...data },
-      update: { ...data, lastVisitAt: new Date() },
+      create: { user: { connect: { id: userId } }, ...data } as Prisma.PlannerSessionCreateInput,
+      update: { ...data, lastVisitAt: new Date() } as Prisma.PlannerSessionUpdateInput,
     });
   }
 

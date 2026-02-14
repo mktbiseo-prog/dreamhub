@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { notFound } from "next/navigation";
 import { fetchThoughtById, fetchRelatedThoughts } from "@/lib/queries";
 import { ThoughtDetailView } from "@/components/ThoughtDetailView";

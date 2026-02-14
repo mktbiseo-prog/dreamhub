@@ -2,11 +2,17 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import dynamic from "next/dynamic";
 import { cn } from "@dreamhub/ui";
 import { Avatar } from "@dreamhub/design-system";
-import { AiCoach } from "@/components/planner/AiCoach";
 import { StreakCounter } from "@/components/planner/StreakCounter";
 import { usePlannerStore } from "@/lib/store";
+
+// Lazy-load AiCoach — heavy component with AI API calls, not needed at first paint
+const AiCoach = dynamic(
+  () => import("@/components/planner/AiCoach").then((m) => m.AiCoach),
+  { ssr: false },
+);
 
 export default function PlannerLayout({
   children,

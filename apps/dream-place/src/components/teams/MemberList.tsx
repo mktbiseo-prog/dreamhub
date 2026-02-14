@@ -26,7 +26,7 @@ export function MemberList({ members }: MemberListProps) {
             className="flex items-center gap-3 rounded-[8px] border border-gray-200 bg-white p-3 dark:border-gray-800 dark:bg-gray-950"
           >
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand-400 to-blue-500 text-sm font-bold text-white">
-              {m.name.charAt(0)}
+              {m.name?.[0] ?? "?"}
             </div>
             <div className="flex-1">
               <p className="text-sm font-medium text-gray-900 dark:text-gray-100">

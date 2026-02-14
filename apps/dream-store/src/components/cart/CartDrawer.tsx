@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@dreamhub/ui";
 import { useCart } from "./CartContext";
@@ -107,10 +108,12 @@ export function CartDrawer() {
                       key={item.productId}
                       className="flex gap-4 rounded-card border border-gray-200 p-3 dark:border-gray-800"
                     >
-                      <img
+                      <Image
                         src={item.image}
                         alt={item.title}
-                        className="h-20 w-20 shrink-0 rounded-lg object-cover"
+                        width={80}
+                        height={80}
+                        className="shrink-0 rounded-lg object-cover"
                       />
                       <div className="min-w-0 flex-1">
                         <p className="truncate text-sm font-semibold text-gray-900 dark:text-white">

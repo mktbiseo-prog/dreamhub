@@ -214,7 +214,7 @@ const resolvers = {
 
       // Publish events
       for (const match of matchResults) {
-        await publishMatchCreated(projectId, match.candidateId, match.matchScore);
+        await publishMatchCreated(projectId, [match.candidateId], match.matchScore);
       }
 
       return {
@@ -299,4 +299,3 @@ async function handler(req: Request): Promise<Response> {
 export const POST = handler;
 export const GET = handler;
 
-export { server, typeDefs, resolvers };

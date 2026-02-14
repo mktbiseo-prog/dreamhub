@@ -7,15 +7,11 @@
  * --------------------------------------------------------------------------- */
 
 /* ── Font Imports ────────────────────────────────────────────────────────── */
+/* Inter and Plus Jakarta Sans are loaded via next/font in each app layout. */
+/* Pretendard is loaded via CDN for Korean text support (dynamic subset). */
 
 /* Pretendard Variable — Korean-optimized, 9 weights, Latin + Hangul */
 @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');
-
-/* Plus Jakarta Sans — Display/hero headings */
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
-
-/* Inter — Latin fallback (loaded by Next.js in apps, CDN fallback here) */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 /* ── Type Scale ──────────────────────────────────────────────────────────── */
 

@@ -104,7 +104,7 @@ function MatchListItem({
       <Link href={isAccepted ? `/messages/${match.id}` : `/matches/${match.id}`}>
         <div className="flex items-center gap-4 p-4 transition-colors hover:bg-gray-50 dark:hover:bg-gray-900">
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-400 to-blue-600 text-lg font-bold text-white">
-            {profile.name.charAt(0)}
+            {profile.name?.[0] ?? "?"}
           </div>
 
           <div className="min-w-0 flex-1">

@@ -2,12 +2,25 @@
 
 import { use, useState, useEffect } from "react";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { Button } from "@dreamhub/ui";
 import { cn } from "@dreamhub/ui";
 import { MatchScoreRing } from "@/components/discover/MatchScoreRing";
-import { DreamerDNA } from "@/components/charts/DreamerDNA";
-import { SkillRadar } from "@/components/charts/SkillRadar";
-import { MatchBreakdownModal } from "@/components/place/MatchBreakdownModal";
+
+// Lazy-load chart components — recharts is ~150KB gzipped
+const DreamerDNA = dynamic(
+  () => import("@/components/charts/DreamerDNA").then((m) => m.DreamerDNA),
+  { ssr: false },
+);
+const SkillRadar = dynamic(
+  () => import("@/components/charts/SkillRadar").then((m) => m.SkillRadar),
+  { ssr: false },
+);
+// Lazy-load MatchBreakdownModal — only shown when user clicks "See Details"
+const MatchBreakdownModal = dynamic(
+  () => import("@/components/place/MatchBreakdownModal").then((m) => m.MatchBreakdownModal),
+  { ssr: false },
+);
 import { VerificationBadge, getVerificationTier } from "@/components/place/VerificationBadge";
 import { useDreamStore } from "@/store/useDreamStore";
 
@@ -45,7 +58,7 @@ export default function MatchDetailPage({
   const isPending = match.status === "pending";
   const verificationTier = getVerificationTier(profile.verificationLevel);
 
-  const reverseComplementary = currentUser.skillsOffered.filter((s) =>
+  const reverseComplementary = (currentUser?.skillsOffered ?? []).filter((s) =>
     profile.skillsNeeded.includes(s)
   );
 
@@ -71,7 +84,7 @@ export default function MatchDetailPage({
               // eslint-disable-next-line @next/next/no-img-element
               <img src={profile.avatarUrl} alt={profile.name} className="h-full w-full rounded-full object-cover" />
             ) : (
-              profile.name.charAt(0)
+              profile.name?.[0] ?? "?"
             )}
           </div>
 
@@ -286,8 +299,8 @@ export default function MatchDetailPage({
                 onClick={() => {
                   const createTeam = useDreamStore.getState().createTeam;
                   createTeam(
-                    `Team: ${currentUser.name} & ${profile.name}`,
-                    `${currentUser.dreamStatement} + ${profile.dreamStatement}`
+                    `Team: ${currentUser?.name ?? "Me"} & ${profile.name}`,
+                    `${currentUser?.dreamStatement ?? ""} + ${profile.dreamStatement}`
                   );
                 }}
               >

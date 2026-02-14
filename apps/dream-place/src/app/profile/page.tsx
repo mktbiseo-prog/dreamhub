@@ -106,7 +106,7 @@ export default function ProfilePage() {
             />
           ) : (
             <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-blue-400 to-blue-600 text-2xl font-bold text-white">
-              {profile.name.charAt(0)}
+              {profile.name?.[0] ?? "?"}
             </div>
           )}
           <div>

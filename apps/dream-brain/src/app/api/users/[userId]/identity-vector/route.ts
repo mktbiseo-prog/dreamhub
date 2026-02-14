@@ -31,10 +31,8 @@ export async function GET(
       ),
       coreValues: ["innovation", "collaboration", "growth"],
       shadowTraits: ["perfectionism"],
-      emotion: {
-        valence: 0.5 + seed * 0.4,
-        arousal: 0.3 + seed * 0.3,
-      },
+      emotionValence: 0.5 + seed * 0.4,
+      emotionArousal: 0.3 + seed * 0.3,
     };
 
     return NextResponse.json({

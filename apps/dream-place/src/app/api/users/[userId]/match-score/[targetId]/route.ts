@@ -16,15 +16,18 @@ function makeMockDna(userId: string): DreamDna {
   const seed = Math.abs(hash % 100) / 100;
 
   return {
+    userId,
+    timestamp: new Date().toISOString(),
     identity: {
       visionEmbedding: [seed, 1 - seed, seed * 0.6],
       coreValues: ["innovation", "growth"],
       shadowTraits: [],
-      emotion: { valence: 0.5 + seed * 0.3, arousal: 0.4 + seed * 0.2 },
+      emotionValence: 0.5 + seed * 0.3,
+      emotionArousal: 0.4 + seed * 0.2,
     },
     capability: {
-      hardSkills: [{ name: "engineering", proficiency: 0.7 + seed * 0.2 }],
-      softSkills: [{ name: "communication", proficiency: 0.6 }],
+      hardSkills: { engineering: 0.7 + seed * 0.2 },
+      softSkills: { communication: 0.6 },
       skillVector: [seed, 0.5, 1 - seed, seed * 0.8, 0.3],
     },
     execution: {
@@ -39,7 +42,6 @@ function makeMockDna(userId: string): DreamDna {
       deliveryCompliance: 0.7,
       compositeTrust: 0.5 + seed * 0.3,
     },
-    updatedAt: new Date(),
   };
 }
 

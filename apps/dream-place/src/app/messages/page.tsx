@@ -40,7 +40,7 @@ export default function MessagesPage() {
                 <div className="-mx-4 flex items-center gap-4 rounded-[8px] px-4 py-4 transition-colors hover:bg-gray-50 dark:hover:bg-gray-900">
                   {/* Avatar */}
                   <div className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand-400 to-blue-500 text-lg font-bold text-white">
-                    {conv.partner.name.charAt(0)}
+                    {conv.partner.name?.[0] ?? "?"}
                     {conv.unreadCount > 0 && (
                       <span className="absolute -right-0.5 -top-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-brand-600 text-[10px] font-bold text-white">
                         {conv.unreadCount}

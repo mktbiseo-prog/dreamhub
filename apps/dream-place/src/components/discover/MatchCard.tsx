@@ -1,5 +1,7 @@
 "use client";
 
+import { memo } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@dreamhub/ui";
 import { cn } from "@dreamhub/ui";
@@ -15,7 +17,7 @@ interface MatchCardProps {
   isSaved?: boolean;
 }
 
-export function MatchCard({ match, onInterested, onSkip }: MatchCardProps) {
+export const MatchCard = memo(function MatchCard({ match, onInterested, onSkip }: MatchCardProps) {
   const { profile, matchScore, dreamScore, skillScore, workStyleScore, complementarySkills } =
     match;
 
@@ -31,10 +33,9 @@ export function MatchCard({ match, onInterested, onSkip }: MatchCardProps) {
       <div className="flex items-start gap-4 p-5">
         <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-400 to-blue-600 text-xl font-bold text-white">
           {profile.avatarUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={profile.avatarUrl} alt={profile.name} className="h-full w-full rounded-full object-cover" />
+            <Image src={profile.avatarUrl} alt={profile.name} width={56} height={56} className="rounded-full object-cover" />
           ) : (
-            profile.name.charAt(0)
+            profile.name?.[0] ?? "?"
           )}
         </div>
 
@@ -134,7 +135,7 @@ export function MatchCard({ match, onInterested, onSkip }: MatchCardProps) {
       </div>
     </div>
   );
-}
+});
 
 function MiniGauge({ label, score }: { label: string; score: number }) {
   const color =

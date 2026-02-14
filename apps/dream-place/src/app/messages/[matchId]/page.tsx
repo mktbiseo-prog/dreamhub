@@ -87,7 +87,7 @@ export default function ChatPage({
           </svg>
         </Link>
         <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-brand-400 to-blue-500 text-sm font-bold text-white">
-          {partner.name.charAt(0)}
+          {partner.name?.[0] ?? "?"}
         </div>
         <div className="flex-1">
           <h2 className="font-medium text-gray-900 dark:text-gray-100">

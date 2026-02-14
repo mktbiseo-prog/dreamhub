@@ -4,7 +4,18 @@ import { useState, useMemo, useRef, useCallback } from "react";
 import dynamic from "next/dynamic";
 import { Grid2x2, Box, Loader2, GripHorizontal, ChevronUp, X } from "lucide-react";
 import { cn } from "@dreamhub/design-system";
-import { BrainGraph } from "./BrainGraph";
+// Lazy-load BrainGraph (2D) — @xyflow/react is ~100KB gzipped
+const BrainGraph = dynamic(
+  () => import("./BrainGraph").then((m) => m.BrainGraph),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="flex items-center justify-center h-full">
+        <Loader2 className="h-8 w-8 animate-spin text-[var(--dream-color-primary)]" />
+      </div>
+    ),
+  },
+);
 import { TimeSlider } from "./TimeSlider";
 import { NoteCard } from "./brain/NoteCard";
 import { categories, type CategoryId } from "@/lib/categories";

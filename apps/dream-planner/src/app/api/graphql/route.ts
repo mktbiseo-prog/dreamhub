@@ -14,6 +14,7 @@ import { buildSubgraphSchema } from "@apollo/subgraph";
 import { gql } from "graphql-tag";
 import { calculateGritScore, toExecutionVector } from "@/lib/grit-score";
 import { publishStageChanged } from "@/lib/event-handlers";
+import { ProjectStage } from "@dreamhub/shared-types";
 
 // ═══════════════════════════════════════════════════════════════════════════
 // Schema
@@ -139,7 +140,7 @@ const resolvers = {
         project.updatedAt = new Date().toISOString();
       }
 
-      await publishStageChanged(projectId, oldStage, newStage);
+      await publishStageChanged(projectId, oldStage as ProjectStage, newStage as ProjectStage);
 
       return {
         projectId,
@@ -219,4 +220,3 @@ async function handler(req: Request): Promise<Response> {
 export const POST = handler;
 export const GET = handler;
 
-export { server, typeDefs, resolvers };

@@ -1,3 +1,4 @@
+import { memo } from "react";
 import Link from "next/link";
 import { categories } from "@/lib/categories";
 import type { ThoughtData } from "@/lib/data";
@@ -22,7 +23,7 @@ interface NoteCardProps {
   className?: string;
 }
 
-export function NoteCard({ thought, className }: NoteCardProps) {
+export const NoteCard = memo(function NoteCard({ thought, className }: NoteCardProps) {
   const category = categories[thought.category];
   const Icon = category.icon;
 
@@ -65,7 +66,7 @@ export function NoteCard({ thought, className }: NoteCardProps) {
       </article>
     </Link>
   );
-}
+});
 
 /** Get hex color for a category to use in inline styles */
 function getCategoryHex(categoryId: string): string {

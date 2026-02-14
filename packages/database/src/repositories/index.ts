@@ -23,6 +23,7 @@ import { PlannerRepository } from "./planner.repository";
 import { TranslationCacheRepository } from "./translation-cache.repository";
 import { ChatRepository } from "./chat.repository";
 import { NotificationRepository } from "./notification.repository";
+import { FileUploadRepository } from "./file-upload.repository";
 
 export const userRepo = new UserRepository();
 export const thoughtRepo = new ThoughtRepository();

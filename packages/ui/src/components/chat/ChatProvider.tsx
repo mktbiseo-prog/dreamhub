@@ -84,6 +84,39 @@ export function ChatProvider({
   const [connected, setConnected] = useState(socket?.connected ?? false);
   const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // Message batching: buffer incoming messages and flush every 100ms
+  const msgBufferRef = useRef<Message[]>([]);
+  const flushTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const flushMessages = useCallback(() => {
+    const batch = msgBufferRef.current;
+    if (batch.length === 0) return;
+    msgBufferRef.current = [];
+
+    setMessages((prev) => {
+      const ids = new Set(prev.map((m) => m.id));
+      const newMsgs = batch.filter((m) => !ids.has(m.id));
+      return newMsgs.length > 0 ? [...prev, ...newMsgs] : prev;
+    });
+
+    // Update conversations for the batch
+    setConversations((prev) =>
+      prev.map((c) => {
+        const latest = batch.filter((m) => m.roomId === c.roomId).pop();
+        if (!latest) return c;
+        const addUnread = batch.filter(
+          (m) => m.roomId === c.roomId && m.senderId !== userId && m.roomId !== activeRoomId
+        ).length;
+        return {
+          ...c,
+          lastMessage: latest.content,
+          lastMessageAt: latest.createdAt,
+          unreadCount: c.unreadCount + addUnread,
+        };
+      })
+    );
+  }, [userId, activeRoomId]);
+
   // Socket event handlers
   useEffect(() => {
     if (!socket) return;
@@ -92,26 +125,14 @@ export function ChatProvider({
     const onDisconnect = () => setConnected(false);
 
     const onMessageNew = (msg: Message) => {
-      // Add to active room messages
-      setMessages((prev) =>
-        prev.some((m) => m.id === msg.id) ? prev : [...prev, msg]
-      );
-      // Update conversation last message
-      setConversations((prev) =>
-        prev.map((c) =>
-          c.roomId === msg.roomId
-            ? {
-                ...c,
-                lastMessage: msg.content,
-                lastMessageAt: msg.createdAt,
-                unreadCount:
-                  msg.senderId !== userId && msg.roomId !== activeRoomId
-                    ? c.unreadCount + 1
-                    : c.unreadCount,
-              }
-            : c
-        )
-      );
+      // Buffer messages and flush in 100ms batches
+      msgBufferRef.current.push(msg);
+      if (!flushTimerRef.current) {
+        flushTimerRef.current = setTimeout(() => {
+          flushTimerRef.current = null;
+          flushMessages();
+        }, 100);
+      }
     };
 
     const onMessageTranslated = ({

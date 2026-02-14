@@ -61,8 +61,8 @@ export class UserRepository extends BaseRepository {
   ): Promise<UserPreferences> {
     return this.prisma.userPreferences.upsert({
       where: { userId },
-      create: { userId, ...data },
-      update: data,
+      create: { userId, ...data } as Prisma.UserPreferencesUncheckedCreateInput,
+      update: data as Prisma.UserPreferencesUpdateInput,
     });
   }
 
@@ -78,8 +78,8 @@ export class UserRepository extends BaseRepository {
   ): Promise<DreamDna> {
     return this.prisma.dreamDna.upsert({
       where: { userId },
-      create: { userId, ...data },
-      update: data,
+      create: { userId, ...data } as Prisma.DreamDnaUncheckedCreateInput,
+      update: data as Prisma.DreamDnaUpdateInput,
     });
   }
 
@@ -95,8 +95,8 @@ export class UserRepository extends BaseRepository {
   ): Promise<DreamProfile> {
     return this.prisma.dreamProfile.upsert({
       where: { userId },
-      create: { userId, dreamStatement: data.dreamStatement ?? "", ...data },
-      update: data,
+      create: { userId, dreamStatement: data.dreamStatement ?? "", ...data } as Prisma.DreamProfileUncheckedCreateInput,
+      update: data as Prisma.DreamProfileUpdateInput,
     });
   }
 

@@ -2,12 +2,18 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import dynamic from "next/dynamic";
 import { Sparkles } from "lucide-react";
 import { RecordButton } from "./brain/RecordButton";
 import { WaveformVisualizer } from "./brain/WaveformVisualizer";
-import { CaptureModal } from "./CaptureModal";
 import { useVoiceRecorder } from "@/lib/hooks/useVoiceRecorder";
 import { createVoiceThought } from "@/lib/actions/thoughts";
+
+// Lazy-load CaptureModal — only rendered when user opens it
+const CaptureModal = dynamic(
+  () => import("./CaptureModal").then((m) => m.CaptureModal),
+  { ssr: false },
+);
 
 export function FabButton() {
   const router = useRouter();

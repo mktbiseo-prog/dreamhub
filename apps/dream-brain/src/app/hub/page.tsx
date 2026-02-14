@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { Header } from "@/components/Header";
 import { HubGatewayView } from "@/components/HubGatewayView";
 import { BottomNav } from "@/components/BottomNav";

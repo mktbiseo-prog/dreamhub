@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { Header } from "@/components/Header";
 import { TimelineView } from "@/components/TimelineView";
 import { FabButton } from "@/components/FabButton";

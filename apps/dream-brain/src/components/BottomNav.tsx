@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { Home, Brain, BarChart3, Link2 } from "lucide-react";
 import { MobileNav, type NavItem } from "@dreamhub/design-system";
@@ -18,6 +19,15 @@ export function BottomNav() {
     pathname === "/"
       ? "/"
       : navItems.find((item) => item.href !== "/" && pathname.startsWith(item.href))?.href ?? "/";
+
+  // Prefetch all nav destinations for instant navigation
+  useEffect(() => {
+    navItems.forEach((item) => {
+      if (item.href !== activeHref) {
+        router.prefetch(item.href);
+      }
+    });
+  }, [activeHref, router]);
 
   return (
     <MobileNav
