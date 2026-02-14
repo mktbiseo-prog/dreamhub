@@ -5,7 +5,13 @@ import { BottomNav } from "@/components/BottomNav";
 import { fetchGraphData } from "@/lib/queries";
 
 export default async function BrainPage() {
-  const graphData = await fetchGraphData();
+  let graphData: { thoughts: import("@/lib/data").ThoughtData[]; connections: import("@/lib/data").ConnectionData[] };
+  try {
+    graphData = await fetchGraphData();
+  } catch (e) {
+    if (e && typeof e === "object" && "digest" in e && String((e as Record<string, unknown>).digest).startsWith("NEXT_REDIRECT")) throw e;
+    graphData = { thoughts: [], connections: [] };
+  }
 
   return (
     <div className="flex h-screen flex-col">

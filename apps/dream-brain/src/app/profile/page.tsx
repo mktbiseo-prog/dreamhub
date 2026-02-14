@@ -7,13 +7,24 @@ import { fetchUserProfile, fetchUserStats } from "@/lib/queries";
 import { getCurrentUserId } from "@/lib/auth";
 
 export default async function ProfilePage() {
-  const [profile, stats, userId] = await Promise.all([
-    fetchUserProfile(),
-    fetchUserStats(),
-    getCurrentUserId(),
-  ]);
-
-  const isDemo = userId === "demo-user";
+  let profile: import("@/lib/queries").UserProfile;
+  let stats: import("@/lib/queries").UserStats;
+  let isDemo: boolean;
+  try {
+    const [p, s, userId] = await Promise.all([
+      fetchUserProfile(),
+      fetchUserStats(),
+      getCurrentUserId(),
+    ]);
+    profile = p;
+    stats = s;
+    isDemo = userId === "demo-user";
+  } catch (e) {
+    if (e && typeof e === "object" && "digest" in e && String((e as Record<string, unknown>).digest).startsWith("NEXT_REDIRECT")) throw e;
+    profile = { name: null, email: "", bio: null, dreamStatement: null, skills: [], interests: [] };
+    stats = { totalThoughts: 0, topCategory: null };
+    isDemo = true;
+  }
 
   return (
     <div className="flex min-h-screen flex-col pb-20">

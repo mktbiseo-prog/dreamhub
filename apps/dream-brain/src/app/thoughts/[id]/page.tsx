@@ -10,11 +10,21 @@ interface ThoughtPageProps {
 
 export default async function ThoughtPage({ params }: ThoughtPageProps) {
   const { id } = await params;
-  const thought = await fetchThoughtById(id);
 
-  if (!thought) notFound();
-
-  const related = await fetchRelatedThoughts(id);
+  let thought: import("@/lib/data").ThoughtData;
+  let related: import("@/lib/data").RelatedThoughtData[];
+  try {
+    const fetched = await fetchThoughtById(id);
+    if (!fetched) notFound();
+    thought = fetched;
+    related = await fetchRelatedThoughts(id);
+  } catch (e) {
+    if (e && typeof e === "object" && "digest" in e) {
+      const digest = String((e as Record<string, unknown>).digest);
+      if (digest.startsWith("NEXT_REDIRECT") || digest.startsWith("NEXT_NOT_FOUND")) throw e;
+    }
+    notFound();
+  }
 
   return (
     <div className="flex min-h-screen flex-col">

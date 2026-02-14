@@ -7,12 +7,31 @@ import { getCurrentUserId } from "@/lib/auth";
 import { SettingsPageClient } from "./SettingsPageClient";
 
 export default async function SettingsPage() {
-  const [preferences, userId] = await Promise.all([
-    fetchUserPreferences(),
-    getCurrentUserId(),
-  ]);
-
-  const isDemo = userId === "demo-user";
+  let preferences: import("@/lib/queries").UserPreferencesData;
+  let isDemo: boolean;
+  let userId: string;
+  try {
+    const [prefs, uid] = await Promise.all([
+      fetchUserPreferences(),
+      getCurrentUserId(),
+    ]);
+    preferences = prefs;
+    userId = uid;
+    isDemo = uid === "demo-user";
+  } catch (e) {
+    if (e && typeof e === "object" && "digest" in e && String((e as Record<string, unknown>).digest).startsWith("NEXT_REDIRECT")) throw e;
+    preferences = {
+      aiProcessingLevel: "standard",
+      dailyPromptEnabled: true,
+      weeklyInsightEnabled: true,
+      connectionAlerts: true,
+      defaultView: "home",
+      thoughtsPerPage: 20,
+      embeddingEnabled: true,
+    };
+    isDemo = true;
+    userId = "demo-user";
+  }
 
   return (
     <div className="flex min-h-screen flex-col pb-20">

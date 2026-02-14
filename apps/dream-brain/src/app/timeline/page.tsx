@@ -7,7 +7,13 @@ import { BottomNav } from "@/components/BottomNav";
 import { fetchThoughts } from "@/lib/queries";
 
 export default async function TimelinePage() {
-  const thoughts = await fetchThoughts({ includeArchived: true });
+  let thoughts: import("@/lib/data").ThoughtData[];
+  try {
+    thoughts = await fetchThoughts({ includeArchived: true });
+  } catch (e) {
+    if (e && typeof e === "object" && "digest" in e && String((e as Record<string, unknown>).digest).startsWith("NEXT_REDIRECT")) throw e;
+    thoughts = [];
+  }
 
   return (
     <div className="flex min-h-screen flex-col pb-20">
