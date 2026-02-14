@@ -1,0 +1,24 @@
+{
+  "name": "@dreamhub/i18n",
+  "private": true,
+  "version": "0.0.1",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./translator": "./src/translator.ts",
+    "./detector": "./src/detector.ts",
+    "./rtl": "./src/rtl.ts",
+    "./formatter": "./src/formatter.ts",
+    "./types": "./src/types.ts",
+    "./middleware": "./src/middleware.ts"
+  },
+  "dependencies": {
+    "@dreamhub/shared-types": "workspace:*"
+  },
+  "devDependencies": {
+    "@dreamhub/config": "workspace:*",
+    "typescript": "^5.7.0",
+    "vitest": "^4.0.18"
+  }
+}

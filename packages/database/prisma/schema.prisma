@@ -24,6 +24,11 @@ model User {
   createdAt            DateTime  @default(now())
   updatedAt            DateTime  @updatedAt
 
+  profileImageUrl    String?
+  preferredLanguage  String    @default("en")
+  connectedAccounts  Json      @default("[]")
+  permissions        String[]  @default([])
+
   stripeCustomerId String?
   stripeConnectId  String?
 
@@ -53,6 +58,13 @@ model User {
   sellerDisputes   Dispute[] @relation("DisputeSeller")
   communityVotes   CommunityVote[]
   storyEngagements StoryEngagement[]
+  dreamDna         DreamDna?
+  cafeVisits       CafeVisit[]
+  trustSignals     TrustSignal[]
+  authSessions     AuthSession[]
+  notifications    Notification[]
+  notificationPreferences NotificationPreference[]
+  fileUploads      FileUpload[]
 
   @@map("users")
 }
@@ -149,11 +161,15 @@ model Match {
   id            String      @id @default(cuid())
   senderId      String
   receiverId    String
-  matchScore    Float       @default(0)
-  dreamScore    Float       @default(0)
-  skillScore    Float       @default(0)
-  valueScore    Float       @default(0)
-  status        MatchStatus @default(PENDING)
+  matchScore       Float       @default(0)
+  dreamScore       Float       @default(0)
+  skillScore       Float       @default(0)
+  valueScore       Float       @default(0)
+  visionAlignment  Float       @default(0)
+  complementarity  Float       @default(0)
+  trustIndex       Float       @default(0)
+  psychFit         Float       @default(0)
+  status           MatchStatus @default(PENDING)
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
 
@@ -750,6 +766,8 @@ model Thought {
   emotionSecondary     String?
   valence              Float?          @default(0)
   emotionConfidence    Float?          @default(0)
+  arousal              Float?          @default(0)
+  language             String          @default("en")
   actionItems          Json?           @default("[]")
   peopleMentioned      String[]        @default([])
   placesMentioned      String[]        @default([])
@@ -794,4 +812,195 @@ model InsightReport {
 
   @@unique([userId, periodType, periodStart])
   @@map("insight_reports")
+}
+
+// ─── Dream DNA (4D Vector — §2) ──────────────────────────────────
+
+model DreamDna {
+  id               String   @id @default(cuid())
+  userId           String   @unique
+
+  // Identity dimension
+  identityVector   Float[]  @default([])
+  coreValues       String[] @default([])
+  shadowTraits     String[] @default([])
+  emotionValence   Float    @default(0)
+  emotionArousal   Float    @default(0)
+
+  // Capability dimension
+  hardSkills       Json     @default("{}")
+  softSkills       Json     @default("{}")
+  skillVector      Float[]  @default([])
+
+  // Execution dimension
+  gritScore        Float    @default(0)
+  completionRate   Float    @default(0)
+  streakDays       Int      @default(0)
+  mvpLaunched      Boolean  @default(false)
+
+  // Trust dimension
+  compositeTrust   Float    @default(0.5)
+
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("dream_dna")
+}
+
+// ─── Cafe Visits (§13 Doorbell Events) ────────────────────────────
+
+model CafeVisit {
+  id             String   @id @default(cuid())
+  userId         String
+  cafeId         String
+  doorbellType   String   @default("ONLINE")
+  targetDreamId  String?
+  weight         Float    @default(1.0)
+  createdAt      DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([cafeId])
+  @@map("cafe_visits")
+}
+
+// ─── Trust Signals (§9 Cross-Service Trust) ───────────────────────
+
+model TrustSignal {
+  id          String   @id @default(cuid())
+  userId      String
+  service     String
+  signalType  String
+  value       Float    @default(0)
+  createdAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, service])
+  @@map("trust_signals")
+}
+
+// ─── Translation Cache (translation-service) ──────────────────────
+
+model TranslationCache {
+  id             String   @id @default(cuid())
+  sourceHash     String   @unique
+  sourceText     String   @db.Text
+  fromLang       String
+  toLang         String
+  translatedText String   @db.Text
+  accessCount    Int      @default(0)
+  createdAt      DateTime @default(now())
+
+  @@index([fromLang, toLang])
+  @@map("translation_cache")
+}
+
+// ─── Auth Sessions (JWT Token Store) ──────────────────────────────
+
+model AuthSession {
+  id          String    @id @default(cuid())
+  userId      String
+  token       String    @unique
+  deviceInfo  String?
+  expiresAt   DateTime
+  createdAt   DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("auth_sessions")
+}
+
+// ─── Chat System ────────────────────────────────────────────
+
+model ChatRoom {
+  id           String   @id @default(cuid())
+  type         String   @default("MATCH_CHAT")
+  name         String?
+  matchId      String?  @unique
+  teamId       String?  @unique
+  participants String[] @default([])
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  chatMessages ChatMessage[]
+
+  @@index([type])
+  @@map("chat_rooms")
+}
+
+model ChatMessage {
+  id                String   @id @default(cuid())
+  roomId            String
+  senderId          String
+  content           String   @db.Text
+  type              String   @default("TEXT")
+  language          String?
+  translatedContent Json     @default("{}")
+  readBy            String[] @default([])
+  createdAt         DateTime @default(now())
+
+  room ChatRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
+
+  @@index([roomId, createdAt])
+  @@map("chat_messages")
+}
+
+// ─── Notifications ──────────────────────────────────────────
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String
+  title     String
+  body      String   @db.Text
+  data      Json     @default("{}")
+  channels  String[] @default([])
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([userId, read])
+  @@map("notifications")
+}
+
+model NotificationPreference {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String
+  channels  String[] @default([])
+  enabled   Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, type])
+  @@map("notification_preferences")
+}
+
+// ─── File Uploads ───────────────────────────────────────────
+
+model FileUpload {
+  id           String   @id @default(cuid())
+  userId       String
+  key          String   @unique
+  url          String
+  category     String
+  mimeType     String
+  size         Int
+  originalName String
+  createdAt    DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([category])
+  @@map("file_uploads")
 }

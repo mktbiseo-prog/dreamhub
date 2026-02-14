@@ -1,0 +1,15 @@
+{
+  "store.title": "Dream Store",
+  "store.subtitle": "Apoie sonhos, descubra produtos incríveis",
+  "store.product.support": "Apoie este sonho",
+  "store.product.story": "A história por trás disso",
+  "store.product.creator": "Criado por",
+  "store.product.funded": "{percent}% financiado",
+  "store.product.supporters": "{count} apoiadores",
+  "store.product.price": "Preço",
+  "store.product.addToCart": "Adicionar ao carrinho",
+  "store.seller.dashboard": "Painel do vendedor",
+  "store.seller.addProduct": "Adicionar produto",
+  "store.seller.sales": "Vendas",
+  "store.seller.revenue": "Receita"
+}

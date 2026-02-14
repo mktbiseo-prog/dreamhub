@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
+import { authMiddleware } from "@dreamhub/auth/middleware";
+import { i18nMiddleware } from "@dreamhub/i18n/middleware";
 
 interface SkillInput {
   name: string;
@@ -13,12 +15,17 @@ interface CombineRequest {
 
 export async function POST(request: Request) {
   try {
+    const i18n = i18nMiddleware(request);
+    const auth = authMiddleware(request);
+    if (!auth.success) {
+      return NextResponse.json({ error: i18n.t(auth.status === 403 ? "error.forbidden" : "error.unauthorized"), meta: i18n.meta }, { status: auth.status });
+    }
     const body = (await request.json()) as CombineRequest;
     const { skills } = body;
 
     if (!skills || skills.length < 2) {
       return NextResponse.json(
-        { error: "At least 2 skills required" },
+        { error: i18n.t("error.validation"), meta: i18n.meta },
         { status: 400 }
       );
     }
@@ -28,6 +35,7 @@ export async function POST(request: Request) {
       // Mock fallback
       return NextResponse.json({
         valuePropositions: getMockPropositions(skills),
+        meta: i18n.meta,
       });
     }
 
@@ -76,6 +84,7 @@ Learning skills: ${grouped.learning.join(", ") || "none"}`,
     if (!content) {
       return NextResponse.json({
         valuePropositions: getMockPropositions(skills),
+        meta: i18n.meta,
       });
     }
 
@@ -86,11 +95,13 @@ Learning skills: ${grouped.learning.join(", ") || "none"}`,
         skills: string[];
       }[];
     };
-    return NextResponse.json({ valuePropositions: parsed.propositions });
+    return NextResponse.json({ valuePropositions: parsed.propositions, meta: i18n.meta });
   } catch (error) {
     console.error("[Skills Combine API] Error:", error);
+    const i18n = i18nMiddleware(request);
     return NextResponse.json({
       valuePropositions: getMockPropositions([]),
+      meta: i18n.meta,
     });
   }
 }

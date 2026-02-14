@@ -77,6 +77,61 @@ export interface MatchCreatedEvent extends BaseEvent {
   };
 }
 
+// ── dream.auth.user_registered ────────────────────────────────────────────
+
+/** Emitted when a new Dream ID is created.  All services create initial records. */
+export interface UserRegisteredEvent extends BaseEvent {
+  type: "dream.auth.user_registered";
+  payload: {
+    userId: string;
+    email: string;
+    name: string;
+    preferredLanguage: string;
+  };
+}
+
+// ── dream.auth.user_updated ──────────────────────────────────────────────
+
+/** Emitted when a Dream ID profile is modified.  All services sync changes. */
+export interface UserUpdatedEvent extends BaseEvent {
+  type: "dream.auth.user_updated";
+  payload: {
+    userId: string;
+    changes: {
+      name?: string;
+      email?: string;
+      profileImageUrl?: string;
+      preferredLanguage?: string;
+    };
+  };
+}
+
+// ── dream.auth.user_deleted ──────────────────────────────────────────────
+
+/** Emitted when a Dream ID is deleted.  All services clean up user data. */
+export interface UserDeletedEvent extends BaseEvent {
+  type: "dream.auth.user_deleted";
+  payload: {
+    userId: string;
+    deletedAt: string;
+  };
+}
+
+// ── dream.place.message_translated ────────────────────────────────────────
+
+/** Emitted when a chat message translation completes.  Consumed by Place (chat UI). */
+export interface MessageTranslatedEvent extends BaseEvent {
+  type: "dream.place.message_translated";
+  payload: {
+    messageId: string;
+    matchId: string;
+    translated: string;
+    fromLang: string;
+    toLang: string;
+    receiverLang: string;
+  };
+}
+
 // ── Union & topic mapping ──────────────────────────────────────────────────
 
 export type DreamEvent =
@@ -84,7 +139,11 @@ export type DreamEvent =
   | DoorbellRungEvent
   | PurchaseVerifiedEvent
   | StageChangedEvent
-  | MatchCreatedEvent;
+  | MatchCreatedEvent
+  | UserRegisteredEvent
+  | UserUpdatedEvent
+  | UserDeletedEvent
+  | MessageTranslatedEvent;
 
 export type DreamEventType = DreamEvent["type"];
 
@@ -95,4 +154,8 @@ export const DREAM_EVENT_TOPICS: Record<DreamEventType, string> = {
   "dream.store.purchase_verified": "dream.store.purchase_verified",
   "dream.planner.stage_changed": "dream.planner.stage_changed",
   "dream.place.match_created": "dream.place.match_created",
+  "dream.auth.user_registered": "dream.auth.user_registered",
+  "dream.auth.user_updated": "dream.auth.user_updated",
+  "dream.auth.user_deleted": "dream.auth.user_deleted",
+  "dream.place.message_translated": "dream.place.message_translated",
 } as const;

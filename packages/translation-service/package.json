@@ -1,0 +1,30 @@
+{
+  "name": "@dreamhub/translation-service",
+  "private": true,
+  "version": "0.0.1",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./types": "./src/types.ts",
+    "./cache": "./src/cache.ts",
+    "./detector": "./src/detector.ts",
+    "./content": "./src/content.ts",
+    "./chat": "./src/chat.ts",
+    "./queue": "./src/queue.ts",
+    "./providers/mock": "./src/providers/mock.ts",
+    "./providers/google": "./src/providers/google.ts",
+    "./providers/deepl": "./src/providers/deepl.ts",
+    "./providers/factory": "./src/providers/factory.ts"
+  },
+  "dependencies": {
+    "@dreamhub/shared-types": "workspace:*",
+    "@dreamhub/event-bus": "workspace:*",
+    "@dreamhub/i18n": "workspace:*"
+  },
+  "devDependencies": {
+    "@dreamhub/config": "workspace:*",
+    "typescript": "^5.7.0",
+    "vitest": "^4.0.18"
+  }
+}

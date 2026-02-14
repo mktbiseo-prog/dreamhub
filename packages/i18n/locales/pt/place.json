@@ -1,0 +1,20 @@
+{
+  "place.title": "Dream Place",
+  "place.subtitle": "Encontre sua equipe dos sonhos",
+  "place.match.title": "Suas compatibilidades",
+  "place.match.score": "Pontuação de compatibilidade: {score}%",
+  "place.match.vision": "Alinhamento de visão",
+  "place.match.skills": "Complementaridade de habilidades",
+  "place.match.trust": "Índice de confiança",
+  "place.match.psych": "Compatibilidade de personalidade",
+  "place.match.accept": "Conectar",
+  "place.match.decline": "Passar",
+  "place.match.explanation": "Por que vocês combinaram",
+  "place.explore": "Explorar sonhos",
+  "place.filter.skills": "Habilidades necessárias",
+  "place.filter.stage": "Etapa do projeto",
+  "place.filter.location": "Localização",
+  "place.team.title": "Minha equipe",
+  "place.team.join": "Entrar na equipe",
+  "place.team.members": "{count} membros"
+}

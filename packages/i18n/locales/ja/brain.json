@@ -1,0 +1,15 @@
+{
+  "brain.title": "Dream Brain",
+  "brain.subtitle": "あなたの第二のAI頭脳",
+  "brain.record": "考えを記録する",
+  "brain.recording": "録音中...",
+  "brain.tap": "タップして録音を開始",
+  "brain.categories": "カテゴリー",
+  "brain.insights": "インサイト",
+  "brain.visualization": "3Dブレインマップ",
+  "brain.thoughtCount": "{count}個の考えを記録",
+  "brain.streak": "{days}日連続",
+  "brain.prompt.1": "今何を考えていますか？",
+  "brain.prompt.2": "今日の目標は何ですか？",
+  "brain.prompt.3": "最近最も興味があることは何ですか？"
+}

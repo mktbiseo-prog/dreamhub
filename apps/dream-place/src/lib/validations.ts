@@ -66,6 +66,18 @@ export const sendMessageSchema = z.object({
     .max(2000, "Message must be under 2,000 characters"),
 });
 
+// ─── Chat Messages ─────────────────────────────────────────
+
+export const chatMessageSchema = z.object({
+  content: z
+    .string()
+    .min(1, "Message cannot be empty")
+    .max(2000, "Message must be under 2,000 characters"),
+  type: z.enum(["TEXT", "IMAGE"]).optional(),
+});
+
+export type ChatMessageInput = z.infer<typeof chatMessageSchema>;
+
 // ─── Discover Filters ───────────────────────────────────────
 
 export const discoverFiltersSchema = z.object({

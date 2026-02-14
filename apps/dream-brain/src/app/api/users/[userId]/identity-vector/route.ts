@@ -1,11 +1,18 @@
 import { NextResponse } from "next/server";
 import type { IdentityVector } from "@dreamhub/shared-types";
+import { authMiddleware } from "@dreamhub/auth/middleware";
+import { i18nMiddleware } from "@dreamhub/i18n/middleware";
 
 export async function GET(
-  _req: Request,
+  req: Request,
   { params }: { params: Promise<{ userId: string }> },
 ) {
+  const i18n = i18nMiddleware(req);
   try {
+    const auth = authMiddleware(req);
+    if (!auth.success) {
+      return NextResponse.json({ error: i18n.t(auth.status === 403 ? "error.forbidden" : "error.unauthorized"), meta: i18n.meta }, { status: auth.status });
+    }
     const { userId } = await params;
 
     // TODO: In production, aggregate user's thought embeddings from DB
@@ -33,9 +40,9 @@ export async function GET(
     return NextResponse.json({
       userId,
       identityVector,
+      meta: i18n.meta,
     });
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Internal server error";
-    return NextResponse.json({ error: message }, { status: 500 });
+    return NextResponse.json({ error: i18n.t("error.serverError"), meta: i18n.meta }, { status: 500 });
   }
 }

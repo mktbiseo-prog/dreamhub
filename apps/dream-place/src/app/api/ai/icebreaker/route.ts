@@ -1,4 +1,6 @@
 import { NextResponse } from "next/server";
+import { authMiddleware } from "@dreamhub/auth/middleware";
+import { i18nMiddleware } from "@dreamhub/i18n/middleware";
 
 /**
  * POST /api/ai/icebreaker
@@ -6,10 +8,16 @@ import { NextResponse } from "next/server";
  * Mock: template-based. Production: GPT-4o-mini.
  */
 export async function POST(req: Request) {
+  const i18n = i18nMiddleware(req);
   try {
+    const auth = authMiddleware(req);
+    if (!auth.success) {
+      return NextResponse.json({ error: i18n.t(auth.status === 403 ? "error.forbidden" : "error.unauthorized"), meta: i18n.meta }, { status: auth.status });
+    }
+
     const { profileA, profileB } = await req.json();
     if (!profileA || !profileB) {
-      return NextResponse.json({ error: "profileA and profileB required" }, { status: 400 });
+      return NextResponse.json({ error: i18n.t("error.validation"), meta: i18n.meta }, { status: 400 });
     }
 
     // Find common ground
@@ -49,10 +57,10 @@ export async function POST(req: Request) {
       `I think our skills could complement each other really well. Would you be open to a quick chat about potential collaboration?`
     );
 
-    return NextResponse.json({ suggestions });
+    return NextResponse.json({ suggestions, meta: i18n.meta });
   } catch {
     return NextResponse.json(
-      { error: "Failed to generate suggestions" },
+      { error: i18n.t("error.serverError"), meta: i18n.meta },
       { status: 500 }
     );
   }

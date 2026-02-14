@@ -12,6 +12,10 @@
     "@apollo/server": "^4.11.0",
     "@apollo/subgraph": "^2.13.0",
     "graphql": "^16.9.0",
+    "@dreamhub/auth": "workspace:*",
+    "@dreamhub/event-bus": "workspace:*",
+    "@dreamhub/i18n": "workspace:*",
+    "@dreamhub/shared-types": "workspace:*",
     "graphql-tag": "^2.12.6"
   },
   "devDependencies": {

@@ -1,0 +1,20 @@
+{
+  "place.title": "드림 플레이스",
+  "place.subtitle": "꿈의 팀을 찾으세요",
+  "place.match.title": "나의 매칭",
+  "place.match.score": "매칭 점수: {score}%",
+  "place.match.vision": "비전 일치도",
+  "place.match.skills": "스킬 상호보완성",
+  "place.match.trust": "신뢰 지수",
+  "place.match.psych": "성격 적합도",
+  "place.match.accept": "연결하기",
+  "place.match.decline": "패스",
+  "place.match.explanation": "매칭 이유",
+  "place.explore": "꿈 탐색하기",
+  "place.filter.skills": "필요한 스킬",
+  "place.filter.stage": "프로젝트 단계",
+  "place.filter.location": "위치",
+  "place.team.title": "나의 팀",
+  "place.team.join": "팀 참가",
+  "place.team.members": "{count}명의 멤버"
+}

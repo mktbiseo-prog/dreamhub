@@ -1,0 +1,15 @@
+{
+  "brain.title": "دريم برين",
+  "brain.subtitle": "دماغك الثاني بالذكاء الاصطناعي",
+  "brain.record": "سجّل فكرتك",
+  "brain.recording": "جارٍ التسجيل...",
+  "brain.tap": "انقر لبدء التسجيل",
+  "brain.categories": "الفئات",
+  "brain.insights": "رؤى",
+  "brain.visualization": "خريطة الدماغ ثلاثية الأبعاد",
+  "brain.thoughtCount": "{count} أفكار مسجّلة",
+  "brain.streak": "سلسلة {days} أيام",
+  "brain.prompt.1": "ما الذي يدور في ذهنك الآن؟",
+  "brain.prompt.2": "ما هدفك لهذا اليوم؟",
+  "brain.prompt.3": "ما الذي يثير اهتمامك أكثر مؤخراً؟"
+}

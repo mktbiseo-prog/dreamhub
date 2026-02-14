@@ -1,0 +1,17 @@
+{
+  "planner.title": "Dream Planner",
+  "planner.subtitle": "將你的夢想變成計劃",
+  "planner.part1": "第一部分：發現你的夢想",
+  "planner.part2": "第二部分：規劃與準備",
+  "planner.part3": "第三部分：零成本 MVP",
+  "planner.part4": "第四部分：反思與成長",
+  "planner.gritScore": "毅力分數",
+  "planner.progress": "進度",
+  "planner.streak": "連續記錄",
+  "planner.project.create": "建立新專案",
+  "planner.project.stage": "專案階段",
+  "planner.stage.ideation": "構思",
+  "planner.stage.building": "建設",
+  "planner.stage.scaling": "擴展",
+  "planner.stage.complete": "完成"
+}

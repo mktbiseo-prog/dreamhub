@@ -1,0 +1,15 @@
+{
+  "brain.title": "Dream Brain",
+  "brain.subtitle": "你的第二個 AI 大腦",
+  "brain.record": "記錄你的想法",
+  "brain.recording": "錄音中...",
+  "brain.tap": "點擊開始錄音",
+  "brain.categories": "分類",
+  "brain.insights": "洞察",
+  "brain.visualization": "3D 大腦地圖",
+  "brain.thoughtCount": "已記錄 {count} 個想法",
+  "brain.streak": "連續 {days} 天",
+  "brain.prompt.1": "你現在在想甚麼？",
+  "brain.prompt.2": "你今天的目標是甚麼？",
+  "brain.prompt.3": "你最近最感興趣的是甚麼？"
+}

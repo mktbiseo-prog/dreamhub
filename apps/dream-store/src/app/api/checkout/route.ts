@@ -4,6 +4,7 @@ import { prisma } from "@dreamhub/database";
 import { getStripe, PLATFORM_FEE_PERCENT } from "@/lib/stripe";
 import { getProductById as mockGetProductById } from "@/lib/mockData";
 import { getCurrentUserId } from "@/lib/auth";
+import { i18nMiddleware } from "@dreamhub/i18n/middleware";
 
 interface CartItemInput {
   productId: string;
@@ -71,6 +72,7 @@ async function resolveProduct(
 }
 
 export async function POST(request: NextRequest) {
+  const i18n = i18nMiddleware(request);
   const body = await request.json();
   const buyerId = await getCurrentUserId();
 
@@ -86,7 +88,7 @@ export async function POST(request: NextRequest) {
     ];
   } else {
     return NextResponse.json(
-      { error: "Missing product information" },
+      { error: i18n.t("error.validation"), meta: i18n.meta },
       { status: 400 }
     );
   }
@@ -100,7 +102,7 @@ export async function POST(request: NextRequest) {
 
   const products = resolved.filter(Boolean) as ResolvedProduct[];
   if (products.length === 0) {
-    return NextResponse.json({ error: "No valid products found" }, { status: 404 });
+    return NextResponse.json({ error: i18n.t("error.validation"), meta: i18n.meta }, { status: 404 });
   }
 
   const stripe = getStripe();
@@ -108,6 +110,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       message: "Stripe is not configured yet. Add STRIPE_SECRET_KEY to your .env file to enable checkout.",
       demo: true,
+      meta: i18n.meta,
     });
   }
 
@@ -199,5 +202,5 @@ export async function POST(request: NextRequest) {
     // Order creation is not critical for checkout flow
   }
 
-  return NextResponse.json({ url: session.url });
+  return NextResponse.json({ url: session.url, meta: i18n.meta });
 }

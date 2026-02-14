@@ -1,10 +1,17 @@
 import { NextResponse } from "next/server";
+import { authMiddleware } from "@dreamhub/auth/middleware";
+import { i18nMiddleware } from "@dreamhub/i18n/middleware";
 
 export async function GET(
-  _req: Request,
+  req: Request,
   { params }: { params: Promise<{ userId: string }> },
 ) {
   try {
+    const i18n = i18nMiddleware(req);
+    const auth = authMiddleware(req);
+    if (!auth.success) {
+      return NextResponse.json({ error: i18n.t(auth.status === 403 ? "error.forbidden" : "error.unauthorized"), meta: i18n.meta }, { status: auth.status });
+    }
     const { userId } = await params;
 
     // TODO: Query real planner session from DB when available
@@ -17,9 +24,9 @@ export async function GET(
       totalActivities: 23,
     };
 
-    return NextResponse.json({ userId, progress });
+    return NextResponse.json({ userId, progress, meta: i18n.meta });
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Internal server error";
-    return NextResponse.json({ error: message }, { status: 500 });
+    const i18n = i18nMiddleware(req);
+    return NextResponse.json({ error: i18n.t("error.serverError"), meta: i18n.meta }, { status: 500 });
   }
 }

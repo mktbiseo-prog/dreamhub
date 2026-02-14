@@ -1,0 +1,15 @@
+{
+  "brain.title": "드림 브레인",
+  "brain.subtitle": "당신의 두 번째 AI 두뇌",
+  "brain.record": "생각을 기록하세요",
+  "brain.recording": "녹음 중...",
+  "brain.tap": "탭하여 녹음 시작",
+  "brain.categories": "카테고리",
+  "brain.insights": "인사이트",
+  "brain.visualization": "3D 브레인 맵",
+  "brain.thoughtCount": "{count}개의 생각이 기록됨",
+  "brain.streak": "{days}일 연속",
+  "brain.prompt.1": "지금 무슨 생각을 하고 계신가요?",
+  "brain.prompt.2": "오늘의 목표는 무엇인가요?",
+  "brain.prompt.3": "요즘 가장 관심 있는 것은 무엇인가요?"
+}

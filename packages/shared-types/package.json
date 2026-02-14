@@ -8,7 +8,8 @@
     ".": "./src/index.ts",
     "./dream-dna": "./src/dream-dna.ts",
     "./events": "./src/events.ts",
-    "./matching": "./src/matching.ts"
+    "./matching": "./src/matching.ts",
+    "./auth": "./src/auth.ts"
   },
   "devDependencies": {
     "@dreamhub/config": "workspace:*",

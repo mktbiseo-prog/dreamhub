@@ -12,6 +12,7 @@
     "@dreamhub/auth": "workspace:*",
     "@dreamhub/database": "workspace:*",
     "@dreamhub/event-bus": "workspace:*",
+    "@dreamhub/i18n": "workspace:*",
     "@dreamhub/shared-types": "workspace:*",
     "@dreamhub/ui": "workspace:*",
     "next": "^15.0.0",

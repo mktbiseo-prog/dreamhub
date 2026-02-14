@@ -16,6 +16,10 @@ import type {
   PurchaseVerifiedEvent,
   StageChangedEvent,
   MatchCreatedEvent,
+  UserRegisteredEvent,
+  UserUpdatedEvent,
+  UserDeletedEvent,
+  MessageTranslatedEvent,
 } from "@dreamhub/shared-types";
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -29,6 +33,10 @@ export interface TopicEventMap {
   "dream.store.purchase_verified": PurchaseVerifiedEvent;
   "dream.planner.stage_changed": StageChangedEvent;
   "dream.place.match_created": MatchCreatedEvent;
+  "dream.auth.user_registered": UserRegisteredEvent;
+  "dream.auth.user_updated": UserUpdatedEvent;
+  "dream.auth.user_deleted": UserDeletedEvent;
+  "dream.place.message_translated": MessageTranslatedEvent;
 }
 
 /** The payload portion of an event (everything except eventId/timestamp/type) */

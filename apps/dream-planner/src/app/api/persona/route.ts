@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
+import { authMiddleware } from "@dreamhub/auth/middleware";
+import { i18nMiddleware } from "@dreamhub/i18n/middleware";
 
 interface PersonaRequest {
   fans: { name: string; where: string; problem: string; stage: string }[];
@@ -16,11 +18,16 @@ export interface PersonaResult {
 
 export async function POST(request: Request) {
   try {
+    const i18n = i18nMiddleware(request);
+    const auth = authMiddleware(request);
+    if (!auth.success) {
+      return NextResponse.json({ error: i18n.t(auth.status === 403 ? "error.forbidden" : "error.unauthorized"), meta: i18n.meta }, { status: auth.status });
+    }
     const body = (await request.json()) as PersonaRequest;
 
     const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) {
-      return NextResponse.json(getMockPersona(body));
+      return NextResponse.json({ ...getMockPersona(body), meta: i18n.meta });
     }
 
     const openai = new OpenAI({ apiKey });
@@ -61,13 +68,14 @@ Respond ONLY with valid JSON:
 
     const content = response.choices[0]?.message?.content;
     if (!content) {
-      return NextResponse.json(getMockPersona(body));
+      return NextResponse.json({ ...getMockPersona(body), meta: i18n.meta });
     }
 
-    return NextResponse.json(JSON.parse(content));
+    return NextResponse.json({ ...JSON.parse(content), meta: i18n.meta });
   } catch (error) {
     console.error("[Persona API] Error:", error);
-    return NextResponse.json(getMockPersona({} as PersonaRequest));
+    const i18n = i18nMiddleware(request);
+    return NextResponse.json({ ...getMockPersona({} as PersonaRequest), meta: i18n.meta });
   }
 }
 

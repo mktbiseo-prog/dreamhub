@@ -4,21 +4,32 @@
   "main": "./src/index.ts",
   "types": "./src/index.ts",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./jwt": "./src/jwt.ts",
+    "./permissions": "./src/permissions.ts",
+    "./social-providers": "./src/social-providers.ts",
+    "./middleware": "./src/middleware.ts",
+    "./handlers": "./src/handlers.ts",
+    "./user-store": "./src/user-store.ts",
+    "./sso": "./src/sso.ts"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.0.0",
     "@dreamhub/database": "workspace:*",
+    "@dreamhub/event-bus": "workspace:*",
+    "@dreamhub/shared-types": "workspace:*",
     "bcryptjs": "^3.0.3",
     "next-auth": "5.0.0-beta.30",
     "zod": "^3.25.76"
   },
   "devDependencies": {
+    "@dreamhub/config": "workspace:*",
     "@types/bcryptjs": "^3.0.0",
     "@types/node": "^22.0.0",
     "@types/react": "^19.0.0",
     "next": "^15.0.0",
     "react": "^19.0.0",
-    "typescript": "^5.7.0"
+    "typescript": "^5.7.0",
+    "vitest": "^4.0.18"
   }
 }

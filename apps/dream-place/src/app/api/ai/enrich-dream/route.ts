@@ -1,4 +1,6 @@
 import { NextResponse } from "next/server";
+import { authMiddleware } from "@dreamhub/auth/middleware";
+import { i18nMiddleware } from "@dreamhub/i18n/middleware";
 
 /**
  * POST /api/ai/enrich-dream
@@ -6,12 +8,18 @@ import { NextResponse } from "next/server";
  * Mock: keyword-based extraction. Production: GPT-4o-mini.
  */
 export async function POST(req: Request) {
+  const i18n = i18nMiddleware(req);
   try {
+    const auth = authMiddleware(req);
+    if (!auth.success) {
+      return NextResponse.json({ error: i18n.t(auth.status === 403 ? "error.forbidden" : "error.unauthorized"), meta: i18n.meta }, { status: auth.status });
+    }
+
     const { dreamStatement } = await req.json();
 
     if (!dreamStatement || typeof dreamStatement !== "string") {
       return NextResponse.json(
-        { error: "dreamStatement is required" },
+        { error: i18n.t("error.validation"), meta: i18n.meta },
         { status: 400 }
       );
     }
@@ -84,10 +92,11 @@ export async function POST(req: Request) {
       headline,
       category,
       interests: interests.slice(0, 5),
+      meta: i18n.meta,
     });
   } catch {
     return NextResponse.json(
-      { error: "Failed to enrich dream statement" },
+      { error: i18n.t("error.serverError"), meta: i18n.meta },
       { status: 500 }
     );
   }

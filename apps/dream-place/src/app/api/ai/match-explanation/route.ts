@@ -1,4 +1,6 @@
 import { NextResponse } from "next/server";
+import { authMiddleware } from "@dreamhub/auth/middleware";
+import { i18nMiddleware } from "@dreamhub/i18n/middleware";
 
 /**
  * POST /api/ai/match-explanation
@@ -6,12 +8,18 @@ import { NextResponse } from "next/server";
  * Mock: template-based. Production: GPT-4o-mini.
  */
 export async function POST(req: Request) {
+  const i18n = i18nMiddleware(req);
   try {
+    const auth = authMiddleware(req);
+    if (!auth.success) {
+      return NextResponse.json({ error: i18n.t(auth.status === 403 ? "error.forbidden" : "error.unauthorized"), meta: i18n.meta }, { status: auth.status });
+    }
+
     const { profileA, profileB, scores } = await req.json();
 
     if (!profileA || !profileB || !scores) {
       return NextResponse.json(
-        { error: "profileA, profileB, and scores are required" },
+        { error: i18n.t("error.validation"), meta: i18n.meta },
         { status: 400 }
       );
     }
@@ -75,10 +83,10 @@ export async function POST(req: Request) {
         ? `You matched because: ${parts.join(". ")}. Together, you could build something amazing!`
         : `You and ${profileB.name} have complementary profiles that could lead to a great collaboration!`;
 
-    return NextResponse.json({ explanation });
+    return NextResponse.json({ explanation, meta: i18n.meta });
   } catch {
     return NextResponse.json(
-      { error: "Failed to generate explanation" },
+      { error: i18n.t("error.serverError"), meta: i18n.meta },
       { status: 500 }
     );
   }

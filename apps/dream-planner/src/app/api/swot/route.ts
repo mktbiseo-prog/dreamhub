@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
+import { authMiddleware } from "@dreamhub/auth/middleware";
+import { i18nMiddleware } from "@dreamhub/i18n/middleware";
 
 interface SwotRequest {
   job: string;
@@ -20,11 +22,16 @@ export interface SwotResult {
 
 export async function POST(request: Request) {
   try {
+    const i18n = i18nMiddleware(request);
+    const auth = authMiddleware(request);
+    if (!auth.success) {
+      return NextResponse.json({ error: i18n.t(auth.status === 403 ? "error.forbidden" : "error.unauthorized"), meta: i18n.meta }, { status: auth.status });
+    }
     const body = (await request.json()) as SwotRequest;
 
     const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) {
-      return NextResponse.json(getMockSwot(body));
+      return NextResponse.json({ ...getMockSwot(body), meta: i18n.meta });
     }
 
     const openai = new OpenAI({ apiKey });
@@ -62,13 +69,14 @@ ${body.skills?.length ? `Skills: ${body.skills.join(", ")}` : ""}`,
 
     const content = response.choices[0]?.message?.content;
     if (!content) {
-      return NextResponse.json(getMockSwot(body));
+      return NextResponse.json({ ...getMockSwot(body), meta: i18n.meta });
     }
 
-    return NextResponse.json(JSON.parse(content));
+    return NextResponse.json({ ...JSON.parse(content), meta: i18n.meta });
   } catch (error) {
     console.error("[SWOT API] Error:", error);
-    return NextResponse.json(getMockSwot({} as SwotRequest));
+    const i18n = i18nMiddleware(request);
+    return NextResponse.json({ ...getMockSwot({} as SwotRequest), meta: i18n.meta });
   }
 }
 

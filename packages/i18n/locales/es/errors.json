@@ -1,0 +1,10 @@
+{
+  "error.unauthorized": "Inicia sesión para continuar",
+  "error.forbidden": "No tienes permiso para hacer esto",
+  "error.notFound": "No encontrado",
+  "error.serverError": "Algo salió mal. Inténtalo de nuevo.",
+  "error.networkError": "Error de red. Verifica tu conexión.",
+  "error.validation": "Por favor, verifica tus datos",
+  "error.fileTooBig": "El archivo es demasiado grande (máx. {max}MB)",
+  "error.invalidFormat": "Formato de archivo no válido"
+}

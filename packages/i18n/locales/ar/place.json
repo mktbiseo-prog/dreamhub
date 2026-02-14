@@ -1,0 +1,20 @@
+{
+  "place.title": "دريم بليس",
+  "place.subtitle": "ابحث عن فريق أحلامك",
+  "place.match.title": "تطابقاتك",
+  "place.match.score": "درجة التطابق: {score}%",
+  "place.match.vision": "توافق الرؤية",
+  "place.match.skills": "تكامل المهارات",
+  "place.match.trust": "مؤشر الثقة",
+  "place.match.psych": "التوافق الشخصي",
+  "place.match.accept": "تواصل",
+  "place.match.decline": "تجاوز",
+  "place.match.explanation": "لماذا تطابقتم",
+  "place.explore": "استكشف الأحلام",
+  "place.filter.skills": "المهارات المطلوبة",
+  "place.filter.stage": "مرحلة المشروع",
+  "place.filter.location": "الموقع",
+  "place.team.title": "فريقي",
+  "place.team.join": "انضم للفريق",
+  "place.team.members": "{count} أعضاء"
+}

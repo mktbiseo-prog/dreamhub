@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
+import { authMiddleware } from "@dreamhub/auth/middleware";
+import { i18nMiddleware } from "@dreamhub/i18n/middleware";
 
 interface MarketAnalysisRequest {
   youtube: { text: string; type: string }[];
@@ -19,11 +21,16 @@ export interface MarketAnalysisResult {
 
 export async function POST(request: Request) {
   try {
+    const i18n = i18nMiddleware(request);
+    const auth = authMiddleware(request);
+    if (!auth.success) {
+      return NextResponse.json({ error: i18n.t(auth.status === 403 ? "error.forbidden" : "error.unauthorized"), meta: i18n.meta }, { status: auth.status });
+    }
     const body = (await request.json()) as MarketAnalysisRequest;
 
     const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) {
-      return NextResponse.json(getMockAnalysis(body));
+      return NextResponse.json({ ...getMockAnalysis(body), meta: i18n.meta });
     }
 
     const openai = new OpenAI({ apiKey });
@@ -71,13 +78,14 @@ Respond ONLY with valid JSON:
 
     const content = response.choices[0]?.message?.content;
     if (!content) {
-      return NextResponse.json(getMockAnalysis(body));
+      return NextResponse.json({ ...getMockAnalysis(body), meta: i18n.meta });
     }
 
-    return NextResponse.json(JSON.parse(content));
+    return NextResponse.json({ ...JSON.parse(content), meta: i18n.meta });
   } catch (error) {
     console.error("[Market Analysis API] Error:", error);
-    return NextResponse.json(getMockAnalysis({} as MarketAnalysisRequest));
+    const i18n = i18nMiddleware(request);
+    return NextResponse.json({ ...getMockAnalysis({} as MarketAnalysisRequest), meta: i18n.meta });
   }
 }
 

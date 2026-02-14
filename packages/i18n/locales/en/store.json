@@ -1,0 +1,15 @@
+{
+  "store.title": "Dream Store",
+  "store.subtitle": "Support dreams, get amazing products",
+  "store.product.support": "Support This Dream",
+  "store.product.story": "The Story Behind This",
+  "store.product.creator": "Created by",
+  "store.product.funded": "{percent}% funded",
+  "store.product.supporters": "{count} supporters",
+  "store.product.price": "Price",
+  "store.product.addToCart": "Add to Cart",
+  "store.seller.dashboard": "Seller Dashboard",
+  "store.seller.addProduct": "Add Product",
+  "store.seller.sales": "Sales",
+  "store.seller.revenue": "Revenue"
+}

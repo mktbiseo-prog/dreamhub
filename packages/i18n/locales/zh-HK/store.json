@@ -1,0 +1,15 @@
+{
+  "store.title": "Dream Store",
+  "store.subtitle": "支持夢想，發現精彩產品",
+  "store.product.support": "支持這個夢想",
+  "store.product.story": "背後的故事",
+  "store.product.creator": "創作者",
+  "store.product.funded": "已籌集 {percent}%",
+  "store.product.supporters": "{count} 位支持者",
+  "store.product.price": "價格",
+  "store.product.addToCart": "加入購物車",
+  "store.seller.dashboard": "賣家控制台",
+  "store.seller.addProduct": "新增產品",
+  "store.seller.sales": "銷售",
+  "store.seller.revenue": "收入"
+}

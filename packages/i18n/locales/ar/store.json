@@ -1,0 +1,15 @@
+{
+  "store.title": "دريم ستور",
+  "store.subtitle": "ادعم الأحلام واحصل على منتجات رائعة",
+  "store.product.support": "ادعم هذا الحلم",
+  "store.product.story": "القصة وراء هذا المنتج",
+  "store.product.creator": "أنشأه",
+  "store.product.funded": "تم تمويل {percent}%",
+  "store.product.supporters": "{count} داعمين",
+  "store.product.price": "السعر",
+  "store.product.addToCart": "أضف إلى السلة",
+  "store.seller.dashboard": "لوحة البائع",
+  "store.seller.addProduct": "إضافة منتج",
+  "store.seller.sales": "المبيعات",
+  "store.seller.revenue": "الإيرادات"
+}

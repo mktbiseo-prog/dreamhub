@@ -1,19 +1,22 @@
 import { NextResponse } from "next/server";
 import { MOCK_CHECK_INS } from "@/data/mockTeams";
+import { i18nMiddleware } from "@dreamhub/i18n/middleware";
 
 export async function GET(
   _req: Request,
   { params }: { params: Promise<{ teamId: string }> }
 ) {
+  const i18n = i18nMiddleware(_req);
   const { teamId } = await params;
   const checkIns = MOCK_CHECK_INS.filter((c) => c.teamId === teamId);
-  return NextResponse.json({ checkIns });
+  return NextResponse.json({ checkIns, meta: i18n.meta });
 }
 
 export async function POST(
   req: Request,
   { params }: { params: Promise<{ teamId: string }> }
 ) {
+  const i18n = i18nMiddleware(req);
   const { teamId } = await params;
   const body = await req.json();
 
@@ -28,5 +31,5 @@ export async function POST(
     progress: body.progress ?? "",
   };
 
-  return NextResponse.json({ checkIn });
+  return NextResponse.json({ checkIn, meta: i18n.meta });
 }

@@ -1,0 +1,17 @@
+{
+  "planner.title": "Dream Planner",
+  "planner.subtitle": "Turn your dream into a plan",
+  "planner.part1": "Part 1: Discover Your Dream",
+  "planner.part2": "Part 2: Plan & Prepare",
+  "planner.part3": "Part 3: Zero-Cost MVP",
+  "planner.part4": "Part 4: Reflect & Grow",
+  "planner.gritScore": "Grit Score",
+  "planner.progress": "Progress",
+  "planner.streak": "Streak",
+  "planner.project.create": "Create New Project",
+  "planner.project.stage": "Project Stage",
+  "planner.stage.ideation": "Ideation",
+  "planner.stage.building": "Building",
+  "planner.stage.scaling": "Scaling",
+  "planner.stage.complete": "Complete"
+}

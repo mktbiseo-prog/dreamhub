@@ -1,12 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getCurrentUserId } from "@/lib/auth";
 import { prisma, isDbAvailable } from "@/lib/db";
+import { i18nMiddleware } from "@dreamhub/i18n/middleware";
+import { publishMatchCreated } from "@/lib/event-handlers";
 
 // POST /api/matches/:matchId/accept — accept or decline match request
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ matchId: string }> }
 ) {
+  const i18n = i18nMiddleware(request);
   const { matchId } = await params;
 
   if (!isDbAvailable()) {
@@ -15,12 +18,13 @@ export async function POST(
       matchId,
       status: "accepted",
       message: "Match accepted! You can now message each other.",
+      meta: i18n.meta,
     });
   }
 
   const userId = await getCurrentUserId();
   if (!userId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: i18n.t("error.unauthorized"), meta: i18n.meta }, { status: 401 });
   }
 
   try {
@@ -33,6 +37,11 @@ export async function POST(
       data: { status: newStatus },
     });
 
+    // On acceptance, emit match_created event → triggers auto chat room creation
+    if (newStatus === "ACCEPTED") {
+      publishMatchCreated(matchId, [match.senderId, match.receiverId], match.matchScore).catch(() => {});
+    }
+
     return NextResponse.json({
       success: true,
       matchId: match.id,
@@ -41,10 +50,11 @@ export async function POST(
         newStatus === "ACCEPTED"
           ? "Match accepted! You can now message each other."
           : "Match declined.",
+      meta: i18n.meta,
     });
   } catch {
     return NextResponse.json(
-      { error: "Failed to update match" },
+      { error: i18n.t("error.serverError"), meta: i18n.meta },
       { status: 500 }
     );
   }

@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+import { authMiddleware } from "@dreamhub/auth/middleware";
+import { i18nMiddleware } from "@dreamhub/i18n/middleware";
 
 const TEMPLATES: Record<string, string> = {
   originStory: `You are a creative writing assistant for Dream Store, a platform where creators sell products through their dream stories. Help the creator write a compelling origin story.
@@ -42,12 +44,18 @@ Do NOT use emojis.`,
 };
 
 export async function POST(request: NextRequest) {
+  const i18n = i18nMiddleware(request);
+  const auth = authMiddleware(request);
+  if (!auth.success) {
+    return NextResponse.json({ error: i18n.t(auth.status === 403 ? "error.forbidden" : "error.unauthorized"), meta: i18n.meta }, { status: auth.status });
+  }
+
   const body = await request.json();
   const { field, context } = body;
 
   if (!field || !TEMPLATES[field]) {
     return NextResponse.json(
-      { error: "Invalid field" },
+      { error: i18n.t("error.validation"), meta: i18n.meta },
       { status: 400 }
     );
   }
@@ -64,6 +72,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       text: fallbacks[field] || "Please configure OPENAI_API_KEY for AI-powered suggestions.",
       isTemplate: true,
+      meta: i18n.meta,
     });
   }
 
@@ -101,11 +110,11 @@ export async function POST(request: NextRequest) {
     const data = await response.json();
     const text = data.choices?.[0]?.message?.content?.trim();
 
-    return NextResponse.json({ text, isTemplate: false });
+    return NextResponse.json({ text, isTemplate: false, meta: i18n.meta });
   } catch (error) {
     console.error("AI assist error:", error);
     return NextResponse.json(
-      { error: "AI generation failed. Please try again." },
+      { error: i18n.t("error.serverError"), meta: i18n.meta },
       { status: 500 }
     );
   }

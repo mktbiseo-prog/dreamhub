@@ -1,0 +1,10 @@
+{
+  "error.unauthorized": "続けるにはログインしてください",
+  "error.forbidden": "この操作を行う権限がありません",
+  "error.notFound": "見つかりません",
+  "error.serverError": "問題が発生しました。もう一度お試しください。",
+  "error.networkError": "ネットワークエラーです。接続を確認してください。",
+  "error.validation": "入力内容を確認してください",
+  "error.fileTooBig": "ファイルが大きすぎます（最大{max}MB）",
+  "error.invalidFormat": "無効なファイル形式です"
+}

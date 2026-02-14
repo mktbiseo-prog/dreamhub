@@ -1,0 +1,15 @@
+{
+  "brain.title": "Dream Brain",
+  "brain.subtitle": "Your second AI brain",
+  "brain.record": "Record your thought",
+  "brain.recording": "Recording...",
+  "brain.tap": "Tap to start recording",
+  "brain.categories": "Categories",
+  "brain.insights": "Insights",
+  "brain.visualization": "3D Brain Map",
+  "brain.thoughtCount": "{count} thoughts recorded",
+  "brain.streak": "{days} day streak",
+  "brain.prompt.1": "What's on your mind right now?",
+  "brain.prompt.2": "What's your goal for today?",
+  "brain.prompt.3": "What interests you the most lately?"
+}

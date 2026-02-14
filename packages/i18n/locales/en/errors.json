@@ -1,0 +1,10 @@
+{
+  "error.unauthorized": "Please log in to continue",
+  "error.forbidden": "You don't have permission to do this",
+  "error.notFound": "Not found",
+  "error.serverError": "Something went wrong. Please try again.",
+  "error.networkError": "Network error. Check your connection.",
+  "error.validation": "Please check your input",
+  "error.fileTooBig": "File is too large (max {max}MB)",
+  "error.invalidFormat": "Invalid file format"
+}

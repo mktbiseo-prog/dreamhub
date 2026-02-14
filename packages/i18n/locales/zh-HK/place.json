@@ -1,0 +1,20 @@
+{
+  "place.title": "Dream Place",
+  "place.subtitle": "找到你的夢想團隊",
+  "place.match.title": "你的配對",
+  "place.match.score": "配對分數：{score}%",
+  "place.match.vision": "願景契合度",
+  "place.match.skills": "技能互補性",
+  "place.match.trust": "信任指數",
+  "place.match.psych": "性格匹配度",
+  "place.match.accept": "建立連結",
+  "place.match.decline": "略過",
+  "place.match.explanation": "為何你們配對成功",
+  "place.explore": "探索夢想",
+  "place.filter.skills": "所需技能",
+  "place.filter.stage": "專案階段",
+  "place.filter.location": "地點",
+  "place.team.title": "我的團隊",
+  "place.team.join": "加入團隊",
+  "place.team.members": "{count} 位成員"
+}

@@ -1,0 +1,17 @@
+{
+  "planner.title": "Dream Planner",
+  "planner.subtitle": "夢を計画に変える",
+  "planner.part1": "パート1：夢を発見する",
+  "planner.part2": "パート2：計画と準備",
+  "planner.part3": "パート3：ゼロコストMVP",
+  "planner.part4": "パート4：振り返りと成長",
+  "planner.gritScore": "グリットスコア",
+  "planner.progress": "進捗",
+  "planner.streak": "連続記録",
+  "planner.project.create": "新しいプロジェクトを作成",
+  "planner.project.stage": "プロジェクトステージ",
+  "planner.stage.ideation": "アイデア段階",
+  "planner.stage.building": "構築中",
+  "planner.stage.scaling": "拡大中",
+  "planner.stage.complete": "完了"
+}

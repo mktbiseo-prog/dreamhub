@@ -12,6 +12,8 @@ import {
   type BanditCandidate,
 } from "@/lib/cold-start";
 import { applySuccessPattern } from "@/lib/team-performance";
+import { authMiddleware } from "@dreamhub/auth/middleware";
+import { i18nMiddleware } from "@dreamhub/i18n/middleware";
 
 /** Mock Dream DNA for generating recommendations */
 function makeMockDna(seed: number): DreamDna {
@@ -51,7 +53,13 @@ export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ userId: string }> },
 ) {
+  const i18n = i18nMiddleware(req);
   try {
+    const auth = authMiddleware(req);
+    if (!auth.success) {
+      return NextResponse.json({ error: i18n.t(auth.status === 403 ? "error.forbidden" : "error.unauthorized"), meta: i18n.meta }, { status: auth.status });
+    }
+
     const { userId } = await params;
     const limit = Math.min(
       parseInt(req.nextUrl.searchParams.get("limit") ?? "10", 10),
@@ -162,9 +170,9 @@ export async function GET(
       strategy,
       interactionCount,
       recommendations: recommendations.slice(0, limit),
+      meta: i18n.meta,
     });
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Internal server error";
-    return NextResponse.json({ error: message }, { status: 500 });
+  } catch {
+    return NextResponse.json({ error: i18n.t("error.serverError"), meta: i18n.meta }, { status: 500 });
   }
 }

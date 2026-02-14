@@ -1,0 +1,15 @@
+{
+  "store.title": "Dream Store",
+  "store.subtitle": "夢を応援し、素晴らしい商品を手に入れよう",
+  "store.product.support": "この夢を応援する",
+  "store.product.story": "この商品の物語",
+  "store.product.creator": "クリエイター",
+  "store.product.funded": "{percent}%達成",
+  "store.product.supporters": "{count}人のサポーター",
+  "store.product.price": "価格",
+  "store.product.addToCart": "カートに追加",
+  "store.seller.dashboard": "セラーダッシュボード",
+  "store.seller.addProduct": "商品を追加",
+  "store.seller.sales": "売上",
+  "store.seller.revenue": "収益"
+}

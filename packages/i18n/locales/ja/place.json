@@ -1,0 +1,20 @@
+{
+  "place.title": "Dream Place",
+  "place.subtitle": "ドリームチームを見つけよう",
+  "place.match.title": "あなたのマッチ",
+  "place.match.score": "マッチスコア：{score}%",
+  "place.match.vision": "ビジョンの一致度",
+  "place.match.skills": "スキルの相互補完性",
+  "place.match.trust": "信頼指数",
+  "place.match.psych": "性格の適合度",
+  "place.match.accept": "つながる",
+  "place.match.decline": "スキップ",
+  "place.match.explanation": "マッチした理由",
+  "place.explore": "夢を探す",
+  "place.filter.skills": "必要なスキル",
+  "place.filter.stage": "プロジェクトステージ",
+  "place.filter.location": "場所",
+  "place.team.title": "マイチーム",
+  "place.team.join": "チームに参加",
+  "place.team.members": "{count}人のメンバー"
+}

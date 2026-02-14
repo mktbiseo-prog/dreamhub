@@ -9,6 +9,8 @@ import {
   type MatchCandidate,
 } from "@/lib/stable-matching";
 import { publishMatchCreated } from "@/lib/event-handlers";
+import { authMiddleware } from "@dreamhub/auth/middleware";
+import { i18nMiddleware } from "@dreamhub/i18n/middleware";
 
 const runMatchingSchema = z.object({
   candidates: z.array(z.object({
@@ -52,14 +54,20 @@ export async function POST(
   req: Request,
   { params }: { params: Promise<{ projectId: string }> },
 ) {
+  const i18n = i18nMiddleware(req);
   try {
+    const auth = authMiddleware(req);
+    if (!auth.success) {
+      return NextResponse.json({ error: i18n.t(auth.status === 403 ? "error.forbidden" : "error.unauthorized"), meta: i18n.meta }, { status: auth.status });
+    }
+
     const { projectId } = await params;
     const body = await req.json();
 
     const parsed = runMatchingSchema.safeParse(body);
     if (!parsed.success) {
       return NextResponse.json(
-        { error: "Invalid input", details: parsed.error.flatten() },
+        { error: i18n.t("error.validation"), details: parsed.error.flatten(), meta: i18n.meta },
         { status: 400 },
       );
     }
@@ -115,9 +123,9 @@ export async function POST(
       blockingPairs,
       isStable: blockingPairs.length === 0,
       eventsPublished,
+      meta: i18n.meta,
     });
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Internal server error";
-    return NextResponse.json({ error: message }, { status: 500 });
+  } catch {
+    return NextResponse.json({ error: i18n.t("error.serverError"), meta: i18n.meta }, { status: 500 });
   }
 }

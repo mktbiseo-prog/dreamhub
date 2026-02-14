@@ -4,19 +4,21 @@ import { getCurrentUserId } from "@/lib/auth";
 import { cafeCheckInSchema } from "@/lib/validations";
 import { CURRENT_USER_ID } from "@/data/mockData";
 import { emitCafeEvent } from "@/lib/cafeEvents";
+import { i18nMiddleware } from "@dreamhub/i18n/middleware";
 
 // POST /api/cafe/[cafeId]/checkin — check in to a cafe
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ cafeId: string }> }
 ) {
+  const i18n = i18nMiddleware(request);
   const { cafeId } = await params;
   const body = await request.json();
   const parsed = cafeCheckInSchema.safeParse(body);
 
   if (!parsed.success) {
     return NextResponse.json(
-      { error: "Invalid input", details: parsed.error.flatten() },
+      { error: i18n.t("error.validation"), details: parsed.error.flatten(), meta: i18n.meta },
       { status: 400 }
     );
   }
@@ -50,12 +52,12 @@ export async function POST(
       timestamp: checkIn.checkedInAt,
     });
 
-    return NextResponse.json({ checkIn });
+    return NextResponse.json({ checkIn, meta: i18n.meta });
   }
 
   const userId = await getCurrentUserId();
   if (!userId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: i18n.t("error.unauthorized"), meta: i18n.meta }, { status: 401 });
   }
 
   // TODO: Prisma create check-in record
@@ -87,5 +89,5 @@ export async function POST(
     timestamp: checkIn.checkedInAt,
   });
 
-  return NextResponse.json({ checkIn });
+  return NextResponse.json({ checkIn, meta: i18n.meta });
 }

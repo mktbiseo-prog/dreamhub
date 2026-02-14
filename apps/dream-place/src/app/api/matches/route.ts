@@ -1,11 +1,13 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { MOCK_MATCHES } from "@/data/mockData";
 import { getCurrentUserId } from "@/lib/auth";
 import { prisma, isDbAvailable } from "@/lib/db";
 import type { MatchResult, DreamerProfile } from "@/types";
+import { i18nMiddleware } from "@dreamhub/i18n/middleware";
 
 // GET /api/matches — list my matches
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const i18n = i18nMiddleware(request);
   if (!isDbAvailable()) {
     const accepted = MOCK_MATCHES.slice(0, 3).map((m) => ({
       ...m,
@@ -20,12 +22,13 @@ export async function GET() {
       matches: [...accepted, ...pending],
       accepted: accepted.length,
       pending: pending.length,
+      meta: i18n.meta,
     });
   }
 
   const userId = await getCurrentUserId();
   if (!userId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: i18n.t("error.unauthorized"), meta: i18n.meta }, { status: 401 });
   }
 
   const dbMatches = await prisma.match.findMany({
@@ -89,5 +92,6 @@ export async function GET() {
     matches,
     accepted: accepted.length,
     pending: pending.length,
+    meta: i18n.meta,
   });
 }

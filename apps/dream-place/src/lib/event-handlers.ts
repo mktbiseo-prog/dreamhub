@@ -26,6 +26,34 @@ import {
 } from "./team-performance";
 
 // ═══════════════════════════════════════════════════════════════════════════
+// DB persistence (write-through)
+// ═══════════════════════════════════════════════════════════════════════════
+
+let trustSignalRepo: {
+  create: (data: Record<string, unknown>) => Promise<unknown>;
+  getAggregatedTrust: (userId: string, service?: string) => Promise<number>;
+  createCafeVisit: (data: Record<string, unknown>) => Promise<unknown>;
+} | null = null;
+
+let userRepo: {
+  create: (data: Record<string, unknown>) => Promise<unknown>;
+  update: (id: string, data: Record<string, unknown>) => Promise<unknown>;
+  deleteWithCascade: (id: string) => Promise<void>;
+  upsertDreamProfile: (userId: string, data: Record<string, unknown>) => Promise<unknown>;
+} | null = null;
+
+function tryLoadRepos(): void {
+  if (trustSignalRepo || !process.env.DATABASE_URL) return;
+  try {
+    const db = require("@dreamhub/database");
+    trustSignalRepo = db.trustSignalRepo;
+    userRepo = db.userRepo;
+  } catch {
+    // DB not available
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
 // §4.2  Doorbell signal weights
 // ═══════════════════════════════════════════════════════════════════════════
 
@@ -42,7 +70,7 @@ export const DOORBELL_WEIGHTS = {
 } as const;
 
 // ═══════════════════════════════════════════════════════════════════════════
-// In-memory state (will be backed by DB in production)
+// In-memory state (fast cache, backed by DB when available)
 // ═══════════════════════════════════════════════════════════════════════════
 
 /** Per-user accumulated trust signal score */
@@ -105,6 +133,7 @@ export function resetState(): void {
   projectExecutionScores.clear();
   projectWeights.clear();
   projectMetadata.clear();
+  placeUsers.clear();
   resetOfflineSignalState();
   resetTeamPerformanceState();
 }
@@ -177,6 +206,28 @@ function handleDoorbellRung(
     targetDreamId,
     doorbellType: isPhysicalButton ? "PHYSICAL" : "APP",
   });
+
+  // Write-through to DB: persist trust signal and cafe visit
+  tryLoadRepos();
+  if (trustSignalRepo) {
+    const doorbellType = isPhysicalButton ? "PHYSICAL" : "APP";
+    trustSignalRepo
+      .create({
+        user: { connect: { id: sourceUserId } },
+        service: "cafe",
+        signalType: "doorbell",
+        value: weight,
+      })
+      .catch(() => {});
+    trustSignalRepo
+      .createCafeVisit({
+        user: { connect: { id: sourceUserId } },
+        cafeId: targetDreamId,
+        doorbellType,
+        weight,
+      })
+      .catch(() => {});
+  }
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -214,6 +265,19 @@ function handlePurchaseVerified(
     };
     recordTeamSuccess(metrics);
   }
+
+  // Write-through to DB: persist trust signal for purchase
+  tryLoadRepos();
+  if (trustSignalRepo) {
+    trustSignalRepo
+      .create({
+        user: { connect: { id: projectId } },
+        service: "store",
+        signalType: "purchase",
+        value: amount,
+      })
+      .catch(() => {});
+  }
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -237,11 +301,166 @@ function handleStageChanged(
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
+// SSO state — Dream Place user records
+// ═══════════════════════════════════════════════════════════════════════════
+
+interface PlaceUserRecord {
+  userId: string;
+  name: string;
+  dnaInitialized: boolean;
+  coldStartStrategy: string;
+  createdAt: string;
+}
+
+const placeUsers = new Map<string, PlaceUserRecord>();
+
+export function getPlaceUser(userId: string): PlaceUserRecord | undefined {
+  return placeUsers.get(userId);
+}
+
+export function getAllPlaceUsers(): Map<string, PlaceUserRecord> {
+  return placeUsers;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Subscriber: USER_REGISTERED (from Auth → Place)
+// ═══════════════════════════════════════════════════════════════════════════
+
+function handleUserRegistered(
+  event: { payload: { userId: string; name: string } },
+): void {
+  const { userId, name } = event.payload;
+  placeUsers.set(userId, {
+    userId,
+    name,
+    dnaInitialized: false,
+    coldStartStrategy: "CONTENT_INIT",
+    createdAt: new Date().toISOString(),
+  });
+
+  // Write-through: create Dream Profile in DB
+  tryLoadRepos();
+  if (userRepo) {
+    userRepo
+      .upsertDreamProfile(userId, { dreamStatement: "" })
+      .catch(() => {});
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Subscriber: USER_UPDATED (from Auth → Place)
+// ═══════════════════════════════════════════════════════════════════════════
+
+function handleUserUpdated(
+  event: { payload: { userId: string; changes: { name?: string } } },
+): void {
+  const record = placeUsers.get(event.payload.userId);
+  if (!record) return;
+
+  const { changes } = event.payload;
+  if (changes.name !== undefined) record.name = changes.name;
+
+  tryLoadRepos();
+  if (userRepo) {
+    userRepo.update(event.payload.userId, changes).catch(() => {});
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Subscriber: USER_DELETED (from Auth → Place)
+// ═══════════════════════════════════════════════════════════════════════════
+
+function handleUserDeleted(
+  event: { payload: { userId: string } },
+): void {
+  placeUsers.delete(event.payload.userId);
+  userTrustSignals.delete(event.payload.userId);
+
+  tryLoadRepos();
+  if (userRepo) {
+    userRepo.deleteWithCascade(event.payload.userId).catch(() => {});
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Team member join → auto-add to project chat room
+// ═══════════════════════════════════════════════════════════════════════════
+
+let chatIntegration: {
+  addTeamMember: (
+    teamId: string,
+    userId: string,
+    userName: string,
+    roomManager: unknown,
+    messageHandler: unknown,
+    io: unknown,
+  ) => void;
+} | null = null;
+
+/**
+ * Call this when a new member joins a team to auto-add them to the
+ * team's PROJECT_TEAM chat room with a system message.
+ */
+export function handleTeamMemberJoined(
+  teamId: string,
+  userId: string,
+  userName: string,
+): void {
+  if (!chatIntegration) {
+    try {
+      const cs = require("@dreamhub/chat-service");
+      chatIntegration = new cs.ChatEventIntegration();
+    } catch {
+      // chat-service not available
+    }
+  }
+  // Chat integration requires a running server context;
+  // this is a placeholder for when the chat server is embedded.
+  // For now, the DB write-through is the primary integration path.
+  tryLoadRepos();
+  let chatRepoLocal: {
+    findRoomByTeamId: (teamId: string) => Promise<{ id: string; participants: string[] } | null>;
+    addParticipant: (roomId: string, userId: string) => Promise<unknown>;
+    createMessage: (data: {
+      roomId: string;
+      senderId: string;
+      content: string;
+      type?: string;
+      readBy?: string[];
+    }) => Promise<unknown>;
+  } | null = null;
+  try {
+    const db = require("@dreamhub/database");
+    chatRepoLocal = db.chatRepo;
+  } catch {
+    // DB not available
+  }
+  if (chatRepoLocal) {
+    chatRepoLocal
+      .findRoomByTeamId(teamId)
+      .then((room) => {
+        if (!room) return;
+        return Promise.all([
+          chatRepoLocal!.addParticipant(room.id, userId),
+          chatRepoLocal!.createMessage({
+            roomId: room.id,
+            senderId: "system",
+            content: `${userName} joined the team!`,
+            type: "SYSTEM",
+            readBy: [],
+          }),
+        ]);
+      })
+      .catch(() => {});
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
 // Registration
 // ═══════════════════════════════════════════════════════════════════════════
 
 /**
- * Register all Place event subscriptions.
+ * Register all Place event subscriptions (including SSO auth events).
  * Call once at service startup.
  *
  * @returns Array of subscriptions (for cleanup in tests)
@@ -253,5 +472,8 @@ export function registerPlaceEventHandlers(
     bus.subscribe("dream.cafe.doorbell_rung", handleDoorbellRung),
     bus.subscribe("dream.store.purchase_verified", handlePurchaseVerified),
     bus.subscribe("dream.planner.stage_changed", handleStageChanged),
+    bus.subscribe("dream.auth.user_registered", handleUserRegistered),
+    bus.subscribe("dream.auth.user_updated", handleUserUpdated),
+    bus.subscribe("dream.auth.user_deleted", handleUserDeleted),
   ];
 }

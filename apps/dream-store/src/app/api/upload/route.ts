@@ -2,14 +2,21 @@ import { NextRequest, NextResponse } from "next/server";
 import { writeFile, mkdir } from "fs/promises";
 import { join } from "path";
 import { randomUUID } from "crypto";
+import { authMiddleware } from "@dreamhub/auth/middleware";
+import { i18nMiddleware } from "@dreamhub/i18n/middleware";
 
 export async function POST(request: NextRequest) {
+  const i18n = i18nMiddleware(request);
   try {
+    const auth = authMiddleware(request);
+    if (!auth.success) {
+      return NextResponse.json({ error: i18n.t(auth.status === 403 ? "error.forbidden" : "error.unauthorized"), meta: i18n.meta }, { status: auth.status });
+    }
     const formData = await request.formData();
     const file = formData.get("file") as File | null;
 
     if (!file) {
-      return NextResponse.json({ error: "No file provided" }, { status: 400 });
+      return NextResponse.json({ error: i18n.t("error.validation"), meta: i18n.meta }, { status: 400 });
     }
 
     // Validate file type
@@ -21,7 +28,7 @@ export async function POST(request: NextRequest) {
     ];
     if (!allowedTypes.includes(file.type)) {
       return NextResponse.json(
-        { error: "Invalid file type. Only JPEG, PNG, WebP, and GIF are allowed." },
+        { error: i18n.t("error.validation"), meta: i18n.meta },
         { status: 400 }
       );
     }
@@ -30,7 +37,7 @@ export async function POST(request: NextRequest) {
     const maxSize = 5 * 1024 * 1024;
     if (file.size > maxSize) {
       return NextResponse.json(
-        { error: "File too large. Maximum size is 5MB." },
+        { error: i18n.t("error.validation"), meta: i18n.meta },
         { status: 400 }
       );
     }
@@ -66,7 +73,7 @@ export async function POST(request: NextRequest) {
 
         if (cloudinaryRes.ok) {
           const data = await cloudinaryRes.json();
-          return NextResponse.json({ url: data.secure_url });
+          return NextResponse.json({ url: data.secure_url, meta: i18n.meta });
         }
       }
     }
@@ -81,11 +88,11 @@ export async function POST(request: NextRequest) {
     await mkdir(uploadDir, { recursive: true });
     await writeFile(join(uploadDir, filename), buffer);
 
-    return NextResponse.json({ url: `/uploads/${filename}` });
+    return NextResponse.json({ url: `/uploads/${filename}`, meta: i18n.meta });
   } catch (error) {
     console.error("Upload error:", error);
     return NextResponse.json(
-      { error: "Upload failed" },
+      { error: i18n.t("error.serverError"), meta: i18n.meta },
       { status: 500 }
     );
   }

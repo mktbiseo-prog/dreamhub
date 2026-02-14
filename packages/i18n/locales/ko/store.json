@@ -1,0 +1,15 @@
+{
+  "store.title": "드림 스토어",
+  "store.subtitle": "꿈을 응원하고, 멋진 제품을 만나세요",
+  "store.product.support": "이 꿈을 응원하기",
+  "store.product.story": "이 제품의 이야기",
+  "store.product.creator": "만든 사람",
+  "store.product.funded": "{percent}% 달성",
+  "store.product.supporters": "{count}명의 서포터",
+  "store.product.price": "가격",
+  "store.product.addToCart": "장바구니에 추가",
+  "store.seller.dashboard": "판매자 대시보드",
+  "store.seller.addProduct": "상품 추가",
+  "store.seller.sales": "판매",
+  "store.seller.revenue": "수익"
+}

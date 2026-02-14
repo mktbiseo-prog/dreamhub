@@ -1,0 +1,15 @@
+{
+  "brain.title": "Dream Brain",
+  "brain.subtitle": "Tu segundo cerebro con IA",
+  "brain.record": "Graba tu pensamiento",
+  "brain.recording": "Grabando...",
+  "brain.tap": "Toca para empezar a grabar",
+  "brain.categories": "Categorías",
+  "brain.insights": "Perspectivas",
+  "brain.visualization": "Mapa Cerebral 3D",
+  "brain.thoughtCount": "{count} pensamientos grabados",
+  "brain.streak": "Racha de {days} días",
+  "brain.prompt.1": "¿Qué tienes en mente ahora mismo?",
+  "brain.prompt.2": "¿Cuál es tu objetivo para hoy?",
+  "brain.prompt.3": "¿Qué te interesa más últimamente?"
+}

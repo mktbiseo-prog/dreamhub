@@ -1,0 +1,20 @@
+{
+  "place.title": "Dream Place",
+  "place.subtitle": "Find your dream team",
+  "place.match.title": "Your Matches",
+  "place.match.score": "Match Score: {score}%",
+  "place.match.vision": "Vision Alignment",
+  "place.match.skills": "Skill Complementarity",
+  "place.match.trust": "Trust Index",
+  "place.match.psych": "Personality Fit",
+  "place.match.accept": "Connect",
+  "place.match.decline": "Pass",
+  "place.match.explanation": "Why you matched",
+  "place.explore": "Explore Dreams",
+  "place.filter.skills": "Skills Needed",
+  "place.filter.stage": "Project Stage",
+  "place.filter.location": "Location",
+  "place.team.title": "My Team",
+  "place.team.join": "Join Team",
+  "place.team.members": "{count} members"
+}

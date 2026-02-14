@@ -3,6 +3,8 @@ import { ProjectStage } from "@dreamhub/shared-types";
 import type { DreamDna } from "@dreamhub/shared-types";
 import { computeMatchScore } from "@/lib/matching-engine";
 import { applySuccessPattern } from "@/lib/team-performance";
+import { authMiddleware } from "@dreamhub/auth/middleware";
+import { i18nMiddleware } from "@dreamhub/i18n/middleware";
 
 /** Build a mock DreamDna with deterministic values seeded by userId */
 function makeMockDna(userId: string): DreamDna {
@@ -42,15 +44,21 @@ function makeMockDna(userId: string): DreamDna {
 }
 
 export async function GET(
-  _req: Request,
+  req: Request,
   { params }: { params: Promise<{ userId: string; targetId: string }> },
 ) {
+  const i18n = i18nMiddleware(req);
   try {
+    const auth = authMiddleware(req);
+    if (!auth.success) {
+      return NextResponse.json({ error: i18n.t(auth.status === 403 ? "error.forbidden" : "error.unauthorized"), meta: i18n.meta }, { status: auth.status });
+    }
+
     const { userId, targetId } = await params;
 
     if (userId === targetId) {
       return NextResponse.json(
-        { error: "Cannot compute match score with self" },
+        { error: i18n.t("error.validation"), meta: i18n.meta },
         { status: 400 },
       );
     }
@@ -87,9 +95,9 @@ export async function GET(
         matchingPatternCount: boosted.matchingPatternCount,
         boostMultiplier: boosted.boostMultiplier,
       },
+      meta: i18n.meta,
     });
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Internal server error";
-    return NextResponse.json({ error: message }, { status: 500 });
+  } catch {
+    return NextResponse.json({ error: i18n.t("error.serverError"), meta: i18n.meta }, { status: 500 });
   }
 }

@@ -1,0 +1,17 @@
+{
+  "planner.title": "드림 플래너",
+  "planner.subtitle": "꿈을 계획으로 바꾸세요",
+  "planner.part1": "파트 1: 꿈 발견하기",
+  "planner.part2": "파트 2: 계획 & 준비",
+  "planner.part3": "파트 3: 무비용 MVP",
+  "planner.part4": "파트 4: 성찰 & 성장",
+  "planner.gritScore": "그릿 점수",
+  "planner.progress": "진행률",
+  "planner.streak": "연속 기록",
+  "planner.project.create": "새 프로젝트 만들기",
+  "planner.project.stage": "프로젝트 단계",
+  "planner.stage.ideation": "아이디어",
+  "planner.stage.building": "구축 중",
+  "planner.stage.scaling": "확장 중",
+  "planner.stage.complete": "완료"
+}

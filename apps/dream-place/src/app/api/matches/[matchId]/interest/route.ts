@@ -1,12 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getCurrentUserId } from "@/lib/auth";
 import { prisma, isDbAvailable } from "@/lib/db";
+import { i18nMiddleware } from "@dreamhub/i18n/middleware";
 
 // POST /api/matches/:matchId/interest — express interest
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ matchId: string }> }
 ) {
+  const i18n = i18nMiddleware(request);
   const { matchId } = await params;
 
   if (!isDbAvailable()) {
@@ -15,12 +17,13 @@ export async function POST(
       matchId,
       status: "pending",
       message: "Dream request sent!",
+      meta: i18n.meta,
     });
   }
 
   const userId = await getCurrentUserId();
   if (!userId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: i18n.t("error.unauthorized"), meta: i18n.meta }, { status: 401 });
   }
 
   // matchId here is expected as the receiver's userId (from discover feed)
@@ -50,10 +53,11 @@ export async function POST(
       matchId: match.id,
       status: "pending",
       message: "Dream request sent!",
+      meta: i18n.meta,
     });
   } catch {
     return NextResponse.json(
-      { error: "Failed to create match" },
+      { error: i18n.t("error.serverError"), meta: i18n.meta },
       { status: 500 }
     );
   }

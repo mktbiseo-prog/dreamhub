@@ -5,22 +5,24 @@ import { ringBellSchema } from "@/lib/validations";
 import { CURRENT_USER_ID } from "@/data/mockData";
 import { emitCafeEvent } from "@/lib/cafeEvents";
 import { MOCK_CAFE_ID } from "@/data/mockCafe";
+import { i18nMiddleware } from "@dreamhub/i18n/middleware";
 
 // POST /api/doorbell/ring — ring someone's doorbell
 export async function POST(request: NextRequest) {
+  const i18n = i18nMiddleware(request);
   const body = await request.json();
   const parsed = ringBellSchema.safeParse(body);
 
   if (!parsed.success) {
     return NextResponse.json(
-      { error: "Invalid input", details: parsed.error.flatten() },
+      { error: i18n.t("error.validation"), details: parsed.error.flatten(), meta: i18n.meta },
       { status: 400 }
     );
   }
 
   const userId = isDbAvailable() ? await getCurrentUserId() : CURRENT_USER_ID;
   if (!userId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: i18n.t("error.unauthorized"), meta: i18n.meta }, { status: 401 });
   }
 
   const ring = {
@@ -47,5 +49,5 @@ export async function POST(request: NextRequest) {
     timestamp: ring.createdAt,
   });
 
-  return NextResponse.json({ ring });
+  return NextResponse.json({ ring, meta: i18n.meta });
 }

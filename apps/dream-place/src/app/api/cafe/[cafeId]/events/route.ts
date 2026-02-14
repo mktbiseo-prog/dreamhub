@@ -1,12 +1,14 @@
 import { NextRequest } from "next/server";
 import { subscribeToCafe } from "@/lib/cafeEvents";
 import type { CafeEvent } from "@/types/cafe";
+import { i18nMiddleware } from "@dreamhub/i18n/middleware";
 
 // GET /api/cafe/[cafeId]/events — SSE endpoint
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ cafeId: string }> }
 ) {
+  const i18n = i18nMiddleware(request);
   const { cafeId } = await params;
 
   const { readable, writable } = new TransformStream();
@@ -20,7 +22,7 @@ export async function GET(
   };
 
   // Send initial connection confirmation
-  send(JSON.stringify({ type: "connected", cafeId }));
+  send(JSON.stringify({ type: "connected", cafeId, meta: i18n.meta }));
 
   // Subscribe to cafe events
   const unsubscribe = subscribeToCafe(cafeId, (event: CafeEvent) => {

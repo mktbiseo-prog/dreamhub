@@ -1,0 +1,10 @@
+{
+  "error.unauthorized": "يرجى تسجيل الدخول للمتابعة",
+  "error.forbidden": "ليس لديك صلاحية للقيام بذلك",
+  "error.notFound": "غير موجود",
+  "error.serverError": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
+  "error.networkError": "خطأ في الشبكة. تحقق من اتصالك.",
+  "error.validation": "يرجى التحقق من المدخلات",
+  "error.fileTooBig": "الملف كبير جداً (الحد الأقصى {max} ميجابايت)",
+  "error.invalidFormat": "صيغة الملف غير صالحة"
+}

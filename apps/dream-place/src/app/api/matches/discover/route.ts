@@ -4,9 +4,11 @@ import { getCurrentUserId } from "@/lib/auth";
 import { prisma, isDbAvailable } from "@/lib/db";
 import { computeMatchScores } from "@/lib/matching";
 import type { DreamerProfile, MatchResult } from "@/types";
+import { i18nMiddleware } from "@dreamhub/i18n/middleware";
 
 // GET /api/matches/discover — get match feed (paginated)
 export async function GET(request: NextRequest) {
+  const i18n = i18nMiddleware(request);
   const { searchParams } = new URL(request.url);
   const page = parseInt(searchParams.get("page") ?? "1", 10);
   const limit = parseInt(searchParams.get("limit") ?? "10", 10);
@@ -14,12 +16,12 @@ export async function GET(request: NextRequest) {
   const minScore = parseInt(searchParams.get("minScore") ?? "0", 10);
 
   if (!isDbAvailable()) {
-    return mockDiscover(page, limit, search, minScore);
+    return mockDiscover(page, limit, search, minScore, i18n.meta);
   }
 
   const userId = await getCurrentUserId();
   if (!userId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: i18n.t("error.unauthorized"), meta: i18n.meta }, { status: 401 });
   }
 
   // Get current user's profile
@@ -34,6 +36,7 @@ export async function GET(request: NextRequest) {
       total: 0,
       page,
       totalPages: 0,
+      meta: i18n.meta,
     });
   }
 
@@ -104,10 +107,11 @@ export async function GET(request: NextRequest) {
     total,
     page,
     totalPages: Math.ceil(total / limit),
+    meta: i18n.meta,
   });
 }
 
-function mockDiscover(page: number, limit: number, search: string, minScore: number) {
+function mockDiscover(page: number, limit: number, search: string, minScore: number, meta: { locale: string; direction: "rtl" | "ltr" }) {
   let matches = [...MOCK_MATCHES];
 
   if (search) {
@@ -133,6 +137,7 @@ function mockDiscover(page: number, limit: number, search: string, minScore: num
     total: matches.length,
     page,
     totalPages: Math.ceil(matches.length / limit),
+    meta,
   });
 }
 
