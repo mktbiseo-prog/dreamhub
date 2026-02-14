@@ -72,14 +72,14 @@ function searchMockThoughts(parsed: z.infer<typeof SearchSchema>): SearchResult[
         t.title.toLowerCase().includes(q) ||
         t.body.toLowerCase().includes(q) ||
         t.summary.toLowerCase().includes(q) ||
-        t.tags.some((tag) => tag.toLowerCase().includes(q)) ||
+        t.tags.some((tag: string) => tag.toLowerCase().includes(q)) ||
         t.keywords.some((kw) => kw.toLowerCase().includes(q))
       );
     })
     .map((t): SearchResult => {
       const titleMatch = t.title.toLowerCase().includes(q) ? 0.4 : 0;
       const bodyMatch = t.body.toLowerCase().includes(q) ? 0.2 : 0;
-      const tagMatch = t.tags.some((tag) => tag.toLowerCase().includes(q)) ? 0.3 : 0;
+      const tagMatch = t.tags.some((tag: string) => tag.toLowerCase().includes(q)) ? 0.3 : 0;
       const relevance = Math.min(titleMatch + bodyMatch + tagMatch + 0.1, 1);
       return {
         thought: {
@@ -144,7 +144,7 @@ async function textSearch(parsed: z.infer<typeof SearchSchema>): Promise<SearchR
   let results: SearchResult[] = thoughts.map((t: Thought) => {
     const titleMatch = t.title.toLowerCase().includes(q) ? 0.4 : 0;
     const bodyMatch = t.body.toLowerCase().includes(q) ? 0.2 : 0;
-    const tagMatch = t.tags.some((tag) => tag.toLowerCase().includes(q)) ? 0.3 : 0;
+    const tagMatch = t.tags.some((tag: string) => tag.toLowerCase().includes(q)) ? 0.3 : 0;
     const relevance = Math.min(titleMatch + bodyMatch + tagMatch + 0.1, 1);
     return {
       thought: {
