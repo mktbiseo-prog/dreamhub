@@ -1,0 +1,22 @@
+{
+  "name": "@dreamhub/trust-engine",
+  "private": true,
+  "version": "0.0.1",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./wilson": "./src/wilson.ts",
+    "./bayesian": "./src/bayesian.ts",
+    "./decay": "./src/decay.ts",
+    "./cross-service": "./src/cross-service.ts"
+  },
+  "dependencies": {
+    "@dreamhub/shared-types": "workspace:*"
+  },
+  "devDependencies": {
+    "@dreamhub/config": "workspace:*",
+    "typescript": "^5.7.0",
+    "vitest": "^4.0.18"
+  }
+}

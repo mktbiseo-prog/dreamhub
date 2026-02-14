@@ -1,0 +1,23 @@
+{
+  "name": "@dreamhub/recommendation-engine",
+  "private": true,
+  "version": "0.0.1",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./experts": "./src/experts.ts",
+    "./gate": "./src/gate.ts",
+    "./mmoe": "./src/mmoe.ts",
+    "./cross-domain": "./src/cross-domain.ts",
+    "./recommend": "./src/recommend.ts"
+  },
+  "dependencies": {
+    "@dreamhub/shared-types": "workspace:*"
+  },
+  "devDependencies": {
+    "@dreamhub/config": "workspace:*",
+    "typescript": "^5.7.0",
+    "vitest": "^4.0.18"
+  }
+}

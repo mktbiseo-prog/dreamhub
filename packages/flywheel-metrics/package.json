@@ -1,0 +1,23 @@
+{
+  "name": "@dreamhub/flywheel-metrics",
+  "private": true,
+  "version": "0.0.1",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./network-value": "./src/network-value.ts",
+    "./cross-elasticity": "./src/cross-elasticity.ts",
+    "./ecosystem-health": "./src/ecosystem-health.ts",
+    "./two-sided-market": "./src/two-sided-market.ts",
+    "./report": "./src/report.ts"
+  },
+  "dependencies": {
+    "@dreamhub/shared-types": "workspace:*"
+  },
+  "devDependencies": {
+    "@dreamhub/config": "workspace:*",
+    "typescript": "^5.7.0",
+    "vitest": "^4.0.18"
+  }
+}

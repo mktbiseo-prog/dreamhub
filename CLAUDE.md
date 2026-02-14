@@ -1,5 +1,31 @@
 # Dream Hub — Global Rules (Shared CLAUDE.md)
 
+## 교차 서비스 통합 알고리즘 (Cross-Service Integration)
+
+교차 서비스 연결(매칭, 신뢰도, 데이터 흐름, 이벤트 시스템 등) 작업 시
+반드시 docs/dream_hub_unified_algorithmic_blueprint.md 를 참고할 것.
+
+이 문서에는 다음 내용이 포함되어 있음:
+- Dream DNA 4차원 벡터 구조 및 JSON 스키마 (섹션 2)
+- 다중 신호 융합 알고리즘 (섹션 3)
+- 교차 서비스 신호 처리 프로토콜 (섹션 4)
+- 교차 도메인 추천 엔진 아키텍처 (섹션 5)
+- 기하평균 다목적 매칭 공식 및 증명 (섹션 6)
+- 그람-슈미트 직교화 기반 상호보완성 알고리즘 (섹션 7)
+- 게일-섀플리 안정 매칭 알고리즘 (섹션 8)
+- 교차 서비스 신뢰도 시스템 (섹션 9)
+- 생태계 플라이휠 측정 공식 (섹션 10)
+- 그래프 클러스터 발견 알고리즘 (섹션 11)
+- 콜드스타트 부트스트래핑 전략 (섹션 12)
+- 실시간 이벤트 스트리밍 아키텍처 (섹션 13)
+- 데이터베이스 샤딩 전략 (섹션 14)
+- GraphQL Federation API 명세 (섹션 15)
+- ZKP 보안 프로토콜 (섹션 16)
+- Prisma 스키마 및 구현 의사코드 (섹션 17)
+
+각 서비스별 상세설계서도 docs/ 폴더에 있으니 해당 서비스 작업 시 함께 참고할 것.
+
+
 ## 🌍 CRITICAL: Language & Market
 - **All UI text, labels, buttons, placeholders, error messages, and copy MUST be in English**
 - This is a GLOBAL product targeting international users

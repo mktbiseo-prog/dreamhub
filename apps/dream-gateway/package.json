@@ -1,0 +1,23 @@
+{
+  "name": "dream-gateway",
+  "private": true,
+  "version": "0.0.1",
+  "main": "./src/gateway.ts",
+  "scripts": {
+    "start": "tsx src/gateway.ts",
+    "dev": "tsx watch src/gateway.ts"
+  },
+  "dependencies": {
+    "@apollo/gateway": "^2.9.0",
+    "@apollo/server": "^4.11.0",
+    "@apollo/subgraph": "^2.13.0",
+    "graphql": "^16.9.0",
+    "graphql-tag": "^2.12.6"
+  },
+  "devDependencies": {
+    "@dreamhub/config": "workspace:*",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0",
+    "vitest": "^4.0.18"
+  }
+}

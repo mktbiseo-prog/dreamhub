@@ -11,7 +11,14 @@
   "dependencies": {
     "@dreamhub/auth": "workspace:*",
     "@dreamhub/database": "workspace:*",
+    "@dreamhub/event-bus": "workspace:*",
+    "@dreamhub/shared-types": "workspace:*",
+    "@dreamhub/flywheel-metrics": "workspace:*",
+    "@dreamhub/recommendation-engine": "workspace:*",
+    "@dreamhub/sharding-strategy": "workspace:*",
+    "@dreamhub/trust-engine": "workspace:*",
     "@dreamhub/ui": "workspace:*",
+    "@dreamhub/zkp-matching": "workspace:*",
     "next": "^15.0.0",
     "next-auth": "5.0.0-beta.30",
     "react": "^19.0.0",
@@ -22,13 +29,18 @@
     "zustand": "^5.0.11"
   },
   "devDependencies": {
+    "@apollo/server": "^5.4.0",
+    "@apollo/subgraph": "^2.13.0",
     "@dreamhub/config": "workspace:*",
     "@types/node": "^22.0.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "autoprefixer": "^10.4.0",
+    "graphql": "^16.12.0",
+    "graphql-tag": "^2.12.6",
     "postcss": "^8.4.0",
     "tailwindcss": "^3.4.0",
-    "typescript": "^5.7.0"
+    "typescript": "^5.7.0",
+    "vitest": "^4.0.18"
   }
 }

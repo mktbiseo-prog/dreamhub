@@ -12,6 +12,8 @@
     "@dreamhub/ai": "workspace:*",
     "@dreamhub/auth": "workspace:*",
     "@dreamhub/database": "workspace:*",
+    "@dreamhub/event-bus": "workspace:*",
+    "@dreamhub/shared-types": "workspace:*",
     "@dreamhub/ui": "workspace:*",
     "@xyflow/react": "^12.10.0",
     "lucide-react": "^0.563.0",
@@ -23,14 +25,19 @@
     "zod": "^3.23.0"
   },
   "devDependencies": {
+    "@apollo/server": "^5.4.0",
+    "@apollo/subgraph": "^2.13.0",
     "@dreamhub/config": "workspace:*",
     "@types/node": "^22.0.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "@types/three": "^0.182.0",
     "autoprefixer": "^10.4.0",
+    "graphql": "^16.12.0",
+    "graphql-tag": "^2.12.6",
     "postcss": "^8.4.0",
     "tailwindcss": "^3.4.0",
-    "typescript": "^5.7.0"
+    "typescript": "^5.7.0",
+    "vitest": "^4.0.18"
   }
 }

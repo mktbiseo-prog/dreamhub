@@ -1,0 +1,19 @@
+{
+  "name": "@dreamhub/sharding-strategy",
+  "private": true,
+  "version": "0.0.1",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./kmeans": "./src/kmeans.ts",
+    "./shard-router": "./src/shard-router.ts",
+    "./balancer": "./src/balancer.ts",
+    "./region-router": "./src/region-router.ts"
+  },
+  "devDependencies": {
+    "@dreamhub/config": "workspace:*",
+    "typescript": "^5.7.0",
+    "vitest": "^4.0.18"
+  }
+}
