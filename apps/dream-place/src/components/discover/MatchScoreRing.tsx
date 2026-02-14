@@ -10,15 +10,9 @@ interface MatchScoreRingProps {
 }
 
 function getScoreColor(score: number): string {
-  if (score >= 80) return "text-green-500";
-  if (score >= 50) return "text-amber-500";
-  return "text-red-400";
-}
-
-function getScoreStroke(score: number): string {
-  if (score >= 80) return "stroke-green-500";
-  if (score >= 50) return "stroke-amber-500";
-  return "stroke-red-400";
+  if (score >= 80) return "var(--dream-match-high)";
+  if (score >= 50) return "var(--dream-match-medium)";
+  return "var(--dream-match-low)";
 }
 
 export function MatchScoreRing({
@@ -30,6 +24,7 @@ export function MatchScoreRing({
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
   const offset = circumference - (score / 100) * circumference;
+  const color = getScoreColor(score);
 
   return (
     <div className={cn("relative inline-flex items-center justify-center", className)}>
@@ -48,19 +43,20 @@ export function MatchScoreRing({
           cy={size / 2}
           r={radius}
           fill="none"
+          stroke={color}
           strokeWidth={strokeWidth}
           strokeLinecap="round"
           strokeDasharray={circumference}
           strokeDashoffset={offset}
-          className={cn("transition-all duration-700", getScoreStroke(score))}
+          className="transition-all duration-700"
         />
       </svg>
       <span
         className={cn(
-          "absolute text-sm font-bold",
-          size >= 80 && "text-lg",
-          getScoreColor(score)
+          "absolute font-bold",
+          size >= 80 ? "text-lg" : "text-sm",
         )}
+        style={{ color }}
       >
         {score}%
       </span>

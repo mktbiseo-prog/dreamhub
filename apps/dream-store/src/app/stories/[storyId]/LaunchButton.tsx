@@ -28,7 +28,7 @@ export function LaunchButton({ storyId }: LaunchButtonProps) {
       <Button
         onClick={handleLaunch}
         disabled={isPending}
-        className="bg-gradient-to-r from-brand-600 to-orange-500 px-8 py-3 text-lg font-bold text-white shadow-lg hover:from-brand-700 hover:to-orange-600"
+        className="bg-gradient-to-r from-amber-600 to-orange-500 px-8 py-3 text-lg font-bold text-white shadow-lg hover:from-amber-700 hover:to-orange-600"
       >
         {isPending ? "Launching..." : "Launch Your Dream"}
       </Button>

@@ -70,7 +70,7 @@ export function ImageGallery({ images, alt }: ImageGalleryProps) {
               onClick={() => setCurrent(i)}
               className={`shrink-0 overflow-hidden rounded-lg border-2 transition-colors ${
                 i === current
-                  ? "border-brand-500"
+                  ? "border-amber-500"
                   : "border-transparent opacity-60 hover:opacity-100"
               }`}
             >

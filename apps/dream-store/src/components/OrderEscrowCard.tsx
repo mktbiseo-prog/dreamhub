@@ -108,7 +108,7 @@ export function OrderEscrowCard({ order, role }: OrderEscrowCardProps) {
 
               {/* Verified seller */}
               {order.sellerKycStatus === "VERIFIED" && (
-                <span className="inline-flex items-center rounded-full bg-brand-100 px-2 py-0.5 text-xs font-medium text-brand-700 dark:bg-brand-900/30 dark:text-brand-400">
+                <span className="inline-flex items-center rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
                   <svg className="mr-1 h-3 w-3" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z" />
                   </svg>
@@ -129,7 +129,7 @@ export function OrderEscrowCard({ order, role }: OrderEscrowCardProps) {
               {order.sellerAvatar ? (
                 <img src={order.sellerAvatar} alt={order.sellerName} className="h-4 w-4 rounded-full object-cover" />
               ) : (
-                <div className="flex h-4 w-4 items-center justify-center rounded-full bg-brand-600 text-[8px] font-bold text-white">
+                <div className="flex h-4 w-4 items-center justify-center rounded-full bg-amber-600 text-[8px] font-bold text-white">
                   {order.sellerName.charAt(0)}
                 </div>
               )}

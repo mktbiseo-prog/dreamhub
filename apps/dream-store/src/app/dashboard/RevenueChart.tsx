@@ -34,7 +34,7 @@ export default function RevenueChart({ monthlyRevenue }: RevenueChartProps) {
 
               {/* Bar */}
               <div
-                className="w-full min-w-[24px] max-w-[60px] rounded-t-md bg-gradient-to-t from-brand-600 to-brand-400 transition-all duration-300 group-hover:from-brand-700 group-hover:to-brand-500 dark:from-brand-500 dark:to-brand-300 dark:group-hover:from-brand-600 dark:group-hover:to-brand-400"
+                className="w-full min-w-[24px] max-w-[60px] rounded-t-md bg-gradient-to-t from-amber-600 to-amber-400 transition-all duration-300 group-hover:from-amber-700 group-hover:to-amber-500 dark:from-amber-500 dark:to-amber-300 dark:group-hover:from-amber-600 dark:group-hover:to-amber-400"
                 style={{ height: `${barHeight}%` }}
               />
 

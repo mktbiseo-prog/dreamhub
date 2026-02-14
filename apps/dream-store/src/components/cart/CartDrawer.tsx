@@ -21,34 +21,11 @@ export function CartDrawer() {
     shippingTotal,
     total,
   } = useCart();
-  const [checking, setChecking] = useState(false);
 
-  async function handleCheckout() {
+  function handleCheckout() {
     if (items.length === 0) return;
-    setChecking(true);
-    try {
-      const res = await fetch("/api/checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          items: items.map((i) => ({
-            productId: i.productId,
-            storyId: i.storyId,
-            quantity: i.quantity,
-          })),
-        }),
-      });
-      const data = await res.json();
-      if (data.url) {
-        window.location.href = data.url;
-      } else if (data.demo) {
-        alert(data.message);
-      }
-    } catch {
-      alert("Checkout failed. Please try again.");
-    } finally {
-      setChecking(false);
-    }
+    setOpen(false);
+    window.location.href = "/checkout";
   }
 
   return (
@@ -73,7 +50,7 @@ export function CartDrawer() {
         </svg>
         <span className="hidden sm:inline">Dream Basket</span>
         {itemCount > 0 && (
-          <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-gradient-to-r from-brand-600 to-orange-500 text-[10px] font-bold text-white">
+          <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-gradient-to-r from-amber-600 to-orange-500 text-[10px] font-bold text-white">
             {itemCount}
           </span>
         )}
@@ -118,7 +95,7 @@ export function CartDrawer() {
                   <Link
                     href="/"
                     onClick={() => setOpen(false)}
-                    className="mt-4 text-sm font-medium text-brand-600 hover:text-brand-700"
+                    className="mt-4 text-sm font-medium text-amber-600 hover:text-amber-700"
                   >
                     Explore Dreams
                   </Link>
@@ -139,7 +116,7 @@ export function CartDrawer() {
                         <p className="truncate text-sm font-semibold text-gray-900 dark:text-white">
                           {item.title}
                         </p>
-                        <p className="truncate text-xs text-brand-600">
+                        <p className="truncate text-xs text-amber-600">
                           {item.dreamTitle}
                         </p>
                         <p className="text-xs text-gray-500">
@@ -218,13 +195,10 @@ export function CartDrawer() {
                   </div>
                 </div>
                 <Button
-                  className="mt-4 w-full bg-gradient-to-r from-brand-600 to-orange-500 text-white shadow-lg hover:from-brand-700 hover:to-orange-600"
+                  className="mt-4 w-full bg-gradient-to-r from-amber-600 to-orange-500 text-white shadow-lg hover:from-amber-700 hover:to-orange-600"
                   onClick={handleCheckout}
-                  disabled={checking}
                 >
-                  {checking
-                    ? "Processing..."
-                    : `Support These Dreams — ${formatPrice(total)}`}
+                  {`Checkout — ${formatPrice(total)}`}
                 </Button>
                 <p className="mt-2 text-center text-xs text-gray-400">
                   Secure checkout powered by Stripe

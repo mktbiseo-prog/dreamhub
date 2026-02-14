@@ -1,0 +1,40 @@
+{
+  "name": "@dreamhub/design-system",
+  "private": true,
+  "version": "0.0.1",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./tokens.css": "./src/styles/tokens.css",
+    "./typography.css": "./src/styles/typography.css",
+    "./interactions.css": "./src/styles/interactions.css",
+    "./themes/brain": "./src/styles/brain-theme.css",
+    "./themes/planner": "./src/styles/planner-theme.css",
+    "./themes/place": "./src/styles/place-theme.css",
+    "./themes/store": "./src/styles/store-theme.css",
+    "./dark-mode.css": "./src/styles/dark-mode.css",
+    "./rtl.css": "./src/styles/rtl.css",
+    "./accessibility.css": "./src/styles/accessibility.css"
+  },
+  "dependencies": {
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.0",
+    "tailwind-merge": "^2.6.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "react": "^19.0.0",
+    "tailwindcss": "^3.4.0",
+    "typescript": "^5.7.0"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0",
+    "lucide-react": ">=0.400.0"
+  },
+  "peerDependenciesMeta": {
+    "lucide-react": {
+      "optional": true
+    }
+  }
+}

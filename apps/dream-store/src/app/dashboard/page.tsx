@@ -349,7 +349,7 @@ export default async function CreatorDashboardPage() {
                       </div>
                       <div className="h-2 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-800">
                         <div
-                          className="h-full rounded-full bg-gradient-to-r from-brand-500 to-orange-400 transition-all"
+                          className="h-full rounded-full bg-gradient-to-r from-amber-500 to-orange-400 transition-all"
                           style={{ width: `${progressPercent}%` }}
                         />
                       </div>
@@ -441,7 +441,7 @@ export default async function CreatorDashboardPage() {
                               className="h-6 w-6 rounded-full object-cover"
                             />
                           ) : (
-                            <div className="flex h-6 w-6 items-center justify-center rounded-full bg-brand-600 text-[10px] font-bold text-white">
+                            <div className="flex h-6 w-6 items-center justify-center rounded-full bg-amber-600 text-[10px] font-bold text-white">
                               {order.buyerName.charAt(0)}
                             </div>
                           )}
@@ -517,7 +517,7 @@ export default async function CreatorDashboardPage() {
                               className="h-6 w-6 rounded-full object-cover"
                             />
                           ) : (
-                            <div className="flex h-6 w-6 items-center justify-center rounded-full bg-brand-600 text-[10px] font-bold text-white">
+                            <div className="flex h-6 w-6 items-center justify-center rounded-full bg-amber-600 text-[10px] font-bold text-white">
                               {order.buyerName.charAt(0)}
                             </div>
                           )}

@@ -12,6 +12,8 @@ import { MarketScan } from "@/components/activities/part2/MarketScan";
 import { WhyWhatBridge } from "@/components/activities/part2/WhyWhatBridge";
 import { Part2Reflection } from "@/components/activities/part2/Part2Reflection";
 
+const PART_COLOR = "var(--dream-part-2)";
+
 export function Part2Shell() {
   const { data, store } = usePlannerStore();
   const p2 = data.part2;
@@ -40,67 +42,97 @@ export function Part2Shell() {
   const currentActivityMeta = PART2_ACTIVITIES.find((a) => a.id === p2.currentActivity);
 
   return (
-    <div className="flex gap-8">
-      <div className="hidden lg:block">
-        <ActivitySidebar
-          activities={PART2_ACTIVITIES}
-          currentActivity={p2.currentActivity}
-          onSelect={handleSelect}
-          completedActivities={completedSet}
-          totalCount={5}
-        />
-      </div>
+    <div>
+      {/* Part color bar */}
+      <div className="mb-6 h-1 w-full rounded-full" style={{ backgroundColor: PART_COLOR }} />
 
-      {/* Mobile indicator */}
-      <div className="mb-4 flex items-center gap-2 overflow-x-auto lg:hidden">
-        {PART2_ACTIVITIES.map((a) => (
-          <button
-            key={a.id}
-            type="button"
-            onClick={() => handleSelect(a.id)}
-            className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold transition-all ${
-              p2.currentActivity === a.id
-                ? "bg-brand-500 text-white"
-                : completedSet.has(a.id)
-                  ? "bg-green-100 text-green-700"
-                  : "bg-gray-200 text-gray-500"
-            }`}
-          >
-            {completedSet.has(a.id) ? "\u2713" : a.id}
-          </button>
-        ))}
-        <button
-          type="button"
-          onClick={() => handleSelect(0)}
-          className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-medium transition-all ${
-            p2.currentActivity === 0
-              ? "bg-brand-500 text-white"
-              : "bg-gray-200 text-gray-500"
-          }`}
-        >
-          Reflect
-        </button>
-      </div>
+      {/* Instruction card */}
+      {currentActivityMeta && p2.currentActivity > 0 && (
+        <div className="mb-6 flex items-start gap-3 rounded-xl border border-violet-100 bg-violet-50/50 p-4 dark:border-violet-900/30 dark:bg-violet-950/20">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full" style={{ backgroundColor: PART_COLOR }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
+            </svg>
+          </div>
+          <div>
+            <p className="text-xs font-semibold" style={{ color: PART_COLOR }}>Dream Coach</p>
+            <p className="mt-0.5 text-sm text-gray-600 dark:text-gray-400">
+              {currentActivityMeta.description}
+            </p>
+          </div>
+        </div>
+      )}
 
-      <div className="min-w-0 flex-1">
-        {/* Cross-Part Reference from PART 1 */}
-        {p2.currentActivity !== 0 && <CrossPartReference activityId={p2.currentActivity} />}
-
-        {p2.currentActivity === 6 && <ExperienceMindMap onNext={handleNext} />}
-        {p2.currentActivity === 7 && <FailureResume onNext={handleNext} />}
-        {p2.currentActivity === 8 && <StrengthsRedefine onNext={handleNext} />}
-        {p2.currentActivity === 9 && <MarketScan onNext={handleNext} />}
-        {p2.currentActivity === 10 && <WhyWhatBridge onNext={handleNext} />}
-        {p2.currentActivity === 0 && <Part2Reflection />}
-
-        {/* AI Insight Panel */}
-        {currentActivityMeta && p2.currentActivity > 0 && (
-          <AiInsightPanel
-            activityId={p2.currentActivity}
-            activityName={currentActivityMeta.title}
-            className="mt-6"
+      <div className="flex gap-8">
+        <div className="hidden lg:block">
+          <ActivitySidebar
+            activities={PART2_ACTIVITIES}
+            currentActivity={p2.currentActivity}
+            onSelect={handleSelect}
+            completedActivities={completedSet}
+            totalCount={5}
+            partNumber={2}
+            partColor={PART_COLOR}
           />
-        )}
+        </div>
+
+        {/* Mobile indicator */}
+        <div className="mb-4 flex items-center gap-2 overflow-x-auto lg:hidden">
+          {PART2_ACTIVITIES.map((a) => (
+            <button
+              key={a.id}
+              type="button"
+              onClick={() => handleSelect(a.id)}
+              className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold transition-all ${
+                p2.currentActivity === a.id
+                  ? "text-white"
+                  : completedSet.has(a.id)
+                    ? "text-white opacity-60"
+                    : "bg-gray-200 text-gray-500 dark:bg-gray-700"
+              }`}
+              style={{
+                backgroundColor: p2.currentActivity === a.id || completedSet.has(a.id) ? PART_COLOR : undefined,
+              }}
+            >
+              {completedSet.has(a.id) ? "\u2713" : a.id}
+            </button>
+          ))}
+          <button
+            type="button"
+            onClick={() => handleSelect(0)}
+            className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-medium transition-all ${
+              p2.currentActivity === 0
+                ? "text-white"
+                : "bg-gray-200 text-gray-500 dark:bg-gray-700"
+            }`}
+            style={{
+              backgroundColor: p2.currentActivity === 0 ? PART_COLOR : undefined,
+            }}
+          >
+            Reflect
+          </button>
+        </div>
+
+        <div className="min-w-0 flex-1">
+          {/* Cross-Part Reference from PART 1 */}
+          {p2.currentActivity !== 0 && <CrossPartReference activityId={p2.currentActivity} />}
+
+          {p2.currentActivity === 6 && <ExperienceMindMap onNext={handleNext} />}
+          {p2.currentActivity === 7 && <FailureResume onNext={handleNext} />}
+          {p2.currentActivity === 8 && <StrengthsRedefine onNext={handleNext} />}
+          {p2.currentActivity === 9 && <MarketScan onNext={handleNext} />}
+          {p2.currentActivity === 10 && <WhyWhatBridge onNext={handleNext} />}
+          {p2.currentActivity === 0 && <Part2Reflection />}
+
+          {/* AI Insight Panel */}
+          {currentActivityMeta && p2.currentActivity > 0 && (
+            <AiInsightPanel
+              activityId={p2.currentActivity}
+              activityName={currentActivityMeta.title}
+              className="mt-6"
+            />
+          )}
+        </div>
       </div>
     </div>
   );

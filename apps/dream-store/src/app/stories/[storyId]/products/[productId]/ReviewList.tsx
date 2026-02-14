@@ -75,7 +75,7 @@ function ReviewItem({
           className="h-9 w-9 shrink-0 rounded-full border border-gray-200 object-cover dark:border-gray-700"
         />
       ) : (
-        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-600 text-xs font-bold text-white">
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-amber-600 text-xs font-bold text-white">
           {review.buyerName.charAt(0)}
         </div>
       )}

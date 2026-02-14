@@ -26,11 +26,11 @@ export default async function EditProductPage({ params }: PageProps) {
   const { product, story } = result;
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-brand-50/50 to-white dark:from-gray-950 dark:to-gray-900">
+    <main className="min-h-screen bg-gradient-to-b from-amber-50/50 to-white dark:from-gray-950 dark:to-gray-900">
       <div className="mx-auto max-w-2xl px-4 py-12 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-10 text-center">
-          <p className="mb-2 text-sm font-medium text-brand-600">
+          <p className="mb-2 text-sm font-medium text-amber-600">
             Editing product in
           </p>
           <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">

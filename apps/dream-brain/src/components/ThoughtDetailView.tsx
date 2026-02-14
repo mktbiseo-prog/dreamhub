@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition, useRef, useEffect } from "react";
+import { useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -15,12 +15,21 @@ import {
   Pencil,
   Trash2,
   Mic,
+  Send,
 } from "lucide-react";
+import { cn } from "@dreamhub/design-system";
+import { Button } from "@dreamhub/design-system";
 import { categories } from "@/lib/categories";
-import { updateThought, deleteThought, toggleFavorite, togglePin, toggleArchive } from "@/lib/actions/thoughts";
-import { EmotionBadge } from "./EmotionBadge";
+import {
+  updateThought,
+  deleteThought,
+  toggleFavorite,
+  togglePin,
+  toggleArchive,
+} from "@/lib/actions/thoughts";
+import { AISummaryCard } from "./brain/AISummaryCard";
+import { AudioPlayer } from "./brain/AudioPlayer";
 import { ActionItemsList } from "./ActionItemsList";
-import { EntityPills } from "./EntityPills";
 import type { ThoughtData, RelatedThoughtData } from "@/lib/data";
 
 interface ThoughtDetailViewProps {
@@ -30,9 +39,8 @@ interface ThoughtDetailViewProps {
 
 function formatDate(dateStr: string): string {
   return new Date(dateStr).toLocaleDateString("en-US", {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
+    weekday: "short",
+    month: "short",
     day: "numeric",
     hour: "2-digit",
     minute: "2-digit",
@@ -53,10 +61,7 @@ export function ThoughtDetailView({
   const category = categories[thought.category];
   const Icon = category.icon;
 
-  // Dropdown state
   const [menuOpen, setMenuOpen] = useState(false);
-
-  // Edit mode state
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState(thought.title);
   const [editBody, setEditBody] = useState(thought.body);
@@ -93,15 +98,13 @@ export function ThoughtDetailView({
     setIsEditing(true);
   }
 
-  function handleCancelEdit() {
-    setEditTitle(thought.title);
-    setEditBody(thought.body);
-    setIsEditing(false);
-  }
-
   function handleSave() {
     startTransition(async () => {
-      await updateThought({ id: thought.id, title: editTitle, body: editBody });
+      await updateThought({
+        id: thought.id,
+        title: editTitle,
+        body: editBody,
+      });
       setIsEditing(false);
       router.refresh();
     });
@@ -109,7 +112,11 @@ export function ThoughtDetailView({
 
   function handleDelete() {
     setMenuOpen(false);
-    if (!window.confirm("Are you sure you want to delete this thought? This action cannot be undone.")) {
+    if (
+      !window.confirm(
+        "Are you sure you want to delete this thought? This action cannot be undone.",
+      )
+    ) {
       return;
     }
     startTransition(async () => {
@@ -119,8 +126,8 @@ export function ThoughtDetailView({
   }
 
   return (
-    <div className="flex flex-col">
-      {/* Header */}
+    <div className="flex flex-col min-h-screen">
+      {/* Top bar: back + overflow */}
       <header className="sticky top-0 z-30 flex items-center justify-between px-4 py-3 backdrop-blur-xl bg-gray-950/80 border-b border-white/5">
         <button
           type="button"
@@ -129,7 +136,7 @@ export function ThoughtDetailView({
         >
           <ArrowLeft className="h-5 w-5 text-gray-300" />
         </button>
-        <span className="text-sm font-medium text-gray-300">Thought Detail</span>
+
         <div className="relative">
           <button
             type="button"
@@ -141,19 +148,22 @@ export function ThoughtDetailView({
 
           {menuOpen && (
             <>
-              {/* Backdrop */}
               <div
                 className="fixed inset-0 z-40"
                 onClick={() => setMenuOpen(false)}
               />
-              {/* Dropdown */}
-              <div className="absolute right-0 top-full mt-1 z-50 w-44 rounded-xl border border-white/10 bg-gray-900 py-1 shadow-xl">
+              <div className="absolute right-0 top-full mt-1 z-50 w-44 rounded-[var(--dream-radius-lg)] border border-white/10 bg-gray-900 py-1 shadow-xl">
                 <button
                   type="button"
                   onClick={handleToggleFavorite}
                   className="flex w-full items-center gap-2.5 px-3.5 py-2.5 text-sm text-gray-300 transition-colors hover:bg-white/5"
                 >
-                  <Star className={`h-4 w-4 ${thought.isFavorite ? "fill-yellow-400 text-yellow-400" : ""}`} />
+                  <Star
+                    className={cn(
+                      "h-4 w-4",
+                      thought.isFavorite && "fill-yellow-400 text-yellow-400",
+                    )}
+                  />
                   {thought.isFavorite ? "Unfavorite" : "Favorite"}
                 </button>
                 <button
@@ -161,7 +171,13 @@ export function ThoughtDetailView({
                   onClick={handleTogglePin}
                   className="flex w-full items-center gap-2.5 px-3.5 py-2.5 text-sm text-gray-300 transition-colors hover:bg-white/5"
                 >
-                  <Pin className={`h-4 w-4 ${thought.isPinned ? "text-brand-400" : ""}`} />
+                  <Pin
+                    className={cn(
+                      "h-4 w-4",
+                      thought.isPinned &&
+                        "text-[var(--dream-color-primary)]",
+                    )}
+                  />
                   {thought.isPinned ? "Unpin" : "Pin"}
                 </button>
                 <button
@@ -169,7 +185,12 @@ export function ThoughtDetailView({
                   onClick={handleToggleArchive}
                   className="flex w-full items-center gap-2.5 px-3.5 py-2.5 text-sm text-gray-300 transition-colors hover:bg-white/5"
                 >
-                  <Archive className={`h-4 w-4 ${thought.isArchived ? "text-amber-400" : ""}`} />
+                  <Archive
+                    className={cn(
+                      "h-4 w-4",
+                      thought.isArchived && "text-amber-400",
+                    )}
+                  />
                   {thought.isArchived ? "Unarchive" : "Archive"}
                 </button>
                 <div className="my-1 border-t border-white/[0.06]" />
@@ -195,127 +216,92 @@ export function ThoughtDetailView({
         </div>
       </header>
 
-      <main className="flex-1 px-5 py-5">
-        {/* Category + Importance */}
-        <div className="flex items-center gap-3 mb-4">
-          <div
-            className={`flex items-center gap-2 rounded-lg px-3 py-1.5 ${category.bgColor}`}
+      <main className="flex-1 px-4 py-5">
+        {/* Metadata strip — horizontal scroll */}
+        <div className="flex gap-2 overflow-x-auto scrollbar-none pb-3 mb-4">
+          <span className="shrink-0 inline-flex items-center gap-1.5 rounded-full bg-white/[0.06] px-3 py-1.5 text-xs text-gray-400">
+            <Calendar className="h-3 w-3" />
+            {formatDate(thought.createdAt)}
+          </span>
+          <span
+            className="shrink-0 inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium"
+            style={{
+              backgroundColor: `color-mix(in srgb, ${getCategoryHex(thought.category)} 15%, transparent)`,
+              color: getCategoryHex(thought.category),
+            }}
           >
-            <Icon className={`h-4 w-4 ${category.color}`} />
-            <span className={`text-xs font-medium ${category.color}`}>
-              {category.label}
-            </span>
-          </div>
-          {thought.isFavorite && (
-            <Star className="h-4 w-4 text-yellow-400 fill-yellow-400" />
-          )}
-          {thought.isPinned && (
-            <Pin className="h-4 w-4 text-brand-400" />
-          )}
-          {thought.isArchived && (
-            <span className="inline-flex items-center gap-1 rounded-lg bg-amber-500/10 px-2 py-1">
-              <Archive className="h-3.5 w-3.5 text-amber-400" />
-              <span className="text-xs font-medium text-amber-300">Archived</span>
-            </span>
-          )}
-          {thought.inputMethod === "VOICE" && thought.voiceDurationSeconds != null && (
-            <div className="flex items-center gap-1.5 rounded-lg bg-purple-500/10 px-2.5 py-1.5">
-              <Mic className="h-3.5 w-3.5 text-purple-400" />
-              <span className="text-xs font-medium text-purple-300">
+            <Icon className="h-3 w-3" />
+            {category.label}
+          </span>
+          {thought.inputMethod === "VOICE" &&
+            thought.voiceDurationSeconds != null && (
+              <span className="shrink-0 inline-flex items-center gap-1.5 rounded-full bg-purple-500/10 px-3 py-1.5 text-xs text-purple-300">
+                <Mic className="h-3 w-3" />
                 {formatDuration(thought.voiceDurationSeconds)}
               </span>
-            </div>
+            )}
+          {thought.isFavorite && (
+            <span className="shrink-0 inline-flex items-center gap-1.5 rounded-full bg-yellow-500/10 px-3 py-1.5 text-xs text-yellow-300">
+              <Star className="h-3 w-3 fill-yellow-300" />
+              Starred
+            </span>
           )}
-          <div className="ml-auto flex items-center gap-1">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <div
-                key={i}
-                className={`h-1.5 w-1.5 rounded-full ${
-                  i < thought.importance ? "bg-brand-400" : "bg-white/10"
-                }`}
-              />
-            ))}
-          </div>
+          {thought.tags.slice(0, 3).map((tag) => (
+            <span
+              key={tag}
+              className="shrink-0 inline-flex items-center gap-1 rounded-full bg-white/[0.06] px-3 py-1.5 text-xs text-gray-400"
+            >
+              <Tag className="h-3 w-3" />
+              {tag}
+            </span>
+          ))}
         </div>
+
+        {/* Audio player (if voice) */}
+        {thought.inputMethod === "VOICE" &&
+          thought.voiceDurationSeconds != null &&
+          thought.voiceDurationSeconds > 0 && (
+            <AudioPlayer
+              duration={thought.voiceDurationSeconds}
+              hasAudio
+              className="mb-5"
+            />
+          )}
+
+        {/* AI Summary */}
+        {!isEditing && thought.summary && (
+          <AISummaryCard summary={thought.summary} className="mb-5" />
+        )}
 
         {/* Title */}
         {isEditing ? (
           <input
             type="text"
             value={editTitle}
-            onChange={(e) => setEditTitle(e.target.value)}
-            className="mb-2 w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-2xl font-bold text-gray-50 outline-none focus:border-brand-500/50 focus:ring-1 focus:ring-brand-500/30 transition-colors"
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setEditTitle(e.target.value)
+            }
+            className="mb-3 w-full rounded-[var(--dream-radius-md)] border border-white/10 bg-white/5 px-4 py-3 text-xl font-bold text-gray-50 outline-none focus:border-[var(--dream-color-primary)]/50 transition-colors"
           />
         ) : (
-          <h1 className="text-2xl font-bold text-gray-50 leading-tight mb-2">
+          <h1 className="text-xl font-bold text-gray-50 leading-tight mb-4">
             {thought.title}
           </h1>
         )}
 
-        {/* Date */}
-        <div className="flex items-center gap-2 text-xs text-gray-500 mb-6">
-          <Calendar className="h-3.5 w-3.5" />
-          {formatDate(thought.createdAt)}
-        </div>
-
-        {/* AI Summary */}
-        {!isEditing && (
-          <div className="mb-6 rounded-xl border border-brand-500/20 bg-brand-500/5 p-4">
-            <span className="text-xs font-medium text-brand-300 mb-1 block">
-              AI Summary
-            </span>
-            <p className="text-sm text-gray-300 leading-relaxed">
-              {thought.summary}
-            </p>
-          </div>
-        )}
-
-        {/* Emotion */}
-        {!isEditing && thought.emotion && (
-          <div className="mb-6">
-            <h2 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-3">
-              Emotion
-            </h2>
-            <div className="flex items-center gap-3">
-              <EmotionBadge emotion={thought.emotion} confidence={thought.emotionConfidence} size="md" />
-              {thought.emotionSecondary && (
-                <EmotionBadge emotion={thought.emotionSecondary} size="sm" />
-              )}
-            </div>
-            {thought.valence != null && (
-              <div className="mt-3 flex items-center gap-3">
-                <span className="text-xs text-gray-500">Negative</span>
-                <div className="flex-1 h-2 rounded-full bg-white/[0.06] overflow-hidden">
-                  <div
-                    className="h-full rounded-full bg-gradient-to-r from-red-500 via-gray-400 to-emerald-500"
-                    style={{ width: "100%" }}
-                  />
-                  <div
-                    className="relative -mt-2 h-2"
-                  >
-                    <div
-                      className="absolute top-0 h-2 w-2 rounded-full bg-white shadow-md border border-gray-600"
-                      style={{ left: `${((thought.valence + 1) / 2) * 100}%`, transform: "translateX(-50%)" }}
-                    />
-                  </div>
-                </div>
-                <span className="text-xs text-gray-500">Positive</span>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Full Text */}
+        {/* Full transcript / body */}
         <div className="mb-6">
           <h2 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-3">
-            Full Text
+            {thought.inputMethod === "VOICE" ? "Transcript" : "Full Text"}
           </h2>
           {isEditing ? (
             <textarea
               value={editBody}
-              onChange={(e) => setEditBody(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                setEditBody(e.target.value)
+              }
               rows={8}
-              className="w-full resize-none rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-gray-300 leading-relaxed outline-none focus:border-brand-500/50 focus:ring-1 focus:ring-brand-500/30 transition-colors"
+              className="w-full resize-none rounded-[var(--dream-radius-md)] border border-white/10 bg-white/5 px-4 py-3 text-sm text-gray-300 leading-relaxed outline-none focus:border-[var(--dream-color-primary)]/50 transition-colors"
             />
           ) : (
             <p className="text-sm text-gray-300 leading-relaxed whitespace-pre-wrap">
@@ -327,82 +313,60 @@ export function ThoughtDetailView({
         {/* Edit buttons */}
         {isEditing && (
           <div className="mb-6 flex items-center gap-3">
-            <button
-              type="button"
+            <Button
+              variant="primary"
+              size="md"
               onClick={handleSave}
               disabled={isPending}
-              className="rounded-xl bg-gradient-to-r from-brand-500 to-blue-500 px-5 py-2.5 text-sm font-medium text-white shadow-lg shadow-brand-500/25 transition-all hover:shadow-brand-500/40 disabled:opacity-50"
             >
               {isPending ? "Saving..." : "Save"}
-            </button>
-            <button
-              type="button"
-              onClick={handleCancelEdit}
+            </Button>
+            <Button
+              variant="secondary"
+              size="md"
+              onClick={() => {
+                setEditTitle(thought.title);
+                setEditBody(thought.body);
+                setIsEditing(false);
+              }}
               disabled={isPending}
-              className="rounded-xl border border-white/10 px-5 py-2.5 text-sm text-gray-400 transition-colors hover:bg-white/5"
             >
               Cancel
-            </button>
+            </Button>
           </div>
         )}
 
-        {/* Action Items */}
+        {/* Action items */}
         {!isEditing && thought.actionItems.length > 0 && (
-          <ActionItemsList thoughtId={thought.id} items={thought.actionItems} />
-        )}
-
-        {/* Tags */}
-        <div className="mb-6">
-          <div className="flex items-center gap-2 mb-3">
-            <Tag className="h-3.5 w-3.5 text-gray-500" />
-            <h2 className="text-xs font-semibold uppercase tracking-wider text-gray-500">
-              Tags
-            </h2>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {thought.tags.map((tag) => (
-              <span
-                key={tag}
-                className="rounded-lg bg-white/[0.06] border border-white/[0.06] px-3 py-1.5 text-xs text-gray-300"
-              >
-                #{tag}
-              </span>
-            ))}
-          </div>
-        </div>
-
-        {/* Keywords */}
-        {thought.keywords.length > 0 && (
           <div className="mb-6">
-            <h2 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-3">
-              Keywords
-            </h2>
-            <div className="flex flex-wrap gap-2">
-              {thought.keywords.map((kw) => (
-                <span
-                  key={kw}
-                  className="rounded-lg bg-blue-500/10 px-3 py-1.5 text-xs text-blue-300"
-                >
-                  {kw}
-                </span>
-              ))}
-            </div>
+            <ActionItemsList
+              thoughtId={thought.id}
+              items={thought.actionItems}
+            />
+            <Button
+              variant="secondary"
+              size="sm"
+              className="mt-3 gap-1.5"
+              onClick={() => {
+                /* Send to Planner — placeholder */
+              }}
+            >
+              <Send className="h-3.5 w-3.5" />
+              Send to Planner
+            </Button>
           </div>
         )}
 
-        {/* Entity Mentions */}
-        <EntityPills people={thought.peopleMentioned} places={thought.placesMentioned} />
-
-        {/* Related Thoughts */}
+        {/* Related thoughts — horizontal scroll */}
         {relatedThoughts.length > 0 && (
           <div className="mb-6">
             <div className="flex items-center gap-2 mb-3">
               <Link2 className="h-3.5 w-3.5 text-gray-500" />
               <h2 className="text-xs font-semibold uppercase tracking-wider text-gray-500">
-                Related Thoughts
+                Related thoughts
               </h2>
             </div>
-            <div className="flex flex-col gap-2">
+            <div className="flex gap-3 overflow-x-auto scrollbar-none pb-2">
               {relatedThoughts.map(({ thought: related, score, reason }) => {
                 const relCat = categories[related.category];
                 const RelIcon = relCat.icon;
@@ -410,24 +374,27 @@ export function ThoughtDetailView({
                   <Link
                     key={related.id}
                     href={`/thoughts/${related.id}`}
-                    className="flex items-center gap-3 rounded-xl border border-white/[0.06] bg-white/[0.03] p-3.5 transition-colors hover:bg-white/[0.06]"
+                    className="shrink-0 w-[200px] rounded-[var(--dream-radius-lg)] border border-white/[0.06] bg-white/[0.03] p-3.5 transition-colors hover:bg-white/[0.06]"
                   >
-                    <div
-                      className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${relCat.bgColor}`}
-                    >
-                      <RelIcon className={`h-4 w-4 ${relCat.color}`} />
+                    <div className="flex items-center gap-2 mb-2">
+                      <div
+                        className={cn(
+                          "flex h-7 w-7 items-center justify-center rounded-lg",
+                          relCat.bgColor,
+                        )}
+                      >
+                        <RelIcon className={cn("h-3.5 w-3.5", relCat.color)} />
+                      </div>
+                      <span className="rounded-md bg-violet-500/15 px-1.5 py-0.5 text-[10px] font-medium text-violet-300">
+                        {Math.round(score * 100)}%
+                      </span>
                     </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-sm font-medium text-gray-200 truncate">
-                        {related.title}
-                      </p>
-                      <p className="text-xs text-gray-500 truncate mt-0.5">
-                        {reason}
-                      </p>
-                    </div>
-                    <span className="shrink-0 rounded-md bg-brand-500/15 px-2 py-1 text-xs font-medium text-brand-300">
-                      {Math.round(score * 100)}%
-                    </span>
+                    <p className="text-sm font-medium text-gray-200 line-clamp-2 mb-1">
+                      {related.title}
+                    </p>
+                    <p className="text-xs text-gray-500 line-clamp-1">
+                      {reason}
+                    </p>
                   </Link>
                 );
               })}
@@ -437,4 +404,19 @@ export function ThoughtDetailView({
       </main>
     </div>
   );
+}
+
+function getCategoryHex(categoryId: string): string {
+  const colorMap: Record<string, string> = {
+    work: "#60a5fa",
+    ideas: "#facc15",
+    emotions: "#f472b6",
+    daily: "#fb923c",
+    learning: "#34d399",
+    relationships: "#a78bfa",
+    health: "#4ade80",
+    finance: "#fbbf24",
+    dreams: "#c084fc",
+  };
+  return colorMap[categoryId] ?? "#a78bfa";
 }

@@ -1,0 +1,48 @@
+/* ---------------------------------------------------------------------------
+ * Dream Planner — Service Theme
+ *
+ * Ambitious warmth. Warm Rose (#E11D73).
+ * Spec reference: PART 2, Section 2.1
+ * --------------------------------------------------------------------------- */
+
+:root {
+  /* ── Primary ───────────────────────────────────────────────────────────── */
+  --dream-color-primary: #E11D73;
+  --dream-color-primary-light: #FCE7F3;
+  --dream-color-primary-lighter: #FDF2F8;
+  --dream-color-primary-dark: #BE185D;
+  --dream-color-primary-darker: #9D174D;
+  --dream-color-on-primary: #FFFFFF;
+
+  /* ── Secondary ─────────────────────────────────────────────────────────── */
+  --dream-color-secondary: #8B5CF6;
+  --dream-color-secondary-light: #EDE9FE;
+
+  /* ── Accent ────────────────────────────────────────────────────────────── */
+  --dream-color-accent: #FFC300;
+  --dream-color-accent-light: #FEF9E7;
+
+  /* ── Surfaces ──────────────────────────────────────────────────────────── */
+  --dream-color-surface: #FFFFFF;
+  --dream-color-surface-alt: #FDF2F8;
+  --dream-color-background: #FAFAFA;
+
+  /* ── Text ───────────────────────────────────────────────────────────────── */
+  --dream-color-text-primary: #171717;
+  --dream-color-text-secondary: #525252;
+  --dream-color-text-tertiary: #A3A3A3;
+
+  /* ── Part Colors ──────────────────────────────────────────────────────── */
+  --dream-part-1: #E11D73;   /* Rose — Discover */
+  --dream-part-2: #8B5CF6;   /* Violet — Plan */
+  --dream-part-3: #06B6D4;   /* Cyan — Build */
+  --dream-part-4: #FFC300;   /* Yellow — Launch */
+
+  /* ── Gamification ─────────────────────────────────────────────────────── */
+  --dream-streak-active: #F59E0B;
+  --dream-streak-fire: #EF4444;
+  --dream-xp-gold: #FFC300;
+  --dream-badge-bronze: #CD7F32;
+  --dream-badge-silver: #C0C0C0;
+  --dream-badge-gold: #FFD700;
+}

@@ -166,7 +166,7 @@ export function EditProductForm({ storyId, productId, product }: EditProductForm
                   id="category"
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
-                  className="flex h-10 w-full rounded-[8px] border border-gray-300 bg-white px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
+                  className="flex h-10 w-full rounded-[8px] border border-gray-300 bg-white px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-2 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
                 >
                   <option value="">Select a category</option>
                   {PRODUCT_CATEGORIES.map((cat) => (
@@ -227,7 +227,7 @@ export function EditProductForm({ storyId, productId, product }: EditProductForm
             type="submit"
             size="lg"
             disabled={isPending}
-            className="w-full bg-gradient-to-r from-brand-600 to-orange-500 text-white shadow-lg hover:from-brand-700 hover:to-orange-600 sm:w-auto sm:min-w-[240px]"
+            className="w-full bg-gradient-to-r from-amber-600 to-orange-500 text-white shadow-lg hover:from-amber-700 hover:to-orange-600 sm:w-auto sm:min-w-[240px]"
           >
             {isPending ? "Saving Changes..." : "Save Changes"}
           </Button>

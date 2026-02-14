@@ -79,7 +79,7 @@ export function BuyerProtection({ sellerVerified, sellerBadge }: BuyerProtection
               <p className="text-xs text-green-800 dark:text-green-300">
                 <strong>Verified Creator:</strong> This seller has completed identity verification.
                 {sellerBadge && (
-                  <span className="ml-1 inline-block rounded-full bg-brand-100 px-1.5 py-0.5 text-[10px] font-medium text-brand-700 dark:bg-brand-900/30 dark:text-brand-400">
+                  <span className="ml-1 inline-block rounded-full bg-amber-100 px-1.5 py-0.5 text-[10px] font-medium text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
                     {sellerBadge}
                   </span>
                 )}

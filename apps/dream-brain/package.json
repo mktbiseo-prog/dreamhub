@@ -11,6 +11,7 @@
   "dependencies": {
     "@dreamhub/ai": "workspace:*",
     "@dreamhub/auth": "workspace:*",
+    "@dreamhub/design-system": "workspace:*",
     "@dreamhub/database": "workspace:*",
     "@dreamhub/event-bus": "workspace:*",
     "@dreamhub/i18n": "workspace:*",

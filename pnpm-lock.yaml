@@ -29,6 +29,9 @@ importers:
       '@dreamhub/database':
         specifier: workspace:*
         version: link:../../packages/database
+      '@dreamhub/design-system':
+        specifier: workspace:*
+        version: link:../../packages/design-system
       '@dreamhub/event-bus':
         specifier: workspace:*
         version: link:../../packages/event-bus
@@ -160,6 +163,9 @@ importers:
       '@dreamhub/database':
         specifier: workspace:*
         version: link:../../packages/database
+      '@dreamhub/design-system':
+        specifier: workspace:*
+        version: link:../../packages/design-system
       '@dreamhub/event-bus':
         specifier: workspace:*
         version: link:../../packages/event-bus
@@ -269,6 +275,9 @@ importers:
       '@dreamhub/database':
         specifier: workspace:*
         version: link:../../packages/database
+      '@dreamhub/design-system':
+        specifier: workspace:*
+        version: link:../../packages/design-system
       '@dreamhub/event-bus':
         specifier: workspace:*
         version: link:../../packages/event-bus
@@ -354,6 +363,9 @@ importers:
       '@dreamhub/database':
         specifier: workspace:*
         version: link:../../packages/database
+      '@dreamhub/design-system':
+        specifier: workspace:*
+        version: link:../../packages/design-system
       '@dreamhub/event-bus':
         specifier: workspace:*
         version: link:../../packages/event-bus
@@ -566,6 +578,34 @@ importers:
       vitest:
         specifier: ^2.0.0
         version: 2.1.9(@types/node@22.19.11)
+
+  packages/design-system:
+    dependencies:
+      class-variance-authority:
+        specifier: ^0.7.0
+        version: 0.7.1
+      clsx:
+        specifier: ^2.1.0
+        version: 2.1.1
+      lucide-react:
+        specifier: '>=0.400.0'
+        version: 0.563.0(react@19.2.4)
+      tailwind-merge:
+        specifier: ^2.6.0
+        version: 2.6.1
+    devDependencies:
+      '@types/react':
+        specifier: ^19.0.0
+        version: 19.2.14
+      react:
+        specifier: ^19.0.0
+        version: 19.2.4
+      tailwindcss:
+        specifier: ^3.4.0
+        version: 3.4.19(tsx@4.21.0)
+      typescript:
+        specifier: ^5.7.0
+        version: 5.9.3
 
   packages/event-bus:
     dependencies:

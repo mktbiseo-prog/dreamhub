@@ -8,7 +8,7 @@ export function Footer() {
           {/* Brand */}
           <div className="sm:col-span-2 lg:col-span-1">
             <Link href="/" className="inline-block">
-              <span className="text-lg font-bold bg-gradient-to-r from-brand-600 to-orange-500 bg-clip-text text-transparent">
+              <span className="text-lg font-bold bg-gradient-to-r from-amber-600 to-orange-500 bg-clip-text text-transparent">
                 Dream Store
               </span>
             </Link>
@@ -27,7 +27,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/stories/create"
-                  className="transition-colors hover:text-brand-600"
+                  className="transition-colors hover:text-amber-600"
                 >
                   Start Your Dream
                 </Link>
@@ -54,7 +54,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/"
-                  className="transition-colors hover:text-brand-600"
+                  className="transition-colors hover:text-amber-600"
                 >
                   Discover Dreams
                 </Link>

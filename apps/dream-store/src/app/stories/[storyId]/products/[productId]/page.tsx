@@ -45,70 +45,68 @@ export default async function ProductDetailPage({ params }: PageProps) {
   });
 
   return (
-    <main className="min-h-screen">
+    <main className="min-h-screen pb-24" style={{ backgroundColor: "var(--dream-color-background)" }}>
       <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
         {/* Breadcrumb */}
         <nav className="mb-6 flex items-center justify-between">
           <div className="text-sm text-gray-500">
-          <Link href="/" className="hover:text-brand-600">
-            Discover
-          </Link>
-          <span className="mx-2">/</span>
-          <Link
-            href={`/stories/${story.id}`}
-            className="hover:text-brand-600"
-          >
-            {story.title}
-          </Link>
-          <span className="mx-2">/</span>
-          <span className="text-gray-900 dark:text-white">
-            {product.title}
-          </span>
+            <Link href="/" className="transition-colors hover:text-gray-900 dark:hover:text-white">
+              Discover
+            </Link>
+            <span className="mx-2">/</span>
+            <Link
+              href={`/stories/${story.id}`}
+              className="transition-colors hover:text-gray-900 dark:hover:text-white"
+            >
+              {story.title}
+            </Link>
+            <span className="mx-2">/</span>
+            <span className="text-gray-900 dark:text-white">{product.title}</span>
           </div>
           {isOwner && (
             <Link href={`/stories/${storyId}/products/${productId}/edit`}>
-              <Button variant="outline" size="sm">
-                Edit Product
-              </Button>
+              <Button variant="outline" size="sm">Edit Product</Button>
             </Link>
           )}
         </nav>
 
         <div className="grid gap-10 lg:grid-cols-2">
-          {/* Left — Product Image Gallery */}
+          {/* Left: Image Gallery */}
           <div>
             <ImageGallery images={product.images} alt={product.title} />
           </div>
 
-          {/* Right — Product Info */}
+          {/* Right: Product Info */}
           <div className="flex flex-col">
-            {/* Dream Context Banner */}
+            {/* Mini Dreamer Card */}
             <Link
               href={`/stories/${story.id}`}
-              className="mb-6 flex items-center gap-3 rounded-card bg-brand-50 p-4 transition-colors hover:bg-brand-100 dark:bg-brand-950/30 dark:hover:bg-brand-950/50"
+              className="mb-6 flex items-center gap-3 rounded-[12px] p-4 transition-colors"
+              style={{ backgroundColor: "var(--dream-color-surface-alt)" }}
             >
               <img
                 src={story.creatorAvatar}
                 alt={story.creatorName}
-                className="h-10 w-10 rounded-full border-2 border-brand-200 object-cover"
+                className="h-10 w-10 rounded-full border-2 object-cover"
+                style={{ borderColor: "var(--dream-color-primary-light)" }}
               />
               <div className="min-w-0 flex-1">
-                <p className="text-xs font-medium text-brand-600">
+                <p className="text-xs font-medium" style={{ color: "var(--dream-color-primary-dark)" }}>
                   Part of the dream
                 </p>
                 <p className="truncate text-sm font-semibold text-gray-900 dark:text-white">
                   {story.title}
                 </p>
               </div>
-              <span className="text-xs text-brand-600">View Story →</span>
+              <span className="text-xs" style={{ color: "var(--dream-color-primary-dark)" }}>View Story &rarr;</span>
             </Link>
 
-            {/* Product Title & Price */}
-            <h1 className="mb-2 text-2xl font-bold text-gray-900 dark:text-white lg:text-3xl">
+            {/* Title */}
+            <h1 className="mb-2 text-2xl font-bold lg:text-3xl" style={{ color: "var(--dream-color-headline)" }}>
               {product.title}
             </h1>
 
-            {/* Average Rating */}
+            {/* Rating */}
             {ratingData.count > 0 && (
               <div className="mb-3 flex items-center gap-2">
                 <div className="flex gap-0.5">
@@ -124,24 +122,17 @@ export default async function ProductDetailPage({ params }: PageProps) {
                       strokeWidth={1.5}
                       stroke="currentColor"
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z"
-                      />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
                     </svg>
                   ))}
                 </div>
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                  {ratingData.average}
-                </span>
-                <span className="text-sm text-gray-500">
-                  ({ratingData.count} {ratingData.count === 1 ? "review" : "reviews"})
-                </span>
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{ratingData.average}</span>
+                <span className="text-sm text-gray-500">({ratingData.count} {ratingData.count === 1 ? "review" : "reviews"})</span>
               </div>
             )}
 
-            <p className="mb-6 text-3xl font-bold text-gray-900 dark:text-white">
+            {/* Price in gold */}
+            <p className="mb-6 text-3xl font-bold" style={{ color: "var(--dream-color-primary)" }}>
               {formatPrice(product.price)}
             </p>
 
@@ -184,7 +175,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
 
             {/* Description */}
             <div className="mt-8 border-t border-gray-200 pt-8 dark:border-gray-800">
-              <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-gray-500">
+              <h2 className="mb-3 text-xs font-semibold uppercase tracking-widest text-gray-500">
                 About This Product
               </h2>
               <p className="text-base leading-relaxed text-gray-700 dark:text-gray-300">
@@ -194,22 +185,34 @@ export default async function ProductDetailPage({ params }: PageProps) {
 
             {/* Why I Made This */}
             {product.whyIMadeThis && (
-              <div className="mt-8 rounded-card border-l-4 border-brand-500 bg-gray-50 p-5 dark:bg-gray-900">
-                <h2 className="mb-2 text-sm font-semibold text-brand-600">
+              <div className="mt-8 rounded-[12px] border-l-4 p-5" style={{ borderColor: "var(--dream-color-primary)", backgroundColor: "var(--dream-color-surface-alt)" }}>
+                <h2 className="mb-2 text-sm font-semibold" style={{ color: "var(--dream-color-primary-dark)" }}>
                   Why I Made This
                 </h2>
                 <p className="text-base italic leading-relaxed text-gray-700 dark:text-gray-300">
                   &ldquo;{product.whyIMadeThis}&rdquo;
                 </p>
                 <p className="mt-3 text-sm font-medium text-gray-500">
-                  — {story.creatorName}
+                  &mdash; {story.creatorName}
                 </p>
               </div>
             )}
 
-            {/* Recent Supporters */}
+            {/* Impact Callout (rose bg) */}
+            {story.impactStatement && (
+              <div className="mt-8 rounded-[12px] p-5" style={{ backgroundColor: "var(--dream-color-accent-light)" }}>
+                <h2 className="mb-2 text-xs font-semibold uppercase tracking-widest" style={{ color: "var(--dream-color-accent)" }}>
+                  Your Impact
+                </h2>
+                <p className="text-sm leading-relaxed text-gray-700 dark:text-gray-300">
+                  {story.impactStatement}
+                </p>
+              </div>
+            )}
+
+            {/* Social Proof — Recent Supporters */}
             <div className="mt-8 border-t border-gray-200 pt-8 dark:border-gray-800">
-              <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-gray-500">
+              <h2 className="mb-4 text-xs font-semibold uppercase tracking-widest text-gray-500">
                 Recent Supporters
               </h2>
               <div className="flex -space-x-2">
@@ -235,11 +238,11 @@ export default async function ProductDetailPage({ params }: PageProps) {
           </div>
         </div>
 
-        {/* Supporter Stories (Reviews) */}
+        {/* Reviews Section */}
         <div className="mt-12 border-t border-gray-200 pt-10 dark:border-gray-800">
           <div className="mb-8 flex items-center justify-between">
             <div>
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+              <h2 className="text-xl font-bold" style={{ color: "var(--dream-color-headline)" }}>
                 Supporter Stories
               </h2>
               <p className="mt-1 text-sm text-gray-500">
@@ -248,17 +251,8 @@ export default async function ProductDetailPage({ params }: PageProps) {
             </div>
             {ratingData.count > 0 && (
               <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-                <svg
-                  className="h-5 w-5 fill-yellow-400 text-yellow-400"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z"
-                  />
+                <svg className="h-5 w-5 fill-yellow-400 text-yellow-400" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
                 </svg>
                 <span className="font-semibold">{ratingData.average}</span>
                 <span>out of 5 ({ratingData.count} reviews)</span>
@@ -266,16 +260,31 @@ export default async function ProductDetailPage({ params }: PageProps) {
             )}
           </div>
 
-          {/* Review Form */}
-          <div className="mb-8 rounded-card border border-gray-200 bg-gray-50 p-6 dark:border-gray-800 dark:bg-gray-900">
+          <div className="mb-8 rounded-[12px] border border-gray-200 p-6 dark:border-gray-800" style={{ backgroundColor: "var(--dream-color-surface-alt)" }}>
             <h3 className="mb-4 text-sm font-semibold text-gray-900 dark:text-white">
               Share Your Experience
             </h3>
             <ReviewForm productId={productId} />
           </div>
 
-          {/* Review List */}
           <ReviewList reviews={reviews} currentUserId={currentUserId} />
+        </div>
+      </div>
+
+      {/* Sticky CTA Bar */}
+      <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-gray-200 bg-white/95 backdrop-blur-md dark:border-gray-800 dark:bg-gray-950/95">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6">
+          <div>
+            <p className="text-sm font-medium text-gray-900 dark:text-white">{product.title}</p>
+            <p className="text-lg font-bold" style={{ color: "var(--dream-color-primary)" }}>
+              {formatPrice(product.price)}
+            </p>
+          </div>
+          <SupportButton
+            productId={product.id}
+            storyId={story.id}
+            price={product.price}
+          />
         </div>
       </div>
     </main>

@@ -91,7 +91,7 @@ export function PollCard({ poll, isCreator }: PollCardProps) {
                   <span
                     className={`text-sm ${
                       isUserVote
-                        ? "font-semibold text-brand-700 dark:text-brand-400"
+                        ? "font-semibold text-amber-700 dark:text-amber-400"
                         : "text-gray-700 dark:text-gray-300"
                     }`}
                   >
@@ -105,7 +105,7 @@ export function PollCard({ poll, isCreator }: PollCardProps) {
                 <div
                   className={`absolute inset-0 rounded-lg ${
                     isUserVote
-                      ? "bg-brand-100 dark:bg-brand-900/30"
+                      ? "bg-amber-100 dark:bg-amber-900/30"
                       : "bg-gray-100 dark:bg-gray-800"
                   }`}
                   style={{ width: `${percentage}%` }}
@@ -119,7 +119,7 @@ export function PollCard({ poll, isCreator }: PollCardProps) {
               key={option.id}
               className={`flex cursor-pointer items-center gap-3 rounded-lg border px-3 py-2 transition-colors ${
                 selectedOptionId === option.id
-                  ? "border-brand-500 bg-brand-50 dark:bg-brand-950/30"
+                  ? "border-amber-500 bg-amber-50 dark:bg-amber-950/30"
                   : "border-gray-200 hover:border-gray-300 dark:border-gray-700 dark:hover:border-gray-600"
               }`}
             >
@@ -129,7 +129,7 @@ export function PollCard({ poll, isCreator }: PollCardProps) {
                 value={option.id}
                 checked={selectedOptionId === option.id}
                 onChange={() => setSelectedOptionId(option.id)}
-                className="h-4 w-4 text-brand-600"
+                className="h-4 w-4 text-amber-600"
               />
               <span className="text-sm text-gray-700 dark:text-gray-300">
                 {option.label}

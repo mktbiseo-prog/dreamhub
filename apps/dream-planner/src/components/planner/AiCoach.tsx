@@ -512,12 +512,12 @@ export function AiCoach({ inline = false }: { inline?: boolean }) {
   }, [isLoading, messages, sendToApi]);
 
   const partColors: Record<number, string> = {
-    1: "from-purple-500 to-brand-500",
-    2: "from-brand-500 to-blue-500",
-    3: "from-blue-500 to-cyan-500",
-    4: "from-emerald-500 to-teal-500",
+    1: "from-rose-500 to-pink-500",
+    2: "from-violet-500 to-purple-500",
+    3: "from-cyan-500 to-blue-500",
+    4: "from-amber-400 to-yellow-500",
   };
-  const gradient = partColors[partNumber] || "from-brand-500 to-blue-500";
+  const gradient = partColors[partNumber] || "from-rose-500 to-pink-500";
 
   // Don't show coach on dashboard
   if (partNumber === 0) return null;
@@ -535,7 +535,7 @@ export function AiCoach({ inline = false }: { inline?: boolean }) {
             </svg>
           </div>
           <div>
-            <p className="text-sm font-semibold text-white">AI Coach</p>
+            <p className="text-sm font-semibold text-white">Dream Coach</p>
             <p className="text-[10px] text-white/70">
               PART {partNumber} &middot; {activityName}
             </p>
@@ -556,7 +556,7 @@ export function AiCoach({ inline = false }: { inline?: boolean }) {
               <button
                 type="button"
                 onClick={handleOpen}
-                className="mt-3 rounded-full bg-brand-100 px-4 py-1.5 text-xs font-medium text-brand-700 transition-colors hover:bg-brand-200 dark:bg-brand-900 dark:text-brand-300"
+                className="mt-3 rounded-full bg-rose-100 px-4 py-1.5 text-xs font-medium text-rose-700 transition-colors hover:bg-rose-200 dark:bg-rose-900 dark:text-rose-300"
               >
                 Start Conversation
               </button>
@@ -583,8 +583,8 @@ export function AiCoach({ inline = false }: { inline?: boolean }) {
                 className={cn(
                   "max-w-[90%] rounded-[12px] px-3 py-2 text-sm",
                   msg.role === "coach"
-                    ? "mr-auto bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300"
-                    : "ml-auto bg-brand-500 text-white"
+                    ? "mr-auto bg-rose-50 text-gray-700 dark:bg-rose-950/30 dark:text-gray-300"
+                    : "ml-auto bg-rose-500 text-white"
                 )}
               >
                 {msg.text}
@@ -597,7 +597,7 @@ export function AiCoach({ inline = false }: { inline?: boolean }) {
                       type="button"
                       onClick={() => handleSuggestionClick(s)}
                       disabled={isLoading}
-                      className="rounded-full border border-brand-200 bg-brand-50 px-2.5 py-1 text-[11px] text-brand-700 transition-colors hover:bg-brand-100 disabled:opacity-50 dark:border-brand-800 dark:bg-brand-950 dark:text-brand-300"
+                      className="rounded-full border border-rose-200 bg-rose-50 px-2.5 py-1 text-[11px] text-rose-700 transition-colors hover:bg-rose-100 disabled:opacity-50 dark:border-rose-800 dark:bg-rose-950/40 dark:text-rose-300"
                     >
                       {s.length > 40 ? s.slice(0, 37) + "..." : s}
                     </button>
@@ -608,10 +608,10 @@ export function AiCoach({ inline = false }: { inline?: boolean }) {
           ))}
 
           {isLoading && (
-            <div className="mr-auto flex max-w-[85%] items-center gap-1 rounded-[12px] bg-gray-100 px-4 py-3 dark:bg-gray-800">
-              <div className="h-2 w-2 animate-bounce rounded-full bg-gray-400 [animation-delay:0ms]" />
-              <div className="h-2 w-2 animate-bounce rounded-full bg-gray-400 [animation-delay:150ms]" />
-              <div className="h-2 w-2 animate-bounce rounded-full bg-gray-400 [animation-delay:300ms]" />
+            <div className="mr-auto flex max-w-[85%] items-center gap-1 rounded-[12px] bg-rose-50 px-4 py-3 dark:bg-rose-950/30">
+              <div className="h-2 w-2 animate-bounce rounded-full bg-rose-400 [animation-delay:0ms]" />
+              <div className="h-2 w-2 animate-bounce rounded-full bg-rose-400 [animation-delay:150ms]" />
+              <div className="h-2 w-2 animate-bounce rounded-full bg-rose-400 [animation-delay:300ms]" />
             </div>
           )}
 
@@ -628,13 +628,13 @@ export function AiCoach({ inline = false }: { inline?: boolean }) {
               onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && handleSend()}
               placeholder="Ask your AI coach..."
               disabled={isLoading}
-              className="flex-1 rounded-[8px] border border-gray-200 bg-gray-50 px-3 py-2 text-sm placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300"
+              className="flex-1 rounded-[8px] border border-gray-200 bg-gray-50 px-3 py-2 text-sm placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-500 disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300"
             />
             <button
               type="button"
               onClick={handleSend}
               disabled={!input.trim() || isLoading}
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[8px] bg-brand-500 text-white transition-colors hover:bg-brand-600 disabled:opacity-50"
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[8px] bg-rose-500 text-white transition-colors hover:bg-rose-600 disabled:opacity-50"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />
@@ -661,8 +661,8 @@ export function AiCoach({ inline = false }: { inline?: boolean }) {
               className="animate-in slide-in-from-bottom-2 fade-in max-w-[240px] rounded-[12px] border border-gray-200 bg-white px-3 py-2 text-left text-xs text-gray-700 shadow-lg transition-all hover:shadow-xl dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300"
             >
               <div className="mb-0.5 flex items-center gap-1.5">
-                <span className="inline-block h-2 w-2 rounded-full bg-brand-500" />
-                <span className="font-semibold text-brand-600 dark:text-brand-400">AI Coach</span>
+                <span className="inline-block h-2 w-2 rounded-full bg-rose-500" />
+                <span className="font-semibold text-rose-600 dark:text-rose-400">Dream Coach</span>
               </div>
               {nudgeMessage}
               <div className="absolute -bottom-1.5 right-7 h-3 w-3 rotate-45 border-b border-r border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800" />
@@ -711,7 +711,7 @@ export function AiCoach({ inline = false }: { inline?: boolean }) {
                 </svg>
               </div>
               <div>
-                <p className="text-sm font-semibold text-white">AI Coach</p>
+                <p className="text-sm font-semibold text-white">Dream Coach</p>
                 <p className="text-[10px] text-white/70">
                   PART {partNumber} &middot; {activityName}
                 </p>
@@ -772,7 +772,7 @@ export function AiCoach({ inline = false }: { inline?: boolean }) {
                         type="button"
                         onClick={() => handleSuggestionClick(s)}
                         disabled={isLoading}
-                        className="rounded-full border border-brand-200 bg-brand-50 px-2.5 py-1 text-[11px] text-brand-700 transition-colors hover:bg-brand-100 disabled:opacity-50 dark:border-brand-800 dark:bg-brand-950 dark:text-brand-300"
+                        className="rounded-full border border-rose-200 bg-rose-50 px-2.5 py-1 text-[11px] text-rose-700 transition-colors hover:bg-rose-100 disabled:opacity-50 dark:border-rose-800 dark:bg-rose-950/40 dark:text-rose-300"
                       >
                         {s.length > 50 ? s.slice(0, 47) + "..." : s}
                       </button>
@@ -804,13 +804,13 @@ export function AiCoach({ inline = false }: { inline?: boolean }) {
                 onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && handleSend()}
                 placeholder="Ask your AI coach..."
                 disabled={isLoading}
-                className="flex-1 rounded-[8px] border border-gray-200 bg-gray-50 px-3 py-2 text-sm placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300"
+                className="flex-1 rounded-[8px] border border-gray-200 bg-gray-50 px-3 py-2 text-sm placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-500 disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300"
               />
               <button
                 type="button"
                 onClick={handleSend}
                 disabled={!input.trim() || isLoading}
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[8px] bg-brand-500 text-white transition-colors hover:bg-brand-600 disabled:opacity-50"
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[8px] bg-rose-500 text-white transition-colors hover:bg-rose-600 disabled:opacity-50"
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />

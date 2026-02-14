@@ -36,12 +36,12 @@ export function CommunityVoteButton({
       disabled={isPending}
       className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
         hasVoted
-          ? "bg-brand-100 text-brand-700 dark:bg-brand-900/30 dark:text-brand-400"
-          : "bg-gray-100 text-gray-600 hover:bg-brand-50 hover:text-brand-600 dark:bg-gray-800 dark:text-gray-400"
+          ? "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400"
+          : "bg-gray-100 text-gray-600 hover:bg-amber-50 hover:text-amber-600 dark:bg-gray-800 dark:text-gray-400"
       }`}
     >
       <svg
-        className={`h-3.5 w-3.5 ${hasVoted ? "fill-brand-500 text-brand-500" : "fill-none"}`}
+        className={`h-3.5 w-3.5 ${hasVoted ? "fill-amber-500 text-amber-500" : "fill-none"}`}
         viewBox="0 0 24 24"
         strokeWidth={2}
         stroke="currentColor"

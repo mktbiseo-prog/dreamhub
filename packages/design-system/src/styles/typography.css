@@ -1,0 +1,61 @@
+/* ---------------------------------------------------------------------------
+ * Dream Hub — Typography System
+ *
+ * Font stack: Pretendard (Korean-optimized) > Inter > system fallbacks
+ * Display font: Plus Jakarta Sans for hero headings
+ * Spec reference: PART 0, Section 0.2
+ * --------------------------------------------------------------------------- */
+
+/* ── Font Imports ────────────────────────────────────────────────────────── */
+
+/* Pretendard Variable — Korean-optimized, 9 weights, Latin + Hangul */
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');
+
+/* Plus Jakarta Sans — Display/hero headings */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
+
+/* Inter — Latin fallback (loaded by Next.js in apps, CDN fallback here) */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* ── Type Scale ──────────────────────────────────────────────────────────── */
+
+:root {
+  --dream-text-display: 700 36px/1.2 var(--dream-font-display);
+  --dream-text-h1: 700 28px/1.3 var(--dream-font-primary);
+  --dream-text-h2: 600 24px/1.35 var(--dream-font-primary);
+  --dream-text-h3: 600 20px/1.4 var(--dream-font-primary);
+  --dream-text-h4: 600 18px/1.4 var(--dream-font-primary);
+  --dream-text-h5: 500 16px/1.5 var(--dream-font-primary);
+  --dream-text-h6: 500 14px/1.5 var(--dream-font-primary);
+  --dream-text-body: 400 16px/1.6 var(--dream-font-primary);
+  --dream-text-body-sm: 400 14px/1.6 var(--dream-font-primary);
+  --dream-text-caption: 400 12px/1.5 var(--dream-font-primary);
+  --dream-text-overline: 600 11px/1.5 var(--dream-font-primary);
+}
+
+/* ── Korean-Specific Adjustments ─────────────────────────────────────────── */
+
+[lang="ko"] {
+  --dream-text-body: 400 16px/1.75 var(--dream-font-primary);
+  --dream-text-body-sm: 400 14px/1.7 var(--dream-font-primary);
+  letter-spacing: -0.01em;
+}
+
+/* ── Typography Utility Classes ──────────────────────────────────────────── */
+
+.dream-text-display { font: var(--dream-text-display); }
+.dream-text-h1 { font: var(--dream-text-h1); }
+.dream-text-h2 { font: var(--dream-text-h2); }
+.dream-text-h3 { font: var(--dream-text-h3); }
+.dream-text-h4 { font: var(--dream-text-h4); }
+.dream-text-h5 { font: var(--dream-text-h5); }
+.dream-text-h6 { font: var(--dream-text-h6); }
+.dream-text-body { font: var(--dream-text-body); }
+.dream-text-body-sm { font: var(--dream-text-body-sm); }
+.dream-text-caption { font: var(--dream-text-caption); }
+
+.dream-text-overline {
+  font: var(--dream-text-overline);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}

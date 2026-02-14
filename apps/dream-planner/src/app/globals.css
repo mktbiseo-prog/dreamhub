@@ -1,3 +1,8 @@
+@import "@dreamhub/design-system/tokens.css";
+@import "@dreamhub/design-system/typography.css";
+@import "@dreamhub/design-system/themes/planner";
+@import "@dreamhub/design-system/interactions.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

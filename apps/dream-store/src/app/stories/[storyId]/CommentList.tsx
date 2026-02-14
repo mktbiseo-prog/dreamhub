@@ -41,7 +41,7 @@ function CommentItem({
           className="h-8 w-8 shrink-0 rounded-full border border-gray-200 object-cover dark:border-gray-700"
         />
       ) : (
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-600 text-xs font-bold text-white">
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-amber-600 text-xs font-bold text-white">
           {comment.userName.charAt(0)}
         </div>
       )}

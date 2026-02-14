@@ -5,7 +5,7 @@ export default function NotFound() {
   return (
     <main className="flex min-h-[80vh] items-center justify-center px-4">
       <div className="max-w-md text-center">
-        <p className="mb-2 text-6xl font-bold bg-gradient-to-r from-brand-500 to-orange-400 bg-clip-text text-transparent">
+        <p className="mb-2 text-6xl font-bold bg-gradient-to-r from-amber-500 to-orange-400 bg-clip-text text-transparent">
           404
         </p>
         <h1 className="mb-3 text-2xl font-bold text-gray-900 dark:text-white">

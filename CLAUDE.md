@@ -1,5 +1,8 @@
 # Dream Hub — Global Rules (Shared CLAUDE.md)
 
+- docs/Dream_Hub_Platform__Complete_UIUX_and_Brand_Identity_Specification.md: 전체 UI/UX + 브랜드 아이덴티티 (디자인 토큰, 컬러, 타이포, 컴포넌트, 화면별 레이아웃, 인터랙션, 다크모드, 반응형, 접근성)
+
+
 ## 교차 서비스 통합 알고리즘 (Cross-Service Integration)
 
 교차 서비스 연결(매칭, 신뢰도, 데이터 흐름, 이벤트 시스템 등) 작업 시

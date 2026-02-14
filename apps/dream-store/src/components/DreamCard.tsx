@@ -1,120 +1,152 @@
 import Link from "next/link";
-import type { DreamStory } from "@/lib/types";
+import type { DreamStory, Product } from "@/lib/types";
 import { formatPrice } from "@/lib/mockData";
 import { BookmarkButton } from "@/components/BookmarkButton";
 
-interface DreamCardProps {
+/* ─── Story Card ──────────────────────────────────────────────────────────── */
+
+interface StoryCardProps {
   story: DreamStory;
   isBookmarked?: boolean;
 }
 
-export function DreamCard({ story, isBookmarked = false }: DreamCardProps) {
+export function DreamCard({ story, isBookmarked = false }: StoryCardProps) {
   const completedMilestones = story.milestones.filter((m) => m.completed).length;
-  const progressPercent = Math.round(
-    (completedMilestones / story.milestones.length) * 100
-  );
-  const lowestPrice = story.products.length
-    ? Math.min(...story.products.map((p) => p.price))
+  const progressPercent = story.milestones.length > 0
+    ? Math.round((completedMilestones / story.milestones.length) * 100)
     : 0;
 
   return (
     <Link
       href={`/stories/${story.id}`}
-      className="group block overflow-hidden rounded-card border border-gray-200 bg-white shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5 dark:border-gray-800 dark:bg-gray-950"
+      className="group block overflow-hidden rounded-[12px] border border-gray-200 bg-white shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5 dark:border-gray-800 dark:bg-gray-950"
     >
-      {/* Cover Image */}
-      <div className="relative h-48 overflow-hidden">
+      {/* Cover — portrait ratio */}
+      <div className="relative aspect-[4/5] overflow-hidden">
         <img
           src={story.coverImage}
           alt={story.title}
           className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
         />
-        {/* Category badge */}
-        <span className="absolute left-3 top-3 rounded-full bg-white/90 px-2.5 py-1 text-xs font-medium text-gray-700 dark:bg-gray-900/90 dark:text-gray-300">
-          {story.category}
-        </span>
-        {/* Staff Pick / Featured / Coming Soon badges */}
-        <div className="absolute right-3 top-3 flex flex-col items-end gap-1">
+        {/* Gradient overlay for text readability */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+
+        {/* Top badges */}
+        <div className="absolute left-3 top-3 flex flex-wrap items-center gap-1.5">
+          <span className="rounded-full bg-white/90 px-2.5 py-0.5 text-[10px] font-medium text-gray-700 backdrop-blur-sm dark:bg-gray-900/80 dark:text-gray-300">
+            {story.category}
+          </span>
           {story.status === "PREVIEW" && (
-            <span className="rounded-full bg-orange-500 px-2 py-0.5 text-[10px] font-bold text-white shadow-sm">
+            <span className="rounded-full px-2 py-0.5 text-[10px] font-bold text-white" style={{ backgroundColor: "var(--dream-color-primary-dark)" }}>
               Coming Soon
             </span>
           )}
           {story.isStaffPick && (
-            <span className="rounded-full bg-yellow-400 px-2 py-0.5 text-[10px] font-bold text-yellow-900 shadow-sm">
+            <span className="rounded-full px-2 py-0.5 text-[10px] font-bold" style={{ backgroundColor: "var(--dream-color-primary)", color: "var(--dream-color-on-primary)" }}>
               Staff Pick
             </span>
           )}
           {story.isFeatured && !story.isStaffPick && (
-            <span className="rounded-full bg-brand-500 px-2 py-0.5 text-[10px] font-bold text-white shadow-sm">
+            <span className="rounded-full px-2 py-0.5 text-[10px] font-bold text-white" style={{ backgroundColor: "var(--dream-color-accent)" }}>
               Featured
             </span>
           )}
         </div>
-        {/* Bookmark Button */}
-        <div className="absolute bottom-3 right-3">
+
+        {/* Bookmark */}
+        <div className="absolute right-3 top-3">
           <BookmarkButton
             dreamStoryId={story.id}
             initialBookmarked={isBookmarked}
           />
         </div>
+
+        {/* Bottom overlay content */}
+        <div className="absolute bottom-0 left-0 right-0 p-4">
+          {/* Creator */}
+          <div className="mb-2 flex items-center gap-2">
+            <img
+              src={story.creatorAvatar}
+              alt={story.creatorName}
+              className="h-6 w-6 rounded-full border border-white/60 object-cover"
+            />
+            <span className="text-xs font-medium text-white/90">
+              {story.creatorName}
+            </span>
+          </div>
+          {/* Dream title */}
+          <h3 className="mb-2 text-base font-bold leading-snug text-white">
+            {story.title}
+          </h3>
+          {/* Funding bar */}
+          <div>
+            <div className="mb-1 flex items-center justify-between text-[10px] text-white/70">
+              <span>{progressPercent}% funded</span>
+              <span>{story.supporterCount} supporters</span>
+            </div>
+            <div className="h-1 overflow-hidden rounded-full bg-white/20">
+              <div
+                className="h-full rounded-full transition-all"
+                style={{
+                  width: `${progressPercent}%`,
+                  backgroundColor: "var(--dream-impact-progress)",
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </Link>
+  );
+}
+
+/* ─── Product Card ────────────────────────────────────────────────────────── */
+
+interface ProductCardProps {
+  product: Product;
+  story: DreamStory;
+}
+
+export function ProductCard({ product, story }: ProductCardProps) {
+  return (
+    <Link
+      href={`/stories/${story.id}/products/${product.id}`}
+      className="group block overflow-hidden rounded-[12px] border border-gray-200 bg-white shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5 dark:border-gray-800 dark:bg-gray-950"
+    >
+      {/* 1:1 product photo */}
+      <div className="relative aspect-square overflow-hidden">
+        <img
+          src={product.images[0]}
+          alt={product.title}
+          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+        />
+        {product.productType && product.productType !== "Physical Product" && (
+          <span className="absolute right-2 top-2 rounded-full bg-black/60 px-2 py-0.5 text-[10px] text-white backdrop-blur-sm">
+            {product.productType}
+          </span>
+        )}
       </div>
 
-      <div className="p-5">
-        {/* Creator */}
-        <div className="mb-3 flex items-center gap-2">
+      <div className="p-4">
+        {/* Creator line */}
+        <div className="mb-2 flex items-center gap-2">
           <img
             src={story.creatorAvatar}
             alt={story.creatorName}
-            className="h-7 w-7 rounded-full border-2 border-white object-cover shadow-sm dark:border-gray-800"
+            className="h-5 w-5 rounded-full border border-gray-200 object-cover dark:border-gray-700"
           />
-          <span className="text-xs font-medium text-gray-500 dark:text-gray-400">
-            {story.creatorName}
+          <span className="text-[11px] text-gray-500 dark:text-gray-400">
+            From {story.creatorName}&apos;s dream
           </span>
-          {/* Creator stage badge */}
-          {story.creatorStage === "established" && (
-            <span className="rounded-full bg-green-100 px-1.5 py-0.5 text-[10px] font-medium text-green-700 dark:bg-green-900/30 dark:text-green-400">
-              Established
-            </span>
-          )}
         </div>
-
         {/* Title */}
-        <h3 className="mb-2 text-base font-semibold leading-snug text-gray-900 group-hover:text-brand-600 dark:text-white dark:group-hover:text-brand-400">
-          {story.title}
+        <h3 className="mb-1.5 text-sm font-semibold leading-snug text-gray-900 dark:text-white">
+          {product.title}
         </h3>
-
-        {/* Statement preview */}
-        <p className="mb-4 line-clamp-2 text-sm leading-relaxed text-gray-500 dark:text-gray-400">
-          {story.statement}
+        {/* Price in gold */}
+        <p className="text-base font-bold" style={{ color: "var(--dream-color-primary)" }}>
+          {formatPrice(product.price)}
         </p>
-
-        {/* Progress bar */}
-        <div className="mb-3">
-          <div className="mb-1 flex items-center justify-between text-xs text-gray-500">
-            <span>{progressPercent}% of dream achieved</span>
-            <span>{story.supporterCount} supporters</span>
-          </div>
-          <div className="h-1.5 overflow-hidden rounded-full bg-gray-100 dark:bg-gray-800">
-            <div
-              className="h-full rounded-full bg-gradient-to-r from-brand-500 to-orange-400 transition-all"
-              style={{ width: `${progressPercent}%` }}
-            />
-          </div>
-        </div>
-
-        {/* Price — hidden for Coming Soon */}
-        {story.status === "PREVIEW" ? (
-          <p className="text-sm font-medium text-orange-600 dark:text-orange-400">
-            Coming Soon
-          </p>
-        ) : (
-          lowestPrice > 0 && (
-            <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              From {formatPrice(lowestPrice)}
-            </p>
-          )
-        )}
       </div>
     </Link>
   );

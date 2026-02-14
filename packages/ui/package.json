@@ -6,7 +6,9 @@
   "exports": {
     ".": "./src/index.ts",
     "./lib/utils": "./src/lib/utils.ts",
-    "./components/*": "./src/components/*.tsx"
+    "./components/*": "./src/components/*.tsx",
+    "./chat": "./src/components/chat/index.ts",
+    "./notifications": "./src/components/notifications/index.ts"
   },
   "dependencies": {
     "class-variance-authority": "^0.7.0",

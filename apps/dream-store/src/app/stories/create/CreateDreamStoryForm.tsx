@@ -116,10 +116,10 @@ export function CreateDreamStoryForm() {
               key={i}
               type="button"
               onClick={() => i < step && setStep(i)}
-              className={`flex flex-col items-center gap-1 ${i <= step ? "text-brand-600 font-medium" : ""}`}
+              className={`flex flex-col items-center gap-1 ${i <= step ? "text-amber-600 font-medium" : ""}`}
             >
               <span className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold ${
-                i < step ? "bg-brand-600 text-white" : i === step ? "bg-brand-100 text-brand-700 dark:bg-brand-900 dark:text-brand-300" : "bg-gray-200 text-gray-500 dark:bg-gray-800"
+                i < step ? "bg-amber-600 text-white" : i === step ? "bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300" : "bg-gray-200 text-gray-500 dark:bg-gray-800"
               }`}>
                 {i < step ? "\u2713" : i + 1}
               </span>
@@ -128,7 +128,7 @@ export function CreateDreamStoryForm() {
           ))}
         </div>
         <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-800">
-          <div className="h-full rounded-full bg-gradient-to-r from-brand-500 to-orange-400 transition-all" style={{ width: `${((step + 1) / STEPS.length) * 100}%` }} />
+          <div className="h-full rounded-full bg-gradient-to-r from-amber-500 to-orange-400 transition-all" style={{ width: `${((step + 1) / STEPS.length) * 100}%` }} />
         </div>
       </div>
 
@@ -166,7 +166,7 @@ export function CreateDreamStoryForm() {
                     onClick={() => setCreatorStage(opt.value)}
                     className={`rounded-card border p-3 text-left transition-colors ${
                       creatorStage === opt.value
-                        ? "border-brand-500 bg-brand-50 dark:bg-brand-950/30"
+                        ? "border-amber-500 bg-amber-50 dark:bg-amber-950/30"
                         : "border-gray-200 hover:border-gray-300 dark:border-gray-800"
                     }`}
                   >
@@ -209,7 +209,7 @@ export function CreateDreamStoryForm() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="rounded-card bg-brand-50 p-4 text-sm text-brand-700 dark:bg-brand-950/20 dark:text-brand-300">
+            <div className="rounded-card bg-amber-50 p-4 text-sm text-amber-700 dark:bg-amber-950/20 dark:text-amber-300">
               Template: &quot;Everything started when I [did X]. That&apos;s when I realized...&quot;
             </div>
             <div className="space-y-2">
@@ -256,7 +256,7 @@ export function CreateDreamStoryForm() {
               return (
                 <div key={index} className="rounded-card border border-gray-200 p-5 dark:border-gray-800">
                   <div className="mb-4 flex items-center gap-3">
-                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand-500 to-orange-400 text-sm font-bold text-white">
+                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-amber-500 to-orange-400 text-sm font-bold text-white">
                       {label.step}
                     </span>
                     <div>
@@ -292,7 +292,7 @@ export function CreateDreamStoryForm() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="rounded-card bg-brand-50 p-4 text-sm text-brand-700 dark:bg-brand-950/20 dark:text-brand-300">
+            <div className="rounded-card bg-amber-50 p-4 text-sm text-amber-700 dark:bg-amber-950/20 dark:text-amber-300">
               Example: &quot;Every purchase funds my dream of opening a community studio. One mug = one step closer.&quot;
             </div>
             <div className="space-y-2">
@@ -397,7 +397,7 @@ export function CreateDreamStoryForm() {
                   onClick={() => setStatus("ACTIVE")}
                   className={`rounded-card border p-4 text-left transition-colors ${
                     status === "ACTIVE"
-                      ? "border-brand-500 bg-brand-50 dark:bg-brand-950/30"
+                      ? "border-amber-500 bg-amber-50 dark:bg-amber-950/30"
                       : "border-gray-200 hover:border-gray-300 dark:border-gray-800"
                   }`}
                 >
@@ -450,7 +450,7 @@ export function CreateDreamStoryForm() {
           <Button
             type="submit"
             disabled={isPending}
-            className="bg-gradient-to-r from-brand-600 to-orange-500 text-white shadow-lg hover:from-brand-700 hover:to-orange-600"
+            className="bg-gradient-to-r from-amber-600 to-orange-500 text-white shadow-lg hover:from-amber-700 hover:to-orange-600"
           >
             {isPending ? "Creating Your Dream..." : "Launch My Dream"}
           </Button>

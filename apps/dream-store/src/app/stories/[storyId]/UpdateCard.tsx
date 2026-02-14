@@ -31,7 +31,7 @@ export function UpdateCard({ update, isOwner }: UpdateCardProps) {
               className="h-8 w-8 rounded-full border border-gray-200 object-cover dark:border-gray-700"
             />
           ) : (
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-600 text-xs font-bold text-white">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-amber-600 text-xs font-bold text-white">
               {update.creatorName.charAt(0).toUpperCase()}
             </div>
           )}

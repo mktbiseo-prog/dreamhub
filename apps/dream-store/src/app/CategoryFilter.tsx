@@ -44,7 +44,7 @@ export function CategoryFilter({
             className={cn(
               "rounded-full px-4 py-2 text-sm font-medium transition-colors",
               active === category
-                ? "bg-brand-600 text-white shadow-sm"
+                ? "bg-amber-600 text-white shadow-sm"
                 : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
             )}
           >

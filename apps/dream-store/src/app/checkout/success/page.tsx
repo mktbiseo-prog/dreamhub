@@ -58,57 +58,54 @@ export default async function CheckoutSuccessPage({
   const supporterCount = order?.dreamStory._count.orders || 0;
 
   return (
-    <main className="flex min-h-[80vh] items-center justify-center px-4 py-12">
+    <main className="flex min-h-[100vh] items-center justify-center px-4 py-12" style={{ backgroundColor: "var(--dream-color-background)" }}>
       <CelebrationEffect />
       <div className="w-full max-w-lg text-center">
-        {/* Animated success icon */}
-        <div className="mx-auto mb-6 flex h-24 w-24 animate-bounce items-center justify-center rounded-full bg-gradient-to-br from-brand-500 to-orange-400 shadow-lg shadow-brand-500/30">
-          <svg
-            className="h-12 w-12 text-white"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={2.5}
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M4.5 12.75l6 6 9-13.5"
-            />
+        {/* Celebration icon */}
+        <div
+          className="mx-auto mb-8 flex h-28 w-28 animate-bounce items-center justify-center rounded-full shadow-lg"
+          style={{ backgroundColor: "var(--dream-color-primary)", boxShadow: "0 10px 40px rgba(229, 161, 0, 0.3)" }}
+        >
+          <svg className="h-14 w-14 text-white" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
           </svg>
         </div>
 
-        <h1 className="mb-3 text-3xl font-bold text-gray-900 dark:text-white">
-          You&apos;re a Dream Supporter!
-        </h1>
-
         {order ? (
           <>
+            {/* Headline */}
+            <h1 className="mb-2 text-3xl font-bold" style={{ color: "var(--dream-color-headline)" }}>
+              You Just Supported {order.dreamStory.user.name || "a Dreamer"}!
+            </h1>
+
+            {/* Impact statement */}
             <p className="mb-2 text-lg text-gray-600 dark:text-gray-400">
               Thank you for supporting{" "}
               <span className="font-semibold text-gray-900 dark:text-white">
                 {order.dreamStory.title}
               </span>
             </p>
-            <p className="mb-8 text-sm text-gray-500">
-              {order.product.title} &middot; {formatPrice(order.amount)}
+
+            {/* Supporter count */}
+            <p className="mb-8 text-sm" style={{ color: "var(--dream-color-primary-dark)" }}>
+              You&apos;re their {supporterCount}{supporterCount === 1 ? "st" : supporterCount === 2 ? "nd" : supporterCount === 3 ? "rd" : "th"} supporter
             </p>
 
-            {/* Dream Progress Visualization */}
-            <div className="mb-8 rounded-card border border-gray-200 bg-white p-6 text-left shadow-sm dark:border-gray-800 dark:bg-gray-950">
+            {/* Dream Progress Card */}
+            <div className="mb-8 rounded-[16px] border border-gray-200 bg-white p-6 text-left shadow-sm dark:border-gray-800 dark:bg-gray-950">
               <div className="mb-4 flex items-center gap-3">
                 <img
                   src={order.dreamStory.user.avatar || ""}
                   alt={order.dreamStory.user.name || "Creator"}
-                  className="h-10 w-10 rounded-full border-2 border-brand-200 object-cover"
+                  className="h-12 w-12 rounded-full border-2 object-cover"
+                  style={{ borderColor: "var(--dream-color-primary-light)" }}
                 />
                 <div>
                   <p className="text-sm font-semibold text-gray-900 dark:text-white">
                     {order.dreamStory.user.name || "A Dreamer"}
                   </p>
                   <p className="text-xs text-gray-500">
-                    {supporterCount} supporter{supporterCount !== 1 ? "s" : ""} and
-                    counting
+                    {supporterCount} supporter{supporterCount !== 1 ? "s" : ""} and counting
                   </p>
                 </div>
               </div>
@@ -116,71 +113,65 @@ export default async function CheckoutSuccessPage({
               {/* Progress Bar */}
               <div className="mb-2">
                 <div className="mb-1 flex items-center justify-between text-xs">
-                  <span className="font-medium text-gray-700 dark:text-gray-300">
-                    Dream Progress
-                  </span>
-                  <span className="font-bold text-brand-600">
+                  <span className="font-medium text-gray-700 dark:text-gray-300">Dream Progress</span>
+                  <span className="font-bold" style={{ color: "var(--dream-color-primary)" }}>
                     {progressPercent}%
                   </span>
                 </div>
-                <div className="h-3 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-800">
+                <div className="h-3 overflow-hidden rounded-full bg-gray-100 dark:bg-gray-800">
                   <div
-                    className="h-full rounded-full bg-gradient-to-r from-brand-500 to-orange-400 transition-all duration-1000"
-                    style={{ width: `${progressPercent}%` }}
+                    className="h-full rounded-full transition-all duration-1000"
+                    style={{ width: `${progressPercent}%`, backgroundColor: "var(--dream-impact-progress)" }}
                   />
                 </div>
               </div>
 
-              {/* Milestone snapshot */}
+              {/* Milestones */}
               <div className="mt-4 space-y-2">
                 {order.dreamStory.milestones.slice(0, 3).map((m) => (
                   <div key={m.id} className="flex items-center gap-2 text-sm">
                     <span
                       className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold ${
-                        m.completed
-                          ? "bg-brand-500 text-white"
-                          : "bg-gray-200 text-gray-500 dark:bg-gray-700"
+                        m.completed ? "text-white" : "bg-gray-200 text-gray-500 dark:bg-gray-700"
                       }`}
+                      style={m.completed ? { backgroundColor: "var(--dream-impact-funded)" } : undefined}
                     >
                       {m.completed ? "\u2713" : ""}
                     </span>
-                    <span
-                      className={
-                        m.completed
-                          ? "text-gray-900 dark:text-white"
-                          : "text-gray-500"
-                      }
-                    >
+                    <span className={m.completed ? "text-gray-900 dark:text-white" : "text-gray-500"}>
                       {m.title}
                     </span>
                   </div>
                 ))}
               </div>
 
-              {/* Your impact message */}
+              {/* Impact */}
               {order.dreamStory.impactStatement && (
-                <div className="mt-4 rounded-lg bg-brand-50 p-3 text-sm text-brand-700 dark:bg-brand-950/20 dark:text-brand-300">
-                  &ldquo;{order.dreamStory.impactStatement}&rdquo;
+                <div className="mt-4 rounded-lg p-3" style={{ backgroundColor: "var(--dream-color-primary-lighter)" }}>
+                  <p className="text-sm" style={{ color: "var(--dream-color-primary-darker)" }}>
+                    &ldquo;{order.dreamStory.impactStatement}&rdquo;
+                  </p>
                 </div>
               )}
             </div>
 
             {/* Follow CTA */}
-            <div className="mb-8 rounded-card border border-brand-200 bg-brand-50 p-4 dark:border-brand-900 dark:bg-brand-950/20">
-              <p className="mb-3 text-sm font-medium text-brand-700 dark:text-brand-300">
+            <div
+              className="mb-8 rounded-[12px] border p-4"
+              style={{
+                borderColor: "var(--dream-color-primary-light)",
+                backgroundColor: "var(--dream-color-primary-lighter)",
+              }}
+            >
+              <p className="mb-3 text-sm font-medium" style={{ color: "var(--dream-color-primary-darker)" }}>
                 Stay connected with this dream journey
               </p>
-              <FollowButton
-                storyId={order.dreamStoryId}
-                initialFollowing={false}
-              />
+              <FollowButton storyId={order.dreamStoryId} initialFollowing={false} />
             </div>
 
             {/* Order Details */}
-            <div className="mb-8 rounded-card border border-gray-200 bg-gray-50 p-4 text-left text-sm dark:border-gray-800 dark:bg-gray-900">
-              <h3 className="mb-2 font-semibold text-gray-900 dark:text-white">
-                Order Details
-              </h3>
+            <div className="mb-8 rounded-[12px] border border-gray-200 p-4 text-left text-sm dark:border-gray-800" style={{ backgroundColor: "var(--dream-color-surface-alt)" }}>
+              <h3 className="mb-2 font-semibold text-gray-900 dark:text-white">Order Details</h3>
               <div className="space-y-1 text-gray-600 dark:text-gray-400">
                 <div className="flex justify-between">
                   <span>Product</span>
@@ -192,31 +183,33 @@ export default async function CheckoutSuccessPage({
                 </div>
                 <div className="flex justify-between">
                   <span>Status</span>
-                  <span className="text-green-600">Confirmed</span>
+                  <span style={{ color: "var(--dream-impact-funded)" }}>Confirmed</span>
                 </div>
                 {order.escrowStatus === "HELD" && (
                   <div className="flex justify-between">
                     <span>Buyer Protection</span>
-                    <span className="text-brand-600">Active (Escrow)</span>
+                    <span style={{ color: "var(--dream-color-primary)" }}>Active (Escrow)</span>
                   </div>
                 )}
               </div>
             </div>
           </>
         ) : (
-          <p className="mb-8 text-lg text-gray-600 dark:text-gray-400">
-            Thank you for supporting this dream. Your purchase directly helps a
-            creator move closer to their goal. You&apos;re now part of their story.
-          </p>
+          <>
+            <h1 className="mb-3 text-3xl font-bold" style={{ color: "var(--dream-color-headline)" }}>
+              You&apos;re a Dream Supporter!
+            </h1>
+            <p className="mb-8 text-lg text-gray-600 dark:text-gray-400">
+              Thank you for supporting this dream. Your purchase directly helps a creator move closer to their goal. You&apos;re now part of their story.
+            </p>
+          </>
         )}
 
+        {/* Navigation buttons */}
         <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
           {order && (
             <Link href={`/stories/${order.dreamStoryId}`}>
-              <Button
-                size="lg"
-                className="w-full bg-gradient-to-r from-brand-600 to-orange-500 text-white sm:w-auto"
-              >
+              <Button size="lg" className="w-full sm:w-auto">
                 View the Dream
               </Button>
             </Link>

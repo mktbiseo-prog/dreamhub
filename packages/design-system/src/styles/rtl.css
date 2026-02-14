@@ -1,0 +1,183 @@
+/* ---------------------------------------------------------------------------
+ * Dream Hub — RTL (Right-to-Left) Support
+ *
+ * Arabic (ar) is the only RTL language in Dream Hub.
+ * Uses CSS logical properties + [dir="rtl"] overrides for edge cases.
+ *
+ * Spec reference: PART 6, Section 6.3
+ * --------------------------------------------------------------------------- */
+
+/* ── Arabic Font & Typography ─────────────────────────────────────────────── */
+
+[lang="ar"] {
+  --dream-font-primary: 'Noto Sans Arabic', 'Inter', -apple-system, sans-serif;
+  --dream-font-display: 'Noto Sans Arabic', sans-serif;
+  line-height: 1.8;
+  letter-spacing: 0;
+}
+
+/* Arabic minimum body font size: 16px (larger than default 14px for sm) */
+[lang="ar"] .dream-text-body-sm,
+[lang="ar"] .text-sm {
+  font-size: 15px;
+  line-height: 1.8;
+}
+
+[lang="ar"] .dream-text-caption,
+[lang="ar"] .text-xs {
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+/* ── Japanese / Chinese Font Stacks ───────────────────────────────────────── */
+
+[lang="ja"] {
+  --dream-font-primary: 'Noto Sans JP', 'Pretendard Variable', 'Pretendard', sans-serif;
+  letter-spacing: 0;
+}
+
+[lang="zh-CN"],
+[lang="zh-HK"],
+[lang="zh"] {
+  --dream-font-primary: 'Noto Sans SC', 'Pretendard Variable', 'Pretendard', sans-serif;
+  letter-spacing: 0;
+}
+
+/* Spanish & French — Inter is the primary Latin font */
+[lang="es"],
+[lang="fr"] {
+  --dream-font-primary: 'Inter', -apple-system, sans-serif;
+}
+
+/* ── RTL Direction Mirroring ──────────────────────────────────────────────── */
+
+/* Chat bubbles: mirror border-radius in RTL */
+[dir="rtl"] .message-bubble--received,
+[dir="rtl"] [data-bubble="received"] {
+  border-radius: 16px 4px 16px 16px;
+}
+
+[dir="rtl"] .message-bubble--sent,
+[dir="rtl"] [data-bubble="sent"] {
+  border-radius: 4px 16px 16px 16px;
+}
+
+/* Navigation back arrow: mirror in RTL */
+[dir="rtl"] .nav-back-icon,
+[dir="rtl"] [data-icon="back"] {
+  transform: scaleX(-1);
+}
+
+/* Chevron / arrow icons */
+[dir="rtl"] .icon-chevron-right,
+[dir="rtl"] [data-icon="chevron-right"] {
+  transform: scaleX(-1);
+}
+
+[dir="rtl"] .icon-chevron-left,
+[dir="rtl"] [data-icon="chevron-left"] {
+  transform: scaleX(-1);
+}
+
+/* Notification unread bar: mirror border-radius */
+[dir="rtl"] .notification-card--unread::before {
+  border-radius: 2px 0 0 2px;
+  inset-inline-start: 0;
+  inset-inline-end: auto;
+}
+
+/* Progress bar fill direction */
+[dir="rtl"] .progress-bar__fill {
+  transform-origin: right center;
+}
+
+/* ── Elements That Should NEVER Mirror ────────────────────────────────────── */
+
+/* Phone numbers, times, and numeric values: always LTR */
+.ltr-isolate,
+[dir="rtl"] .ltr-isolate,
+[dir="rtl"] time,
+[dir="rtl"] [data-ltr],
+[dir="rtl"] .phone-number,
+[dir="rtl"] .time-display,
+[dir="rtl"] .price-display,
+[dir="rtl"] .match-percent {
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+
+/* Icons that should not mirror */
+[dir="rtl"] .icon-no-mirror,
+[dir="rtl"] [data-icon="check"],
+[dir="rtl"] [data-icon="play"],
+[dir="rtl"] [data-icon="pause"],
+[dir="rtl"] [data-icon="search"] {
+  transform: none !important;
+}
+
+/* Brand logos: never mirror */
+[dir="rtl"] .brand-logo {
+  transform: none !important;
+}
+
+/* ── RTL Utility Classes ──────────────────────────────────────────────────── */
+
+/* Flexbox direction helpers that respect RTL */
+.flex-row-rtl {
+  display: flex;
+  flex-direction: row;
+}
+[dir="rtl"] .flex-row-rtl {
+  flex-direction: row-reverse;
+}
+
+/* Auto-direction for mixed-language text (e.g., Arabic + English in chat) */
+.dir-auto {
+  direction: inherit;
+  unicode-bidi: plaintext;
+}
+
+/* Force LTR for code, URLs, file paths */
+.dir-ltr {
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+
+/* ── Logical Property Helpers ─────────────────────────────────────────────── */
+/* For cases where Tailwind doesn't have logical equivalents */
+
+.border-start {
+  border-inline-start-width: 1px;
+  border-inline-start-style: solid;
+}
+
+.border-start-2 {
+  border-inline-start-width: 2px;
+  border-inline-start-style: solid;
+}
+
+.border-start-3 {
+  border-inline-start-width: 3px;
+  border-inline-start-style: solid;
+}
+
+.border-start-4 {
+  border-inline-start-width: 4px;
+  border-inline-start-style: solid;
+}
+
+.rounded-bubble-received {
+  border-radius: 4px 16px 16px 16px;
+}
+
+.rounded-bubble-sent {
+  border-radius: 16px 4px 16px 16px;
+}
+
+[dir="rtl"] .rounded-bubble-received {
+  border-radius: 16px 4px 16px 16px;
+}
+
+[dir="rtl"] .rounded-bubble-sent {
+  border-radius: 4px 16px 16px 16px;
+}

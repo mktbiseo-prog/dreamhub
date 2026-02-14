@@ -36,7 +36,7 @@ export function SearchBar() {
     <form onSubmit={handleSubmit} className="relative w-full max-w-xl">
       <div className="relative">
         <svg
-          className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-white/60"
+          className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400"
           fill="none"
           viewBox="0 0 24 24"
           strokeWidth={2}
@@ -53,13 +53,13 @@ export function SearchBar() {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search dreams, creators, categories..."
-          className="w-full rounded-full border border-white/20 bg-white/10 py-3 pl-12 pr-20 text-sm text-white placeholder-white/50 backdrop-blur-sm transition-colors focus:border-white/40 focus:bg-white/15 focus:outline-none"
+          className="w-full rounded-full border border-gray-300 bg-white py-3 pl-12 pr-20 text-sm text-gray-900 placeholder-gray-400 shadow-sm transition-colors focus:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-200 dark:border-gray-700 dark:bg-gray-900 dark:text-white dark:placeholder-gray-500 dark:focus:border-amber-600 dark:focus:ring-amber-900/30"
         />
         {query && (
           <button
             type="button"
             onClick={handleClear}
-            className="absolute right-14 top-1/2 -translate-y-1/2 rounded-full p-1 text-white/50 hover:text-white"
+            className="absolute right-14 top-1/2 -translate-y-1/2 rounded-full p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
           >
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -69,7 +69,7 @@ export function SearchBar() {
         <button
           type="submit"
           disabled={isPending}
-          className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-white/20 px-4 py-1.5 text-xs font-medium text-white transition-colors hover:bg-white/30"
+          className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-amber-500 px-4 py-1.5 text-xs font-medium text-white transition-colors hover:bg-amber-600"
         >
           {isPending ? "..." : "Search"}
         </button>

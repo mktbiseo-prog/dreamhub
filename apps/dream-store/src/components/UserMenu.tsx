@@ -36,7 +36,7 @@ export function UserMenu({ name, avatar }: UserMenuProps) {
             className="h-7 w-7 rounded-full object-cover"
           />
         ) : (
-          <div className="flex h-7 w-7 items-center justify-center rounded-full bg-brand-600 text-xs font-bold text-white">
+          <div className="flex h-7 w-7 items-center justify-center rounded-full bg-amber-600 text-xs font-bold text-white">
             {name.charAt(0).toUpperCase()}
           </div>
         )}

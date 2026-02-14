@@ -18,7 +18,7 @@ export interface LinkedAccounts {
   portfolio?: string;
 }
 
-export type VerificationLevel = "unverified" | "basic" | "verified";
+export type VerificationLevel = "unverified" | "basic" | "verified" | "trusted";
 
 export interface DreamerProfile {
   id: string;

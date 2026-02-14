@@ -76,7 +76,7 @@ export function BottomNav() {
               className={cn(
                 "flex flex-1 flex-col items-center gap-1 py-2 text-xs transition-colors",
                 isActive
-                  ? "text-brand-600 dark:text-brand-400"
+                  ? "text-blue-600 dark:text-blue-400"
                   : "text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
               )}
             >

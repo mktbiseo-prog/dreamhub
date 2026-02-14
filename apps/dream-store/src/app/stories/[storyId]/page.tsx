@@ -60,36 +60,39 @@ export default async function DreamStoryPage({ params }: PageProps) {
   });
 
   return (
-    <main className="min-h-screen">
-      {/* Engagement tracking */}
+    <main className="min-h-screen" style={{ backgroundColor: "var(--dream-color-background)" }}>
       <EngagementTracker storyId={storyId} type="view" />
 
-      {/* Hero */}
-      <section className="relative h-[50vh] min-h-[400px]">
-        <img
-          src={story.coverImage}
-          alt={story.title}
-          className="h-full w-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+      {/* ── Hero: 16:9 cover with parallax-style gradient ── */}
+      <section className="relative">
+        <div className="relative aspect-[16/9] max-h-[500px] overflow-hidden">
+          <img
+            src={story.coverImage}
+            alt={story.title}
+            className="h-full w-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+        </div>
+
+        {/* Content over hero */}
         <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-10 lg:p-16">
-          <div className="mx-auto max-w-5xl">
+          <div className="mx-auto max-w-4xl">
             <div className="mb-3 flex flex-wrap items-center gap-2">
               <span className="inline-block rounded-full bg-white/20 px-3 py-1 text-xs font-medium text-white backdrop-blur-sm">
                 {story.category}
               </span>
               {isPreview && (
-                <span className="inline-block rounded-full bg-orange-500/90 px-3 py-1 text-xs font-bold text-white backdrop-blur-sm">
+                <span className="inline-block rounded-full px-3 py-1 text-xs font-bold text-white backdrop-blur-sm" style={{ backgroundColor: "var(--dream-color-primary-dark)" }}>
                   Coming Soon
                 </span>
               )}
               {story.isStaffPick && (
-                <span className="inline-block rounded-full bg-yellow-500/90 px-3 py-1 text-xs font-bold text-white backdrop-blur-sm">
+                <span className="inline-block rounded-full px-3 py-1 text-xs font-bold backdrop-blur-sm" style={{ backgroundColor: "var(--dream-color-primary)", color: "var(--dream-color-on-primary)" }}>
                   Staff Pick
                 </span>
               )}
               {creatorBadge && (
-                <span className="inline-block rounded-full bg-brand-600/90 px-3 py-1 text-xs font-bold text-white backdrop-blur-sm">
+                <span className="inline-block rounded-full px-3 py-1 text-xs font-bold text-white backdrop-blur-sm" style={{ backgroundColor: "var(--dream-color-accent)" }}>
                   {creatorBadge}
                 </span>
               )}
@@ -97,52 +100,48 @@ export default async function DreamStoryPage({ params }: PageProps) {
             <h1 className="mb-4 text-3xl font-bold text-white sm:text-4xl lg:text-5xl">
               {story.title}
             </h1>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <img
-                  src={story.creatorAvatar}
-                  alt={story.creatorName}
-                  className="h-12 w-12 rounded-full border-2 border-white object-cover"
-                />
-                <div>
-                  <p className="font-medium text-white">
-                    {story.creatorName}
-                  </p>
-                  <p className="text-sm text-white/70">
-                    {story.supporterCount} supporters &middot; {story.followerCount} followers
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                {isOwner && (
-                  <>
-                    <Link href={`/stories/${storyId}/edit`}>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="border-white/30 bg-white/10 text-white backdrop-blur-sm hover:bg-white/20"
-                      >
-                        Edit Dream
-                      </Button>
-                    </Link>
-                  </>
-                )}
-                <FollowButton storyId={storyId} initialFollowing={following} />
-              </div>
-            </div>
-            {story.videoUrl && (
-              <VideoButton videoUrl={story.videoUrl} title={story.title} />
-            )}
           </div>
         </div>
       </section>
 
-      <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
+      {/* ── Dreamer Info Bar ── */}
+      <section className="border-b border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-950">
+        <div className="mx-auto flex max-w-4xl items-center justify-between px-4 py-4 sm:px-6">
+          <div className="flex items-center gap-3">
+            <img
+              src={story.creatorAvatar}
+              alt={story.creatorName}
+              className="h-12 w-12 rounded-full border-2 object-cover"
+              style={{ borderColor: "var(--dream-color-primary-light)" }}
+            />
+            <div>
+              <p className="font-medium text-gray-900 dark:text-white">{story.creatorName}</p>
+              <p className="text-sm text-gray-500">
+                {story.supporterCount} supporters &middot; {story.followerCount} followers
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            {isOwner && (
+              <Link href={`/stories/${storyId}/edit`}>
+                <Button variant="outline" size="sm">
+                  Edit Dream
+                </Button>
+              </Link>
+            )}
+            <FollowButton storyId={storyId} initialFollowing={following} />
+          </div>
+        </div>
+      </section>
+
+      {/* ── Editorial Content ── */}
+      <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6">
+
         {/* Coming Soon Banner */}
         {isPreview && (
           <section className="mb-12">
-            <div className="rounded-card bg-gradient-to-r from-orange-500/10 to-brand-600/10 p-6 text-center dark:from-orange-500/5 dark:to-brand-600/5">
-              <h2 className="mb-2 text-lg font-bold text-orange-600 dark:text-orange-400">
+            <div className="rounded-[12px] p-6 text-center" style={{ backgroundColor: "var(--dream-color-surface-alt)" }}>
+              <h2 className="mb-2 text-lg font-bold" style={{ color: "var(--dream-color-primary-dark)" }}>
                 Coming Soon
               </h2>
               <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -157,64 +156,71 @@ export default async function DreamStoryPage({ params }: PageProps) {
           </section>
         )}
 
-        {/* Dream Statement */}
-        <section className="mb-12">
-          <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-brand-600">
+        {/* Video */}
+        {story.videoUrl && (
+          <section className="mb-12">
+            <VideoButton videoUrl={story.videoUrl} title={story.title} />
+          </section>
+        )}
+
+        {/* Section 1: The Dream */}
+        <section className="mb-16">
+          <h2 className="mb-1 text-xs font-semibold uppercase tracking-widest" style={{ color: "var(--dream-color-primary)" }}>
             The Dream
           </h2>
-          <p className="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
-            {story.statement}
-          </p>
+          <div className="mt-4">
+            <p className="text-xl font-medium leading-relaxed" style={{ color: "var(--dream-color-headline)" }}>
+              &ldquo;{story.statement}&rdquo;
+            </p>
+          </div>
         </section>
 
-        {/* Dream Progress Bar */}
-        <section className="mb-12 rounded-card bg-gray-50 p-6 dark:bg-gray-900">
-          <div className="mb-2 flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">
-              Dream Progress
-            </h3>
-            <span className="text-sm font-bold text-brand-600">
-              {progressPercent}%
-            </span>
-          </div>
-          <div className="h-3 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-800">
-            <div
-              className="h-full rounded-full bg-gradient-to-r from-brand-500 to-orange-400 transition-all"
-              style={{ width: `${progressPercent}%` }}
-            />
-          </div>
-          <p className="mt-2 text-xs text-gray-500">
-            {completedMilestones} of {story.milestones.length} milestones achieved
-          </p>
-          {/* Milestone celebration */}
-          {progressPercent === 100 && (
-            <div className="mt-3 rounded-lg bg-gradient-to-r from-brand-500/10 to-orange-400/10 p-3 text-center">
-              <p className="text-sm font-semibold text-brand-600">
-                All milestones achieved! This dream is coming true!
-              </p>
+        {/* Dream Progress */}
+        <section className="mb-16">
+          <div className="rounded-[12px] bg-white p-6 shadow-sm dark:bg-gray-950">
+            <div className="mb-2 flex items-center justify-between">
+              <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">Dream Progress</h3>
+              <span className="text-sm font-bold" style={{ color: "var(--dream-color-primary)" }}>
+                {progressPercent}%
+              </span>
             </div>
-          )}
+            <div className="h-3 overflow-hidden rounded-full bg-gray-100 dark:bg-gray-800">
+              <div
+                className="h-full rounded-full transition-all"
+                style={{ width: `${progressPercent}%`, backgroundColor: "var(--dream-impact-progress)" }}
+              />
+            </div>
+            <p className="mt-2 text-xs text-gray-500">
+              {completedMilestones} of {story.milestones.length} milestones achieved
+            </p>
+            {progressPercent === 100 && (
+              <div className="mt-3 rounded-lg p-3 text-center" style={{ backgroundColor: "var(--dream-color-primary-lighter)" }}>
+                <p className="text-sm font-semibold" style={{ color: "var(--dream-color-primary-darker)" }}>
+                  All milestones achieved! This dream is coming true!
+                </p>
+              </div>
+            )}
+          </div>
         </section>
 
-        {/* Origin Story — Section 2 "How this dream started" */}
+        {/* Section 2: The Journey (Origin Story) */}
         {story.originStory && (
-          <section className="mb-12">
-            <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-brand-600">
-              How It All Started
+          <section className="mb-16">
+            <h2 className="mb-1 text-xs font-semibold uppercase tracking-widest" style={{ color: "var(--dream-color-primary)" }}>
+              The Journey
             </h2>
-            <div className="rounded-card border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-950">
+            <div className="mt-4 rounded-[12px] bg-white p-6 shadow-sm dark:bg-gray-950">
               <p className="text-base leading-relaxed text-gray-700 dark:text-gray-300">
                 {story.originStory}
               </p>
-              {/* Process images */}
               {story.processImages.length > 0 && (
-                <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
+                <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
                   {story.processImages.map((img, i) => (
                     <img
                       key={i}
                       src={img}
                       alt={`Behind the scenes ${i + 1}`}
-                      className="rounded-lg object-cover aspect-square"
+                      className="aspect-square rounded-lg object-cover"
                     />
                   ))}
                 </div>
@@ -223,32 +229,25 @@ export default async function DreamStoryPage({ params }: PageProps) {
           </section>
         )}
 
-        {/* Journey Timeline */}
+        {/* Section 3: Where They Are Now (Journey Timeline) */}
         <section className="mb-16">
-          <h2 className="mb-6 text-sm font-semibold uppercase tracking-wider text-brand-600">
-            Journey Timeline
+          <h2 className="mb-1 text-xs font-semibold uppercase tracking-widest" style={{ color: "var(--dream-color-primary)" }}>
+            Where They Are Now
           </h2>
-          <div className="relative space-y-0">
+          <div className="relative mt-6 space-y-0">
             <div className="absolute left-[15px] top-2 bottom-2 w-0.5 bg-gray-200 dark:bg-gray-800" />
             {story.milestones.map((milestone, index) => (
               <div key={milestone.id} className="relative flex gap-4 pb-8 last:pb-0">
                 <div
                   className={`relative z-10 mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white ${
-                    milestone.completed
-                      ? "bg-gradient-to-br from-brand-500 to-orange-400"
-                      : "bg-gray-300 dark:bg-gray-700"
+                    milestone.completed ? "" : "bg-gray-300 dark:bg-gray-700"
                   }`}
+                  style={milestone.completed ? { backgroundColor: "var(--dream-color-primary)" } : undefined}
                 >
                   {milestone.completed ? "\u2713" : index + 1}
                 </div>
                 <div className="pt-0.5">
-                  <p
-                    className={`font-semibold ${
-                      milestone.completed
-                        ? "text-gray-900 dark:text-white"
-                        : "text-gray-500 dark:text-gray-400"
-                    }`}
-                  >
+                  <p className={`font-semibold ${milestone.completed ? "text-gray-900 dark:text-white" : "text-gray-500 dark:text-gray-400"}`}>
                     {milestone.title}
                   </p>
                   <p className="text-sm text-gray-500">
@@ -259,7 +258,13 @@ export default async function DreamStoryPage({ params }: PageProps) {
                     })}
                   </p>
                   {milestone.completed && (
-                    <span className="mt-1 inline-block rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700 dark:bg-green-900/30 dark:text-green-400">
+                    <span
+                      className="mt-1 inline-block rounded-full px-2 py-0.5 text-xs font-medium"
+                      style={{
+                        backgroundColor: "color-mix(in srgb, var(--dream-impact-funded) 15%, transparent)",
+                        color: "var(--dream-impact-funded)",
+                      }}
+                    >
                       Achieved
                     </span>
                   )}
@@ -269,11 +274,11 @@ export default async function DreamStoryPage({ params }: PageProps) {
           </div>
         </section>
 
-        {/* Products — hidden for PREVIEW stories */}
+        {/* Section 4: How You Can Help (Products) */}
         {isPreview ? (
           <section className="mb-16">
-            <div className="rounded-card border border-dashed border-gray-300 bg-gray-50 p-8 text-center dark:border-gray-700 dark:bg-gray-900">
-              <h2 className="mb-2 text-sm font-semibold uppercase tracking-wider text-brand-600">
+            <div className="rounded-[12px] border border-dashed border-gray-300 p-8 text-center dark:border-gray-700" style={{ backgroundColor: "var(--dream-color-surface-alt)" }}>
+              <h2 className="mb-2 text-xs font-semibold uppercase tracking-widest" style={{ color: "var(--dream-color-primary)" }}>
                 Support This Dream
               </h2>
               <p className="text-sm text-gray-500 dark:text-gray-400">
@@ -286,52 +291,53 @@ export default async function DreamStoryPage({ params }: PageProps) {
           </section>
         ) : (
           <section className="mb-16">
-            <div className="mb-6 flex items-center justify-between">
-              <h2 className="text-sm font-semibold uppercase tracking-wider text-brand-600">
-                Support This Dream
-              </h2>
-              <span className="text-sm text-gray-500">
-                {story.products.length} product{story.products.length !== 1 ? "s" : ""}
-              </span>
-            </div>
-            {isOwner && (
-              <div className="mb-6 flex justify-end">
+            <h2 className="mb-1 text-xs font-semibold uppercase tracking-widest" style={{ color: "var(--dream-color-primary)" }}>
+              How You Can Help
+            </h2>
+            <div className="mt-4 flex items-center justify-between">
+              <p className="text-sm text-gray-500">
+                {story.products.length} product{story.products.length !== 1 ? "s" : ""} available
+              </p>
+              {isOwner && (
                 <Link href={`/stories/${story.id}/products/create`}>
                   <Button variant="outline" size="sm">+ Add Product</Button>
                 </Link>
-              </div>
-            )}
-            <div className="grid gap-6 sm:grid-cols-2">
+              )}
+            </div>
+            <div className="mt-4 grid gap-6 sm:grid-cols-2">
               {story.products.map((product) => (
                 <Link
                   key={product.id}
                   href={`/stories/${story.id}/products/${product.id}`}
-                  className="group overflow-hidden rounded-card border border-gray-200 bg-white shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5 dark:border-gray-800 dark:bg-gray-950"
+                  className="group overflow-hidden rounded-[12px] border border-gray-200 bg-white shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5 dark:border-gray-800 dark:bg-gray-950"
                 >
-                  <div className="relative h-48 overflow-hidden">
+                  <div className="relative aspect-[4/3] overflow-hidden">
                     <img
                       src={product.images[0]}
                       alt={product.title}
                       className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                     />
                     {product.productType && product.productType !== "Physical Product" && (
-                      <span className="absolute top-2 right-2 rounded-full bg-black/60 px-2 py-0.5 text-xs text-white backdrop-blur-sm">
+                      <span className="absolute right-2 top-2 rounded-full bg-black/60 px-2 py-0.5 text-xs text-white backdrop-blur-sm">
                         {product.productType}
                       </span>
                     )}
                   </div>
                   <div className="p-5">
-                    <h3 className="mb-2 font-semibold text-gray-900 group-hover:text-brand-600 dark:text-white">
+                    <h3 className="mb-2 font-semibold text-gray-900 dark:text-white">
                       {product.title}
                     </h3>
                     <p className="mb-3 line-clamp-2 text-sm text-gray-500 dark:text-gray-400">
                       {product.description}
                     </p>
                     <div className="flex items-center justify-between">
-                      <span className="text-lg font-bold text-gray-900 dark:text-white">
+                      <span className="text-lg font-bold" style={{ color: "var(--dream-color-primary)" }}>
                         {formatPrice(product.price)}
                       </span>
-                      <span className="rounded-full bg-gradient-to-r from-brand-600 to-orange-500 px-4 py-1.5 text-xs font-semibold text-white">
+                      <span
+                        className="rounded-full px-4 py-1.5 text-xs font-semibold text-white"
+                        style={{ backgroundColor: "var(--dream-color-accent)" }}
+                      >
                         Support This Dream
                       </span>
                     </div>
@@ -342,11 +348,11 @@ export default async function DreamStoryPage({ params }: PageProps) {
           </section>
         )}
 
-        {/* Impact — Section 2 "What your purchase creates" */}
+        {/* Impact Statement */}
         {story.impactStatement && (
           <section className="mb-16">
-            <div className="rounded-card bg-gradient-to-r from-brand-600/10 to-orange-500/10 p-8 dark:from-brand-600/5 dark:to-orange-500/5">
-              <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-brand-600">
+            <div className="rounded-[12px] p-8" style={{ backgroundColor: "var(--dream-color-accent-light)" }}>
+              <h2 className="mb-3 text-xs font-semibold uppercase tracking-widest" style={{ color: "var(--dream-color-accent)" }}>
                 Your Impact
               </h2>
               <p className="text-lg leading-relaxed text-gray-800 dark:text-gray-200">
@@ -358,7 +364,7 @@ export default async function DreamStoryPage({ params }: PageProps) {
 
         {/* Dream Updates */}
         <section className="mb-16">
-          <h2 className="mb-6 text-sm font-semibold uppercase tracking-wider text-brand-600">
+          <h2 className="mb-6 text-xs font-semibold uppercase tracking-widest" style={{ color: "var(--dream-color-primary)" }}>
             Dream Updates
           </h2>
           {isOwner && (
@@ -381,7 +387,7 @@ export default async function DreamStoryPage({ params }: PageProps) {
 
         {/* Community Polls */}
         <section className="mb-16">
-          <h2 className="mb-6 text-sm font-semibold uppercase tracking-wider text-brand-600">
+          <h2 className="mb-6 text-xs font-semibold uppercase tracking-widest" style={{ color: "var(--dream-color-primary)" }}>
             Community Poll
           </h2>
           {isOwner && (
@@ -402,20 +408,27 @@ export default async function DreamStoryPage({ params }: PageProps) {
           )}
         </section>
 
-        {/* Creator Profile Card — Section 2 "Maker Introduction" */}
+        {/* Meet the Maker */}
         <section className="mb-16">
-          <h2 className="mb-6 text-sm font-semibold uppercase tracking-wider text-brand-600">
+          <h2 className="mb-6 text-xs font-semibold uppercase tracking-widest" style={{ color: "var(--dream-color-primary)" }}>
             Meet the Maker
           </h2>
-          <div className="flex flex-col gap-6 rounded-card border border-gray-200 bg-white p-6 sm:flex-row dark:border-gray-800 dark:bg-gray-950">
+          <div className="flex flex-col gap-6 rounded-[12px] border border-gray-200 bg-white p-6 sm:flex-row dark:border-gray-800 dark:bg-gray-950">
             <div className="flex shrink-0 flex-col items-center gap-3">
               <img
                 src={story.creatorAvatar}
                 alt={story.creatorName}
-                className="h-20 w-20 rounded-full border-2 border-brand-200 object-cover dark:border-brand-800"
+                className="h-20 w-20 rounded-full border-2 object-cover"
+                style={{ borderColor: "var(--dream-color-primary-light)" }}
               />
               {creatorBadge && (
-                <span className="rounded-full bg-brand-100 px-2 py-0.5 text-xs font-medium text-brand-700 dark:bg-brand-900/30 dark:text-brand-400">
+                <span
+                  className="rounded-full px-2 py-0.5 text-xs font-medium"
+                  style={{
+                    backgroundColor: "var(--dream-color-primary-lighter)",
+                    color: "var(--dream-color-primary-darker)",
+                  }}
+                >
                   {creatorBadge}
                 </span>
               )}
@@ -425,7 +438,7 @@ export default async function DreamStoryPage({ params }: PageProps) {
                 {story.creatorName}
               </h3>
               {story.creatorStage && (
-                <p className="mb-2 text-xs text-gray-500 capitalize">
+                <p className="mb-2 text-xs capitalize text-gray-500">
                   {story.creatorStage === "early" ? "Early Dreamer" : story.creatorStage === "growing" ? "Growing Creator" : "Established Creator"}
                 </p>
               )}
@@ -441,9 +454,9 @@ export default async function DreamStoryPage({ params }: PageProps) {
           </div>
         </section>
 
-        {/* Dream Comments — Section 8 "Supporter Stories" */}
+        {/* Supporter Stories (Comments) */}
         <section className="mb-16">
-          <h2 className="mb-6 text-sm font-semibold uppercase tracking-wider text-brand-600">
+          <h2 className="mb-6 text-xs font-semibold uppercase tracking-widest" style={{ color: "var(--dream-color-primary)" }}>
             Supporter Stories
           </h2>
           <div className="mb-6">
@@ -452,15 +465,13 @@ export default async function DreamStoryPage({ params }: PageProps) {
           {comments.length > 0 ? (
             <CommentList comments={comments} currentUserId={currentUser?.id} />
           ) : (
-            <p className="text-sm text-gray-500">
-              Be the first to share your support!
-            </p>
+            <p className="text-sm text-gray-500">Be the first to share your support!</p>
           )}
         </section>
 
         {/* Supporter Wall */}
-        <section data-read-complete>
-          <h2 className="mb-6 text-sm font-semibold uppercase tracking-wider text-brand-600">
+        <section>
+          <h2 className="mb-6 text-xs font-semibold uppercase tracking-widest" style={{ color: "var(--dream-color-primary)" }}>
             Supporter Wall
           </h2>
           <p className="mb-6 text-sm text-gray-500">

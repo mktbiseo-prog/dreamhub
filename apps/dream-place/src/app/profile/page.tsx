@@ -6,14 +6,16 @@ import { Button } from "@dreamhub/ui";
 import { Input } from "@dreamhub/ui";
 import { cn } from "@dreamhub/ui";
 import { DreamerDNA } from "@/components/charts/DreamerDNA";
+import { VerificationBadge, getVerificationTier } from "@/components/place/VerificationBadge";
 import { useDreamStore } from "@/store/useDreamStore";
 import { MOCK_TEAMS, MOCK_PROJECTS } from "@/data/mockTeams";
-import type { VerificationLevel, LinkedAccounts } from "@/types";
+import type { LinkedAccounts } from "@/types";
 
-const VERIFICATION_CONFIG: Record<VerificationLevel, { label: string; color: string }> = {
+const VERIFICATION_CONFIG: Record<string, { label: string; color: string }> = {
   unverified: { label: "Unverified", color: "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400" },
-  basic: { label: "Basic", color: "bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400" },
-  verified: { label: "Verified", color: "bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400" },
+  basic: { label: "Email Verified", color: "bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400" },
+  verified: { label: "Verified", color: "bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400" },
+  trusted: { label: "Community Trusted", color: "bg-amber-100 text-amber-700 dark:bg-amber-900/20 dark:text-amber-400" },
 };
 
 export default function ProfilePage() {
@@ -40,7 +42,9 @@ export default function ProfilePage() {
     (p) => p.stage === "COMPLETE" && p.teamId && myTeams.some((t) => t.id === p.teamId)
   );
 
-  const verification = VERIFICATION_CONFIG[profile.verificationLevel ?? "unverified"];
+  const verificationLevel = profile.verificationLevel ?? "unverified";
+  const verification = VERIFICATION_CONFIG[verificationLevel] ?? VERIFICATION_CONFIG.unverified;
+  const verificationTier = getVerificationTier(verificationLevel);
 
   const fields = [
     profile.dreamStatement,
@@ -58,7 +62,6 @@ export default function ProfilePage() {
   const completionPercent = Math.round((completedFields / fields.length) * 100);
 
   function handleSaveLinks() {
-    // In a real app this would call an API
     setEditingLinks(false);
   }
 
@@ -102,7 +105,7 @@ export default function ProfilePage() {
               className="h-16 w-16 rounded-full object-cover"
             />
           ) : (
-            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-brand-400 to-blue-500 text-2xl font-bold text-white">
+            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-blue-400 to-blue-600 text-2xl font-bold text-white">
               {profile.name.charAt(0)}
             </div>
           )}
@@ -111,6 +114,7 @@ export default function ProfilePage() {
               <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">
                 {profile.name}
               </h2>
+              {verificationTier && <VerificationBadge level={verificationTier} size="md" />}
               <span className={cn("rounded-full px-2 py-0.5 text-[10px] font-medium", verification.color)}>
                 {verification.label}
               </span>
@@ -119,7 +123,7 @@ export default function ProfilePage() {
               {profile.city}, {profile.country}
             </p>
             {profile.intent && (
-              <span className="mt-1 inline-block rounded-full bg-brand-50 px-2.5 py-0.5 text-xs font-medium text-brand-600 dark:bg-brand-900/20 dark:text-brand-400">
+              <span className="mt-1 inline-block rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-600 dark:bg-blue-900/20 dark:text-blue-400">
                 {profile.intent === "lead"
                   ? "Dream Leader"
                   : profile.intent === "join"
@@ -133,7 +137,7 @@ export default function ProfilePage() {
         </div>
 
         {profile.dreamHeadline && (
-          <p className="mt-4 text-sm font-medium text-brand-600 dark:text-brand-400">
+          <p className="mt-4 text-sm font-medium text-blue-600 dark:text-blue-400">
             {profile.dreamHeadline}
           </p>
         )}
@@ -207,7 +211,7 @@ export default function ProfilePage() {
             <button
               type="button"
               onClick={() => setEditingLinks(true)}
-              className="text-sm text-brand-600 hover:text-brand-700 dark:text-brand-400"
+              className="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400"
             >
               Edit Links
             </button>
@@ -238,7 +242,7 @@ export default function ProfilePage() {
             {profile.skillsOffered.map((skill) => (
               <span
                 key={skill}
-                className="rounded-full bg-brand-50 px-3 py-1 text-sm font-medium text-brand-700 dark:bg-brand-900/20 dark:text-brand-300"
+                className="rounded-full bg-blue-50 px-3 py-1 text-sm font-medium text-blue-700 dark:bg-blue-900/20 dark:text-blue-300"
               >
                 {skill}
               </span>
@@ -373,23 +377,23 @@ export default function ProfilePage() {
       </Section>
 
       {/* Profile completion */}
-      <div className="mt-6 rounded-[12px] border border-brand-100 bg-brand-50/30 p-5 dark:border-brand-900/30 dark:bg-brand-900/10">
+      <div className="mt-6 rounded-[12px] border border-blue-100 bg-blue-50/30 p-5 dark:border-blue-900/30 dark:bg-blue-900/10">
         <div className="flex items-center justify-between">
           <div>
-            <p className="font-medium text-brand-700 dark:text-brand-300">
+            <p className="font-medium text-blue-700 dark:text-blue-300">
               Profile Completion
             </p>
-            <p className="mt-0.5 text-sm text-brand-500 dark:text-brand-400">
+            <p className="mt-0.5 text-sm text-blue-500 dark:text-blue-400">
               Complete your profile to improve match quality
             </p>
           </div>
-          <div className="text-2xl font-bold text-brand-600">
+          <div className="text-2xl font-bold text-blue-600">
             {completionPercent}%
           </div>
         </div>
-        <div className="mt-3 h-2 overflow-hidden rounded-full bg-brand-100 dark:bg-brand-900/30">
+        <div className="mt-3 h-2 overflow-hidden rounded-full bg-blue-100 dark:bg-blue-900/30">
           <div
-            className="h-full rounded-full bg-brand-500 transition-all"
+            className="h-full rounded-full bg-blue-500 transition-all"
             style={{ width: `${completionPercent}%` }}
           />
         </div>
@@ -405,7 +409,7 @@ function LinkItem({ icon, url }: { icon: string; url: string }) {
       href={url}
       target="_blank"
       rel="noopener noreferrer"
-      className="flex items-center gap-2 text-sm text-brand-600 hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300"
+      className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
     >
       <span className="text-xs text-gray-400">{icon}</span>
       <span className="truncate">{displayUrl}</span>

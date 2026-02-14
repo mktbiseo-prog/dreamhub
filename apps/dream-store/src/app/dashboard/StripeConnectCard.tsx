@@ -74,9 +74,9 @@ export default function StripeConnectCard({
         <div>
           <div className="mb-4 rounded-lg bg-gray-50 p-4 dark:bg-gray-900">
             <div className="flex items-start gap-3">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-100 dark:bg-brand-900/40">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-amber-100 dark:bg-amber-900/40">
                 <svg
-                  className="h-5 w-5 text-brand-600 dark:text-brand-400"
+                  className="h-5 w-5 text-amber-600 dark:text-amber-400"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"

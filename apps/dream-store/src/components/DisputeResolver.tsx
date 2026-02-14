@@ -109,7 +109,7 @@ export function DisputeResolver({ dispute }: DisputeResolverProps) {
           {!dispute.isBuyer && isOpen && !showResolve && (
             <button
               onClick={() => setShowResolve(true)}
-              className="mt-3 rounded-lg bg-brand-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-brand-700"
+              className="mt-3 rounded-lg bg-amber-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-amber-700"
             >
               Resolve Dispute
             </button>
@@ -126,7 +126,7 @@ export function DisputeResolver({ dispute }: DisputeResolverProps) {
                       name="resolution"
                       checked={resolution === "buyer"}
                       onChange={() => setResolution("buyer")}
-                      className="text-brand-600"
+                      className="text-amber-600"
                     />
                     <span className="text-gray-700 dark:text-gray-300">Refund buyer</span>
                   </label>
@@ -136,7 +136,7 @@ export function DisputeResolver({ dispute }: DisputeResolverProps) {
                       name="resolution"
                       checked={resolution === "seller"}
                       onChange={() => setResolution("seller")}
-                      className="text-brand-600"
+                      className="text-amber-600"
                     />
                     <span className="text-gray-700 dark:text-gray-300">Release payment to me</span>
                   </label>
@@ -151,7 +151,7 @@ export function DisputeResolver({ dispute }: DisputeResolverProps) {
                   onChange={(e) => setMessage(e.target.value)}
                   placeholder="Explain your resolution..."
                   rows={3}
-                  className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                  className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
                 />
               </div>
               <div className="flex gap-2">
@@ -164,7 +164,7 @@ export function DisputeResolver({ dispute }: DisputeResolverProps) {
                 <button
                   onClick={handleResolve}
                   disabled={isPending || !message.trim()}
-                  className="rounded-lg bg-brand-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-brand-700 disabled:opacity-50"
+                  className="rounded-lg bg-amber-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-amber-700 disabled:opacity-50"
                 >
                   {isPending ? "Processing..." : "Confirm Resolution"}
                 </button>

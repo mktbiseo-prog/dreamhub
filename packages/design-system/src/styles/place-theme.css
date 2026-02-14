@@ -1,0 +1,45 @@
+/* ---------------------------------------------------------------------------
+ * Dream Place — Service Theme
+ *
+ * Trusted connector. Ocean Blue (#2563EB).
+ * Spec reference: PART 3, Section 3.1
+ * --------------------------------------------------------------------------- */
+
+:root {
+  /* ── Primary ───────────────────────────────────────────────────────────── */
+  --dream-color-primary: #2563EB;
+  --dream-color-primary-light: #DBEAFE;
+  --dream-color-primary-lighter: #EFF6FF;
+  --dream-color-primary-dark: #1D4ED8;
+  --dream-color-primary-darker: #1E40AF;
+  --dream-color-on-primary: #FFFFFF;
+
+  /* ── Secondary ─────────────────────────────────────────────────────────── */
+  --dream-color-secondary: #10B981;
+  --dream-color-secondary-light: #D1FAE5;
+
+  /* ── Accent ────────────────────────────────────────────────────────────── */
+  --dream-color-accent: #F59E0B;
+  --dream-color-accent-light: #FEF3C7;
+
+  /* ── Surfaces ──────────────────────────────────────────────────────────── */
+  --dream-color-surface: #FFFFFF;
+  --dream-color-surface-alt: #EFF6FF;
+  --dream-color-background: #FAFAFA;
+
+  /* ── Text ───────────────────────────────────────────────────────────────── */
+  --dream-color-text-primary: #171717;
+  --dream-color-text-secondary: #525252;
+  --dream-color-text-tertiary: #A3A3A3;
+
+  /* ── Match Score Gradient ──────────────────────────────────────────────── */
+  --dream-match-high: #22C55E;
+  --dream-match-medium: #F59E0B;
+  --dream-match-low: #A3A3A3;
+
+  /* ── Verification Tiers ────────────────────────────────────────────────── */
+  --dream-verified-1: #93C5FD;
+  --dream-verified-2: #3B82F6;
+  --dream-verified-3: #1D4ED8;
+  --dream-verified-4: #FFC300;
+}

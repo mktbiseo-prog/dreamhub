@@ -50,7 +50,7 @@ export function AddToCartButton({
       onClick={handleAdd}
       className={
         className ||
-        "w-full bg-gradient-to-r from-brand-600 to-orange-500 text-white shadow-lg hover:from-brand-700 hover:to-orange-600"
+        "w-full bg-gradient-to-r from-amber-600 to-orange-500 text-white shadow-lg hover:from-amber-700 hover:to-orange-600"
       }
     >
       {added ? (

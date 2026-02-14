@@ -1,0 +1,163 @@
+/* ---------------------------------------------------------------------------
+ * Dream Hub — Micro-Interactions
+ *
+ * Shared animations and interaction patterns.
+ * Spec reference: PART 0, Section 0.5
+ * --------------------------------------------------------------------------- */
+
+/* ── Keyframes ───────────────────────────────────────────────────────────── */
+
+/* Skeleton loader shimmer */
+@keyframes dream-shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* Success checkmark circle draw */
+@keyframes dream-success-draw {
+  0% {
+    stroke-dashoffset: 100;
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+}
+
+/* Record button breathing animation */
+@keyframes dream-breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+}
+
+/* Toast slide in from top */
+@keyframes dream-toast-in {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  60% {
+    transform: translateY(4px);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Toast fade out */
+@keyframes dream-toast-out {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-16px);
+    opacity: 0;
+  }
+}
+
+/* Tab indicator slide */
+@keyframes dream-tab-slide {
+  from { transform: translateX(var(--tab-from, 0)); }
+  to { transform: translateX(var(--tab-to, 0)); }
+}
+
+/* Pull to refresh rotation */
+@keyframes dream-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* ── Utility Classes ─────────────────────────────────────────────────────── */
+
+/* Button press effect — apply to any tappable element */
+.dream-press {
+  transition: transform var(--dream-transition-fast);
+}
+.dream-press:active {
+  transform: scale(0.97);
+}
+
+/* Card hover lift — desktop only */
+.dream-card-hover {
+  transition:
+    box-shadow var(--dream-transition-normal),
+    transform var(--dream-transition-normal);
+}
+@media (hover: hover) {
+  .dream-card-hover:hover {
+    box-shadow: var(--dream-shadow-md);
+    transform: translateY(-2px);
+  }
+}
+
+/* Tab indicator underline */
+.dream-tab-indicator {
+  position: relative;
+}
+.dream-tab-indicator::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--dream-color-primary);
+  transform: scaleX(0);
+  transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.dream-tab-indicator[data-active="true"]::after,
+.dream-tab-indicator.active::after {
+  transform: scaleX(1);
+}
+
+/* Shimmer skeleton */
+.dream-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--dream-neutral-100) 25%,
+    var(--dream-neutral-200) 50%,
+    var(--dream-neutral-100) 75%
+  );
+  background-size: 200% 100%;
+  animation: dream-shimmer 1.5s linear infinite;
+}
+
+/* Breathing animation (for record button) */
+.dream-breathe {
+  animation: dream-breathe 3s ease-in-out infinite;
+}
+
+/* Success draw animation */
+.dream-success-draw {
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  animation: dream-success-draw 400ms ease forwards;
+}
+
+/* Spinner rotation */
+.dream-spin {
+  animation: dream-spin 1s linear infinite;
+}
+
+/* Crossfade for tab content */
+.dream-crossfade-enter {
+  opacity: 0;
+}
+.dream-crossfade-enter-active {
+  opacity: 1;
+  transition: opacity 200ms ease;
+}
+.dream-crossfade-exit {
+  opacity: 1;
+}
+.dream-crossfade-exit-active {
+  opacity: 0;
+  transition: opacity 200ms ease;
+}

@@ -46,7 +46,7 @@ export function SupportButton({
         onClick={handleCheckout}
         disabled={loading}
         size="lg"
-        className="w-full bg-gradient-to-r from-brand-600 to-orange-500 py-6 text-lg font-semibold text-white shadow-lg transition-all hover:from-brand-700 hover:to-orange-600 hover:shadow-xl"
+        className="w-full bg-gradient-to-r from-amber-600 to-orange-500 py-6 text-lg font-semibold text-white shadow-lg transition-all hover:from-amber-700 hover:to-orange-600 hover:shadow-xl"
       >
         {loading
           ? "Preparing checkout..."

@@ -52,7 +52,7 @@ export function AiStoryAssistant({
         type="button"
         onClick={generate}
         disabled={loading || !context.title}
-        className="flex items-center gap-1.5 text-xs font-medium text-brand-600 transition-colors hover:text-brand-700 disabled:opacity-50"
+        className="flex items-center gap-1.5 text-xs font-medium text-amber-600 transition-colors hover:text-amber-700 disabled:opacity-50"
       >
         <svg
           className={`h-3.5 w-3.5 ${loading ? "animate-spin" : ""}`}
@@ -79,8 +79,8 @@ export function AiStoryAssistant({
       </button>
 
       {showPreview && suggestion && (
-        <div className="mt-2 w-full max-w-xl rounded-card border border-brand-200 bg-brand-50 p-3 dark:border-brand-800 dark:bg-brand-950/20">
-          <p className="mb-2 text-xs font-medium text-brand-600">
+        <div className="mt-2 w-full max-w-xl rounded-card border border-amber-200 bg-amber-50 p-3 dark:border-amber-800 dark:bg-amber-950/20">
+          <p className="mb-2 text-xs font-medium text-amber-600">
             AI Suggestion:
           </p>
           <p className="mb-3 text-sm leading-relaxed text-gray-700 dark:text-gray-300">
@@ -93,7 +93,7 @@ export function AiStoryAssistant({
                 onSuggestion(suggestion);
                 setShowPreview(false);
               }}
-              className="rounded-lg bg-brand-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-brand-700"
+              className="rounded-lg bg-amber-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-amber-700"
             >
               Use This
             </button>

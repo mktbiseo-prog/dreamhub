@@ -6,6 +6,7 @@ import { Button } from "@dreamhub/ui";
 import { MatchCard } from "@/components/discover/MatchCard";
 import { FilterPanel, type DiscoverFilterState } from "@/components/discover/FilterPanel";
 import { ResonateSheet } from "@/components/discover/ResonateSheet";
+import { BatchExhausted } from "@/components/place/BatchExhausted";
 import { useDreamStore } from "@/store/useDreamStore";
 
 const DEFAULT_FILTERS: DiscoverFilterState = {
@@ -18,6 +19,8 @@ const DEFAULT_FILTERS: DiscoverFilterState = {
   remotePreference: "",
 };
 
+const DAILY_BATCH_SIZE = 12;
+
 export default function DiscoverPage() {
   const discoverFeed = useDreamStore((s) => s.discoverFeed);
   const expressInterest = useDreamStore((s) => s.expressInterest);
@@ -28,6 +31,7 @@ export default function DiscoverPage() {
   const savedFilters = useDreamStore((s) => s.savedFilters);
   const saveFilter = useDreamStore((s) => s.saveFilter);
   const deleteFilter = useDreamStore((s) => s.deleteFilter);
+  const skippedIds = useDreamStore((s) => s.skippedIds);
 
   const [filters, setFilters] = useState<DiscoverFilterState>(DEFAULT_FILTERS);
   const [showFilters, setShowFilters] = useState(false);
@@ -37,8 +41,13 @@ export default function DiscoverPage() {
     fetchDiscoverFeed();
   }, [fetchDiscoverFeed]);
 
+  // Daily batch: limit to DAILY_BATCH_SIZE items
+  const dailyBatch = useMemo(() => {
+    return discoverFeed.slice(0, DAILY_BATCH_SIZE);
+  }, [discoverFeed]);
+
   const filtered = useMemo(() => {
-    return discoverFeed.filter((m) => {
+    return dailyBatch.filter((m) => {
       // Text search
       if (filters.search) {
         const q = filters.search.toLowerCase();
@@ -89,7 +98,7 @@ export default function DiscoverPage() {
 
       return true;
     });
-  }, [discoverFeed, filters]);
+  }, [dailyBatch, filters]);
 
   const activeFilterCount =
     (filters.dreamCategory ? 1 : 0) +
@@ -102,6 +111,13 @@ export default function DiscoverPage() {
   const resonateMatch = resonateMatchId
     ? discoverFeed.find((m) => m.id === resonateMatchId)
     : null;
+
+  // Batch exhaustion: all daily batch items have been acted on
+  const actedOnCount = dailyBatch.filter(
+    (m) => skippedIds?.has(m.id) || m.status !== "pending"
+  ).length;
+  const remaining = DAILY_BATCH_SIZE - actedOnCount;
+  const isBatchExhausted = dailyBatch.length > 0 && filtered.length === 0 && actedOnCount >= dailyBatch.length;
 
   function handleInterested(matchId: string) {
     setResonateMatchId(matchId);
@@ -118,12 +134,23 @@ export default function DiscoverPage() {
     <div className="mx-auto max-w-lg px-4 py-6">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-          Discover Dreamers
-        </h1>
-        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-          Find people whose dreams complement yours
-        </p>
+        <div className="flex items-center gap-3">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg" style={{ backgroundColor: "var(--dream-color-primary)" }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+            </svg>
+          </div>
+          <div>
+            <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">
+              Discover Dreamers
+            </h1>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              {remaining > 0
+                ? `${remaining} of ${DAILY_BATCH_SIZE} curated matches remaining today`
+                : "Today's batch complete"}
+            </p>
+          </div>
+        </div>
       </div>
 
       {/* Saved filter chips */}
@@ -134,7 +161,7 @@ export default function DiscoverPage() {
               key={sf.id}
               type="button"
               onClick={() => setFilters(sf.filters)}
-              className="rounded-full border border-brand-200 bg-brand-50 px-2.5 py-1 text-xs font-medium text-brand-700 hover:bg-brand-100 dark:border-brand-800 dark:bg-brand-900/20 dark:text-brand-300"
+              className="rounded-full border border-blue-200 bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-700 hover:bg-blue-100 dark:border-blue-800 dark:bg-blue-900/20 dark:text-blue-300"
             >
               {sf.name}
             </button>
@@ -159,7 +186,7 @@ export default function DiscoverPage() {
             <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75" />
           </svg>
           {activeFilterCount > 0 && (
-            <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-brand-600 text-[10px] font-bold text-white">
+            <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-blue-600 text-[10px] font-bold text-white">
               {activeFilterCount}
             </span>
           )}
@@ -213,21 +240,26 @@ export default function DiscoverPage() {
         {filtered.length} dreamer{filtered.length !== 1 ? "s" : ""} found
       </p>
 
-      {/* Match cards */}
-      <div className="space-y-4">
-        {filtered.map((match) => (
-          <MatchCard
-            key={match.id}
-            match={match}
-            onInterested={handleInterested}
-            onSkip={skipMatch}
-            onSave={() => toggleSaveProfile(match.profile.id)}
-            isSaved={savedProfiles.includes(match.profile.id)}
-          />
-        ))}
-      </div>
+      {/* Batch exhausted */}
+      {isBatchExhausted ? (
+        <BatchExhausted onRefresh={fetchDiscoverFeed} />
+      ) : (
+        /* Match cards */
+        <div className="space-y-4">
+          {filtered.map((match) => (
+            <MatchCard
+              key={match.id}
+              match={match}
+              onInterested={handleInterested}
+              onSkip={skipMatch}
+              onSave={() => toggleSaveProfile(match.profile.id)}
+              isSaved={savedProfiles.includes(match.profile.id)}
+            />
+          ))}
+        </div>
+      )}
 
-      {filtered.length === 0 && (
+      {!isBatchExhausted && filtered.length === 0 && (
         <div className="py-16 text-center">
           <p className="text-lg font-medium text-gray-400 dark:text-gray-500">
             No dreamers match your filters
@@ -285,12 +317,12 @@ function FilterPill({
   onRemove: () => void;
 }) {
   return (
-    <span className="inline-flex items-center gap-1 rounded-full bg-brand-50 px-2.5 py-0.5 text-xs font-medium text-brand-700 dark:bg-brand-900/20 dark:text-brand-300">
+    <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-700 dark:bg-blue-900/20 dark:text-blue-300">
       {label}
       <button
         type="button"
         onClick={onRemove}
-        className="ml-0.5 inline-flex h-3.5 w-3.5 items-center justify-center rounded-full hover:bg-brand-200 dark:hover:bg-brand-800"
+        className="ml-0.5 inline-flex h-3.5 w-3.5 items-center justify-center rounded-full hover:bg-blue-200 dark:hover:bg-blue-800"
       >
         &#215;
       </button>

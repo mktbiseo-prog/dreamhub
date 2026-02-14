@@ -7,6 +7,8 @@ import { cn } from "@dreamhub/ui";
 import { MatchScoreRing } from "@/components/discover/MatchScoreRing";
 import { DreamerDNA } from "@/components/charts/DreamerDNA";
 import { SkillRadar } from "@/components/charts/SkillRadar";
+import { MatchBreakdownModal } from "@/components/place/MatchBreakdownModal";
+import { VerificationBadge, getVerificationTier } from "@/components/place/VerificationBadge";
 import { useDreamStore } from "@/store/useDreamStore";
 
 export default function MatchDetailPage({
@@ -19,31 +21,11 @@ export default function MatchDetailPage({
   const myMatches = useDreamStore((s) => s.matches);
   const currentUser = useDreamStore((s) => s.currentUser);
   const expressInterest = useDreamStore((s) => s.expressInterest);
-  const [explanation, setExplanation] = useState<string | null>(null);
+  const [showBreakdown, setShowBreakdown] = useState(false);
 
   const match =
     discoverFeed.find((m) => m.id === matchId) ??
     myMatches.find((m) => m.id === matchId);
-
-  useEffect(() => {
-    if (!match) return;
-    fetch("/api/ai/match-explanation", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        profileA: currentUser,
-        profileB: match.profile,
-        scores: {
-          dreamScore: match.dreamScore,
-          skillScore: match.skillScore,
-          valueScore: match.valueScore,
-        },
-      }),
-    })
-      .then((res) => res.json())
-      .then((data) => setExplanation(data.explanation))
-      .catch(() => {});
-  }, [match, currentUser]);
 
   if (!match) {
     return (
@@ -56,21 +38,19 @@ export default function MatchDetailPage({
   const {
     profile,
     matchScore,
-    dreamScore,
-    skillScore,
-    valueScore,
     complementarySkills,
     sharedInterests,
   } = match;
   const isConnected = match.status === "accepted";
   const isPending = match.status === "pending";
+  const verificationTier = getVerificationTier(profile.verificationLevel);
 
   const reverseComplementary = currentUser.skillsOffered.filter((s) =>
     profile.skillsNeeded.includes(s)
   );
 
   return (
-    <div className="mx-auto max-w-2xl px-4 py-6">
+    <div className="mx-auto max-w-2xl px-4 py-6 pb-28">
       {/* Back button */}
       <Link
         href="/discover"
@@ -82,25 +62,34 @@ export default function MatchDetailPage({
         Back
       </Link>
 
-      {/* Profile header */}
-      <div className="rounded-[12px] border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-950">
+      {/* Hero section */}
+      <div className="rounded-[16px] border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-950">
         <div className="flex items-start gap-5">
-          <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand-400 to-blue-500 text-3xl font-bold text-white">
-            {profile.name.charAt(0)}
+          {/* Large avatar */}
+          <div className="flex h-24 w-24 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-400 to-blue-600 text-4xl font-bold text-white sm:h-28 sm:w-28">
+            {profile.avatarUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={profile.avatarUrl} alt={profile.name} className="h-full w-full rounded-full object-cover" />
+            ) : (
+              profile.name.charAt(0)
+            )}
           </div>
+
           <div className="flex-1">
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-              {profile.name}
-            </h1>
+            <div className="flex items-center gap-2">
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                {profile.name}
+              </h1>
+              {verificationTier && <VerificationBadge level={verificationTier} size="md" />}
+            </div>
             <p className="text-sm text-gray-500 dark:text-gray-400">
               {profile.city}, {profile.country}
             </p>
-            <p className="mt-1 text-sm font-medium text-brand-600 dark:text-brand-400">
-              {profile.dreamHeadline}
-            </p>
+
+            {/* Tags */}
             <div className="mt-2 flex flex-wrap gap-2">
               {profile.intent && (
-                <span className="rounded-full bg-brand-50 px-2.5 py-0.5 text-xs text-brand-600 dark:bg-brand-900/20 dark:text-brand-400">
+                <span className="rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-600 dark:bg-blue-900/20 dark:text-blue-400">
                   {profile.intent === "lead"
                     ? "Dream Leader"
                     : profile.intent === "join"
@@ -116,82 +105,124 @@ export default function MatchDetailPage({
               <span className="rounded-full bg-gray-100 px-2.5 py-0.5 text-xs text-gray-600 dark:bg-gray-800 dark:text-gray-400">
                 {profile.experienceLevel}
               </span>
-              <span className="rounded-full bg-gray-100 px-2.5 py-0.5 text-xs text-gray-600 dark:bg-gray-800 dark:text-gray-400">
-                {profile.dreamCategory}
-              </span>
+            </div>
+
+            {/* Match score */}
+            <div className="mt-3">
+              <MatchScoreRing score={matchScore} size={64} strokeWidth={4} />
             </div>
           </div>
-          <MatchScoreRing score={matchScore} size={80} strokeWidth={5} />
         </div>
-        <p className="mt-4 text-sm leading-relaxed text-gray-600 dark:text-gray-300">
-          {profile.bio}
+
+        {/* Dream headline */}
+        {profile.dreamHeadline && (
+          <p className="mt-4 text-lg font-semibold text-blue-600 dark:text-blue-400">
+            Building: {profile.dreamHeadline}
+          </p>
+        )}
+
+        {/* Bio */}
+        {profile.bio && (
+          <p className="mt-2 text-sm leading-relaxed text-gray-600 dark:text-gray-300">
+            {profile.bio}
+          </p>
+        )}
+      </div>
+
+      {/* Dream statement */}
+      <div className="mt-6 rounded-[16px] border-2 border-blue-100 bg-blue-50/30 p-6 dark:border-blue-900/30 dark:bg-blue-950/10">
+        <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-blue-500">
+          Dream Statement
+        </p>
+        <p className="text-lg font-medium leading-relaxed text-gray-800 dark:text-gray-200">
+          &ldquo;{profile.dreamStatement}&rdquo;
         </p>
       </div>
 
-      {/* AI Match Explanation */}
-      {explanation && (
-        <div className="mt-6 rounded-[12px] border border-brand-200 bg-brand-50/50 p-4 dark:border-brand-800 dark:bg-brand-900/10">
-          <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-brand-500">
-            Why You Matched
-          </p>
-          <p className="text-sm leading-relaxed text-brand-700 dark:text-brand-300">
-            {explanation}
-          </p>
-        </div>
+      {/* Dreamer DNA */}
+      {currentUser.workStyle && profile.workStyle && (
+        <Section title="Dreamer DNA" subtitle="Work style comparison — complementary styles make great teams">
+          <DreamerDNA
+            workStyle={currentUser.workStyle}
+            compareWith={profile.workStyle}
+            compareName={profile.name}
+            size={280}
+          />
+        </Section>
       )}
 
-      {/* Dream comparison */}
-      <div className="mt-6 grid gap-4 sm:grid-cols-2">
-        <div className="rounded-[12px] border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-gray-950">
-          <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
-            Your Dream
-          </p>
-          <p className="text-sm leading-relaxed text-gray-700 dark:text-gray-300">
-            &ldquo;{currentUser.dreamStatement}&rdquo;
-          </p>
+      {/* Structured About */}
+      <Section title="About">
+        <div className="grid grid-cols-2 gap-3">
+          <DetailItem label="Dream Category" value={profile.dreamCategory} />
+          <DetailItem label="Commitment" value={profile.commitmentLevel} />
+          <DetailItem label="Experience" value={profile.experienceLevel} />
+          {profile.preferences?.remotePreference && (
+            <DetailItem label="Collaboration" value={profile.preferences.remotePreference} />
+          )}
+          {profile.preferences?.techPreference && (
+            <DetailItem label="Team Type" value={profile.preferences.techPreference} />
+          )}
+          {profile.preferences?.timezone && (
+            <DetailItem label="Timezone" value={profile.preferences.timezone} />
+          )}
         </div>
-        <div className="rounded-[12px] border border-brand-200 bg-brand-50/30 p-5 dark:border-brand-800 dark:bg-brand-900/10">
-          <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-brand-500">
-            Their Dream
-          </p>
-          <p className="text-sm leading-relaxed text-gray-700 dark:text-gray-300">
-            &ldquo;{profile.dreamStatement}&rdquo;
-          </p>
-        </div>
-      </div>
+      </Section>
 
-      {/* Match breakdown */}
-      <div className="mt-6 rounded-[12px] border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-950">
-        <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
-          Match Breakdown
-        </h2>
-        <div className="space-y-4">
-          <ScoreBar label="Dream Alignment" score={dreamScore} weight="25%" description="How well your dreams and visions align" />
-          <ScoreBar label="Skill Complementarity" score={skillScore} weight="25%" description="How well your skills fill each other's gaps" />
-          <ScoreBar label="Value Alignment" score={valueScore} weight="5%" description="Shared interests and values" />
-          {match.workStyleScore !== undefined && (
-            <ScoreBar label="Work Style Fit" score={match.workStyleScore} weight="15%" description="How well your work styles complement each other" />
+      {/* Skills offered */}
+      {profile.skillsOffered.length > 0 && (
+        <Section title="Skills They Offer">
+          <div className="flex flex-wrap gap-2">
+            {profile.skillsOffered.map((skill) => (
+              <span
+                key={skill}
+                className={cn(
+                  "rounded-full px-3 py-1 text-sm font-medium",
+                  complementarySkills.includes(skill)
+                    ? "bg-green-50 text-green-700 dark:bg-green-900/20 dark:text-green-400"
+                    : "bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400"
+                )}
+              >
+                {skill}
+              </span>
+            ))}
+          </div>
+          {complementarySkills.length > 0 && (
+            <p className="mt-2 text-xs text-green-600 dark:text-green-400">
+              {complementarySkills.length} skill{complementarySkills.length > 1 ? "s" : ""} you need
+            </p>
           )}
-          {match.locationScore !== undefined && (
-            <ScoreBar label="Location" score={match.locationScore} weight="10%" description="Geographic proximity and remote compatibility" />
-          )}
-          {match.experienceScore !== undefined && (
-            <ScoreBar label="Experience Balance" score={match.experienceScore} weight="10%" description="Complementary experience levels" />
-          )}
-          {match.availabilityScore !== undefined && (
-            <ScoreBar label="Availability" score={match.availabilityScore} weight="10%" description="Commitment and timezone overlap" />
-          )}
-        </div>
-      </div>
+        </Section>
+      )}
 
-      {/* Skill Radar Chart */}
-      <div className="mt-6 rounded-[12px] border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-950">
-        <h2 className="mb-2 text-lg font-semibold text-gray-900 dark:text-gray-100">
-          Skill Coverage
-        </h2>
-        <p className="mb-4 text-xs text-gray-400">
-          Skills across domains for both profiles
-        </p>
+      {/* Skills needed */}
+      {profile.skillsNeeded.length > 0 && (
+        <Section title="Skills They Need">
+          <div className="flex flex-wrap gap-2">
+            {profile.skillsNeeded.map((skill) => (
+              <span
+                key={skill}
+                className={cn(
+                  "rounded-full px-3 py-1 text-sm font-medium",
+                  reverseComplementary.includes(skill)
+                    ? "bg-green-50 text-green-700 dark:bg-green-900/20 dark:text-green-400"
+                    : "bg-amber-50 text-amber-700 dark:bg-amber-900/20 dark:text-amber-400"
+                )}
+              >
+                {skill}
+              </span>
+            ))}
+          </div>
+          {reverseComplementary.length > 0 && (
+            <p className="mt-2 text-xs text-green-600 dark:text-green-400">
+              {reverseComplementary.length} skill{reverseComplementary.length > 1 ? "s" : ""} you can offer
+            </p>
+          )}
+        </Section>
+      )}
+
+      {/* Skill Coverage Radar */}
+      <Section title="Skill Coverage" subtitle="Skills across domains for both profiles">
         <SkillRadar
           skillsA={[...currentUser.skillsOffered, ...currentUser.skillsNeeded]}
           skillsB={[...profile.skillsOffered, ...profile.skillsNeeded]}
@@ -199,197 +230,163 @@ export default function MatchDetailPage({
           nameB={profile.name}
           size={280}
         />
-      </div>
+      </Section>
 
-      {/* Dreamer DNA comparison */}
-      {currentUser.workStyle && profile.workStyle && (
-        <div className="mt-6 rounded-[12px] border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-950">
-          <h2 className="mb-2 text-lg font-semibold text-gray-900 dark:text-gray-100">
-            Dreamer DNA
-          </h2>
-          <p className="mb-4 text-xs text-gray-400">
-            Work style comparison — complementary styles make great teams
-          </p>
-          <DreamerDNA
-            workStyle={currentUser.workStyle}
-            compareWith={profile.workStyle}
-            compareName={profile.name}
-            size={280}
-          />
-        </div>
+      {/* Portfolio / Linked Accounts */}
+      {(profile.linkedAccounts?.github || profile.linkedAccounts?.linkedin || profile.linkedAccounts?.portfolio) && (
+        <Section title="Portfolio">
+          <div className="grid gap-2 sm:grid-cols-3">
+            {profile.linkedAccounts?.github && (
+              <PortfolioCard label="GitHub" url={profile.linkedAccounts.github} icon="github" />
+            )}
+            {profile.linkedAccounts?.linkedin && (
+              <PortfolioCard label="LinkedIn" url={profile.linkedAccounts.linkedin} icon="linkedin" />
+            )}
+            {profile.linkedAccounts?.portfolio && (
+              <PortfolioCard label="Portfolio" url={profile.linkedAccounts.portfolio} icon="web" />
+            )}
+          </div>
+        </Section>
       )}
-
-      {/* Skill analysis */}
-      <div className="mt-6 rounded-[12px] border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-950">
-        <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
-          Skill Analysis
-        </h2>
-
-        {complementarySkills.length > 0 && (
-          <div className="mb-4">
-            <p className="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-              Skills they offer that you need
-            </p>
-            <div className="flex flex-wrap gap-2">
-              {complementarySkills.map((skill) => (
-                <span key={skill} className="rounded-full bg-green-50 px-3 py-1 text-sm font-medium text-green-700 dark:bg-green-900/20 dark:text-green-400">
-                  {skill}
-                </span>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {reverseComplementary.length > 0 && (
-          <div className="mb-4">
-            <p className="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-              Skills you offer that they need
-            </p>
-            <div className="flex flex-wrap gap-2">
-              {reverseComplementary.map((skill) => (
-                <span key={skill} className="rounded-full bg-blue-50 px-3 py-1 text-sm font-medium text-blue-700 dark:bg-blue-900/20 dark:text-blue-400">
-                  {skill}
-                </span>
-              ))}
-            </div>
-          </div>
-        )}
-
-        <div>
-          <p className="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-            All skills they bring
-          </p>
-          <div className="flex flex-wrap gap-2">
-            {profile.skillsOffered.map((skill) => (
-              <span
-                key={skill}
-                className={cn(
-                  "rounded-full px-3 py-1 text-sm",
-                  complementarySkills.includes(skill)
-                    ? "bg-green-50 font-medium text-green-700 dark:bg-green-900/20 dark:text-green-400"
-                    : "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400"
-                )}
-              >
-                {skill}
-              </span>
-            ))}
-          </div>
-        </div>
-      </div>
 
       {/* Shared interests */}
       {sharedInterests.length > 0 && (
-        <div className="mt-6 rounded-[12px] border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-950">
-          <h2 className="mb-3 text-lg font-semibold text-gray-900 dark:text-gray-100">
-            Shared Interests
-          </h2>
+        <Section title="Shared Interests">
           <div className="flex flex-wrap gap-2">
             {sharedInterests.map((interest) => (
-              <span key={interest} className="rounded-full bg-brand-50 px-3 py-1 text-sm font-medium text-brand-700 dark:bg-brand-900/20 dark:text-brand-300">
+              <span key={interest} className="rounded-full bg-blue-50 px-3 py-1 text-sm font-medium text-blue-700 dark:bg-blue-900/20 dark:text-blue-300">
                 {interest}
               </span>
             ))}
           </div>
-        </div>
+        </Section>
       )}
 
-      {/* Action */}
-      <div className="sticky bottom-20 mt-6 rounded-[12px] border border-gray-200 bg-white/90 p-4 backdrop-blur-sm dark:border-gray-800 dark:bg-gray-950/90">
-        {isConnected ? (
-          <div className="flex gap-3">
-            <Link href={`/messages/${matchId}`} className="flex-1">
-              <Button className="w-full">Send Message</Button>
-            </Link>
-            <Button
-              variant="outline"
-              onClick={() => {
-                // Create team from match — will be handled by Phase 4
-                const createTeam = useDreamStore.getState().createTeam;
-                createTeam(
-                  `Team: ${currentUser.name} & ${profile.name}`,
-                  `${currentUser.dreamStatement} + ${profile.dreamStatement}`
-                );
-              }}
-            >
-              Form a Team
-            </Button>
-          </div>
-        ) : isPending ? (
-          <div className="text-center">
-            <p className="font-medium text-amber-600 dark:text-amber-400">
-              Dream Request Pending
-            </p>
-            <p className="mt-1 text-sm text-gray-500">
-              Waiting for {profile.name} to respond.
-            </p>
-          </div>
-        ) : (
-          <div className="flex gap-3">
-            <Link href="/discover" className="flex-1">
-              <Button variant="outline" className="w-full">
-                Skip
-              </Button>
-            </Link>
-            <Button
-              className="flex-1"
-              onClick={() => expressInterest(matchId)}
-            >
-              Send Dream Request
-            </Button>
-          </div>
-        )}
+      {/* Match Breakdown CTA */}
+      <div className="mt-6">
+        <Button
+          variant="outline"
+          className="w-full text-blue-600 dark:text-blue-400"
+          onClick={() => setShowBreakdown(true)}
+        >
+          View Full Match Breakdown
+        </Button>
       </div>
+
+      {/* Sticky CTA bar */}
+      <div className="fixed bottom-16 left-0 right-0 z-40 border-t border-gray-200 bg-white/90 px-4 py-3 backdrop-blur-sm dark:border-gray-800 dark:bg-gray-950/90">
+        <div className="mx-auto flex max-w-2xl gap-3">
+          {isConnected ? (
+            <>
+              <Link href={`/messages/${matchId}`} className="flex-1">
+                <Button className="w-full">Send Message</Button>
+              </Link>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  const createTeam = useDreamStore.getState().createTeam;
+                  createTeam(
+                    `Team: ${currentUser.name} & ${profile.name}`,
+                    `${currentUser.dreamStatement} + ${profile.dreamStatement}`
+                  );
+                }}
+              >
+                Form a Team
+              </Button>
+            </>
+          ) : isPending ? (
+            <div className="flex-1 text-center">
+              <p className="font-medium text-amber-600 dark:text-amber-400">
+                Connection Request Pending
+              </p>
+              <p className="mt-0.5 text-sm text-gray-500">
+                Waiting for {profile.name} to respond
+              </p>
+            </div>
+          ) : (
+            <>
+              <Link href="/discover" className="flex-1">
+                <Button variant="outline" className="w-full">
+                  Pass
+                </Button>
+              </Link>
+              <Button
+                className="flex-1"
+                onClick={() => expressInterest(matchId)}
+              >
+                Invite to Connect
+              </Button>
+            </>
+          )}
+        </div>
+      </div>
+
+      {/* Match Breakdown Modal */}
+      <MatchBreakdownModal
+        match={match}
+        currentUser={currentUser}
+        open={showBreakdown}
+        onClose={() => setShowBreakdown(false)}
+        onConnect={(id) => {
+          expressInterest(id);
+          setShowBreakdown(false);
+        }}
+      />
     </div>
   );
 }
 
-function ScoreBar({
-  label,
-  score,
-  weight,
-  description,
+function Section({
+  title,
+  subtitle,
+  children,
 }: {
-  label: string;
-  score: number;
-  weight: string;
-  description: string;
+  title: string;
+  subtitle?: string;
+  children: React.ReactNode;
 }) {
   return (
-    <div>
-      <div className="mb-1 flex items-center justify-between">
-        <div>
-          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-            {label}
-          </span>
-          <span className="ml-2 text-xs text-gray-400">({weight})</span>
-        </div>
-        <span
-          className={cn(
-            "text-sm font-semibold",
-            score >= 80
-              ? "text-green-600"
-              : score >= 50
-                ? "text-amber-600"
-                : "text-red-500"
-          )}
-        >
-          {score}%
-        </span>
-      </div>
-      <div className="h-2 overflow-hidden rounded-full bg-gray-100 dark:bg-gray-800">
-        <div
-          className={cn(
-            "h-full rounded-full transition-all duration-500",
-            score >= 80
-              ? "bg-green-500"
-              : score >= 50
-                ? "bg-amber-500"
-                : "bg-red-400"
-          )}
-          style={{ width: `${score}%` }}
-        />
-      </div>
-      <p className="mt-0.5 text-xs text-gray-400">{description}</p>
+    <div className="mt-6 rounded-[16px] border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-950">
+      <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+        {title}
+      </h2>
+      {subtitle && (
+        <p className="mb-4 mt-1 text-xs text-gray-400">{subtitle}</p>
+      )}
+      {!subtitle && <div className="mb-4" />}
+      {children}
     </div>
+  );
+}
+
+function DetailItem({ label, value }: { label: string; value: string }) {
+  return (
+    <div>
+      <p className="text-xs text-gray-400 dark:text-gray-500">{label}</p>
+      <p className="text-sm font-medium capitalize text-gray-700 dark:text-gray-300">
+        {value}
+      </p>
+    </div>
+  );
+}
+
+function PortfolioCard({ label, url, icon }: { label: string; url: string; icon: string }) {
+  const displayUrl = url.replace(/^https?:\/\//, "").replace(/\/$/, "");
+  return (
+    <a
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="flex items-center gap-2 rounded-[8px] border border-gray-200 bg-gray-50 p-3 transition-colors hover:bg-gray-100 dark:border-gray-800 dark:bg-gray-900 dark:hover:bg-gray-800"
+    >
+      <span className="text-xs font-medium text-gray-400">{icon}</span>
+      <div className="min-w-0 flex-1">
+        <p className="text-sm font-medium text-gray-700 dark:text-gray-300">{label}</p>
+        <p className="truncate text-xs text-gray-400">{displayUrl}</p>
+      </div>
+      <svg className="h-3 w-3 shrink-0 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+      </svg>
+    </a>
   );
 }

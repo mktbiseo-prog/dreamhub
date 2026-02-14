@@ -27,7 +27,7 @@ export default async function MyDreamsPage() {
     <main className="min-h-screen">
       <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
         {/* Impact Banner */}
-        <div className="mb-10 rounded-card bg-gradient-to-r from-brand-600 to-orange-500 p-8 text-white">
+        <div className="mb-10 rounded-card bg-gradient-to-r from-amber-600 to-orange-500 p-8 text-white">
           <h1 className="text-3xl font-bold">
             You&apos;ve supported {data?.dreamCount ?? 0} dream
             {data?.dreamCount !== 1 ? "s" : ""}
@@ -76,7 +76,7 @@ export default async function MyDreamsPage() {
                           className="h-6 w-6 rounded-full border border-gray-200 object-cover dark:border-gray-700"
                         />
                       ) : (
-                        <div className="flex h-6 w-6 items-center justify-center rounded-full bg-brand-600 text-[10px] font-bold text-white">
+                        <div className="flex h-6 w-6 items-center justify-center rounded-full bg-amber-600 text-[10px] font-bold text-white">
                           {dream.creatorName.charAt(0)}
                         </div>
                       )}
@@ -84,7 +84,7 @@ export default async function MyDreamsPage() {
                         {dream.creatorName}
                       </span>
                     </div>
-                    <h3 className="mb-2 font-semibold text-gray-900 group-hover:text-brand-600 dark:text-white">
+                    <h3 className="mb-2 font-semibold text-gray-900 group-hover:text-amber-600 dark:text-white">
                       {dream.title}
                     </h3>
                     <p className="text-xs text-gray-500">
@@ -223,7 +223,7 @@ export default async function MyDreamsPage() {
                       <td className="px-4 py-3">
                         <Link
                           href={`/stories/${order.storyId}`}
-                          className="text-brand-600 hover:underline"
+                          className="text-amber-600 hover:underline"
                         >
                           {order.storyTitle}
                         </Link>

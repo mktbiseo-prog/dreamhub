@@ -25,7 +25,7 @@ export default async function Home() {
   return (
     <div className="flex min-h-screen flex-col pb-20">
       <Header />
-      <main className="flex-1 px-5 py-5">
+      <main className="flex-1 pb-48">
         <HomeFeed initialThoughts={thoughts} todayInsight={todayInsight} />
       </main>
       <FabButton />

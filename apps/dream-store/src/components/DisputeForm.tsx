@@ -81,7 +81,7 @@ export function DisputeForm({ orderId, productTitle, onClose, onSuccess }: Dispu
             <select
               value={reason}
               onChange={(e) => setReason(e.target.value)}
-              className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-gray-700 dark:bg-gray-900 dark:text-white"
+              className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 dark:border-gray-700 dark:bg-gray-900 dark:text-white"
             >
               <option value="">Select a reason...</option>
               {DISPUTE_REASONS.map((r) => (
@@ -99,7 +99,7 @@ export function DisputeForm({ orderId, productTitle, onClose, onSuccess }: Dispu
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Describe the issue in detail..."
               rows={4}
-              className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-gray-700 dark:bg-gray-900 dark:text-white"
+              className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 dark:border-gray-700 dark:bg-gray-900 dark:text-white"
             />
             <p className="mt-1 text-xs text-gray-400">{description.length}/2000</p>
           </div>

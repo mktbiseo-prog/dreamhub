@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Button } from "@dreamhub/ui";
 import { cn } from "@dreamhub/ui";
 import { MatchScoreRing } from "@/components/discover/MatchScoreRing";
+import { VerificationBadge, getVerificationTier } from "@/components/place/VerificationBadge";
 import { useDreamStore } from "@/store/useDreamStore";
 import type { MatchResult } from "@/types";
 
@@ -43,7 +44,7 @@ export default function MatchesPage() {
             className={cn(
               "flex-1 rounded-[6px] py-2 text-sm font-medium transition-colors",
               activeTab === tab
-                ? "bg-brand-600 text-white"
+                ? "bg-blue-600 text-white"
                 : "text-gray-500 hover:text-gray-700 dark:text-gray-400"
             )}
           >
@@ -96,20 +97,22 @@ function MatchListItem({
   const { profile, matchScore, complementarySkills } = match;
   const isAccepted = match.status === "accepted";
   const isPending = match.status === "pending";
+  const verificationTier = getVerificationTier(profile.verificationLevel);
 
   return (
-    <div className="rounded-card border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-950">
+    <div className="rounded-[12px] border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-950">
       <Link href={isAccepted ? `/messages/${match.id}` : `/matches/${match.id}`}>
         <div className="flex items-center gap-4 p-4 transition-colors hover:bg-gray-50 dark:hover:bg-gray-900">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand-400 to-blue-500 text-lg font-bold text-white">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-400 to-blue-600 text-lg font-bold text-white">
             {profile.name.charAt(0)}
           </div>
 
           <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5">
               <h3 className="font-medium text-gray-900 dark:text-gray-100">
                 {profile.name}
               </h3>
+              {verificationTier && <VerificationBadge level={verificationTier} />}
               {isAccepted && (
                 <span className="rounded-full bg-green-50 px-2 py-0.5 text-xs font-medium text-green-600 dark:bg-green-900/20 dark:text-green-400">
                   Connected

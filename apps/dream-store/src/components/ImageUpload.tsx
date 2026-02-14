@@ -123,7 +123,7 @@ export function ImageUpload({
           onDrop={handleDrop}
           className={`flex cursor-pointer flex-col items-center justify-center rounded-card border-2 border-dashed p-6 transition-colors ${
             dragOver
-              ? "border-brand-500 bg-brand-50 dark:bg-brand-950/20"
+              ? "border-amber-500 bg-amber-50 dark:bg-amber-950/20"
               : "border-gray-300 hover:border-gray-400 dark:border-gray-700"
           }`}
           onClick={() => inputRef.current?.click()}
@@ -142,7 +142,7 @@ export function ImageUpload({
             />
           </svg>
           {uploading ? (
-            <p className="text-sm text-brand-600">Uploading...</p>
+            <p className="text-sm text-amber-600">Uploading...</p>
           ) : (
             <>
               <p className="text-sm font-medium text-gray-600 dark:text-gray-400">

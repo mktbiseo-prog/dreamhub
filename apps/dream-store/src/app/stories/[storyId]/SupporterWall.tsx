@@ -12,7 +12,7 @@ interface SupporterWallProps {
 const BADGE_STYLES: Record<string, string> = {
   "Founding Supporter": "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400",
   "10x Supporter": "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400",
-  "Early Dreamer": "bg-brand-100 text-brand-700 dark:bg-brand-900/30 dark:text-brand-400",
+  "Early Dreamer": "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400",
 };
 
 export function SupporterWall({ supporters }: SupporterWallProps) {
@@ -33,7 +33,7 @@ export function SupporterWall({ supporters }: SupporterWallProps) {
                 <img
                   src={supporter.avatar}
                   alt={supporter.name}
-                  className="h-14 w-14 rounded-full border-2 border-brand-200 object-cover dark:border-brand-800"
+                  className="h-14 w-14 rounded-full border-2 border-amber-200 object-cover dark:border-amber-800"
                 />
                 {badge === "Founding Supporter" && (
                   <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-yellow-400 text-[10px]">

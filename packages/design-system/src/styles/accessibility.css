@@ -1,0 +1,233 @@
+/* ---------------------------------------------------------------------------
+ * Dream Hub — Accessibility Utilities
+ *
+ * WCAG 2.1 AA compliant. Covers:
+ * - Focus-visible states
+ * - Reduced motion
+ * - Screen reader utilities
+ * - Touch target sizing
+ * - Skip navigation
+ * - High contrast mode
+ *
+ * Spec reference: PART 5, Section 5.4
+ * --------------------------------------------------------------------------- */
+
+/* ── Focus-Visible Ring ───────────────────────────────────────────────────── */
+/* All interactive elements get a visible focus ring on keyboard navigation */
+
+:focus-visible {
+  outline: 2px solid var(--dream-color-primary, #2563EB);
+  outline-offset: 2px;
+  border-radius: var(--dream-radius-sm);
+}
+
+/* Remove default outline for mouse users */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Custom focus ring utility */
+.dream-focus-ring:focus-visible {
+  outline: 2px solid var(--dream-color-primary, #2563EB);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px var(--dream-color-primary-light, rgba(37, 99, 235, 0.15));
+}
+
+/* ── Reduced Motion ───────────────────────────────────────────────────────── */
+/* Respect user preference: disable/simplify all animations */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Keep essential feedback animations but make them instant */
+  .dream-press:active {
+    transform: scale(0.97);
+    transition: none;
+  }
+
+  /* Disable parallax */
+  .parallax {
+    transform: none !important;
+  }
+
+  /* Disable breathing/pulsing animations */
+  .dream-breathe,
+  .animate-bounce,
+  .animate-pulse,
+  .animate-spin {
+    animation: none !important;
+  }
+
+  /* Keep shimmer but make it static gray */
+  .dream-shimmer {
+    animation: none !important;
+    background: var(--dream-neutral-200) !important;
+  }
+}
+
+/* ── Screen Reader Only ───────────────────────────────────────────────────── */
+/* Visually hidden but accessible to screen readers */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Show on focus (for skip-nav links) */
+.sr-only-focusable:focus,
+.sr-only-focusable:focus-within {
+  position: static;
+  width: auto;
+  height: auto;
+  padding: inherit;
+  margin: inherit;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+
+/* ── Skip Navigation ──────────────────────────────────────────────────────── */
+
+.skip-nav {
+  position: absolute;
+  top: -100%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10000;
+  padding: 12px 24px;
+  background: var(--dream-color-primary, #2563EB);
+  color: white;
+  font-weight: 600;
+  border-radius: 0 0 var(--dream-radius-md) var(--dream-radius-md);
+  text-decoration: none;
+  transition: top 150ms ease;
+}
+
+.skip-nav:focus {
+  top: 0;
+}
+
+/* ── Touch Targets ────────────────────────────────────────────────────────── */
+/* Minimum 44x44px for all interactive elements (WCAG 2.5.5) */
+
+.touch-target {
+  min-width: 44px;
+  min-height: 44px;
+}
+
+/* Ensure small buttons/links have adequate tap area */
+.touch-target-sm {
+  position: relative;
+}
+
+.touch-target-sm::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  min-width: 44px;
+  min-height: 44px;
+}
+
+/* ── Non-Color Information ────────────────────────────────────────────────── */
+/* Status indicators always use color + icon + label */
+
+.status-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.status-indicator::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: var(--dream-radius-full);
+  flex-shrink: 0;
+}
+
+.status-indicator[data-status="success"]::before {
+  background: var(--dream-success);
+}
+
+.status-indicator[data-status="warning"]::before {
+  background: var(--dream-warning);
+}
+
+.status-indicator[data-status="error"]::before {
+  background: var(--dream-error);
+}
+
+.status-indicator[data-status="info"]::before {
+  background: var(--dream-info);
+}
+
+/* ── High Contrast Mode ───────────────────────────────────────────────────── */
+
+@media (prefers-contrast: more) {
+  :root {
+    --dream-neutral-200: #999;
+    --dream-neutral-400: #666;
+    --dream-shadow-sm: 0 0 0 1px var(--dream-neutral-300);
+    --dream-shadow-md: 0 0 0 1px var(--dream-neutral-300);
+  }
+
+  /* Ensure borders are visible */
+  .card,
+  [class*="rounded-"] {
+    border-width: 2px;
+  }
+
+  /* Stronger focus indicators */
+  :focus-visible {
+    outline-width: 3px;
+    outline-offset: 3px;
+  }
+}
+
+/* ── ARIA Live Regions ────────────────────────────────────────────────────── */
+
+[aria-live="polite"],
+[aria-live="assertive"] {
+  /* Ensure live regions are not visually disruptive */
+}
+
+/* Announce-only region (no visual) */
+.aria-announce {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+}
+
+/* ── Responsive Breakpoints ───────────────────────────────────────────────── */
+/* Spec reference: Section 5.3 */
+
+:root {
+  --dream-bp-sm: 640px;
+  --dream-bp-md: 768px;
+  --dream-bp-lg: 1024px;
+  --dream-bp-xl: 1280px;
+  --dream-bp-2xl: 1536px;
+  --dream-content-max: 1200px;
+  --dream-sidebar-width: 240px;
+  --dream-sidebar-collapsed: 64px;
+  --dream-bottom-nav-height: 56px;
+}

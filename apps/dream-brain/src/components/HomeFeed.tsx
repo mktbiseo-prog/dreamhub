@@ -1,24 +1,9 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import Link from "next/link";
-import { Sparkles, TrendingUp, Search } from "lucide-react";
-import { SearchBar } from "./SearchBar";
-import { CategoryFilter } from "./CategoryFilter";
-import { EmotionFilter } from "./EmotionFilter";
-import { DateRangeFilter, getDateRangeStart, type DateRange } from "./DateRangeFilter";
-import { ViewFilter, type ViewFilterType } from "./ViewFilter";
-import { ThoughtCard } from "./ThoughtCard";
+import { useMemo } from "react";
+import { Brain } from "lucide-react";
+import { NoteCard } from "./brain/NoteCard";
 import type { ThoughtData } from "@/lib/data";
-import type { CategoryId } from "@/lib/categories";
-import type { EmotionType } from "@dreamhub/ai";
-
-const dailyPrompts = [
-  "What's on your mind right now?",
-  "What's one thing you learned today?",
-  "What are you most excited about?",
-  "What challenge are you facing?",
-];
 
 interface HomeFeedProps {
   initialThoughts: ThoughtData[];
@@ -26,105 +11,49 @@ interface HomeFeedProps {
 }
 
 export function HomeFeed({ initialThoughts, todayInsight }: HomeFeedProps) {
-  const [search, setSearch] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<CategoryId | null>(null);
-  const [selectedEmotion, setSelectedEmotion] = useState<EmotionType | null>(null);
-  const [dateRange, setDateRange] = useState<DateRange>(null);
-  const [viewFilter, setViewFilter] = useState<ViewFilterType>("all");
-
-  const prompt = dailyPrompts[Math.floor(Date.now() / 86400000) % dailyPrompts.length];
-
-  const filteredThoughts = useMemo(() => {
-    const dateStart = getDateRangeStart(dateRange);
-    return initialThoughts.filter((thought) => {
-      // View filter
-      if (viewFilter === "favorites" && !thought.isFavorite) return false;
-      if (viewFilter === "pinned" && !thought.isPinned) return false;
-      if (viewFilter === "archived" && !thought.isArchived) return false;
-      if (viewFilter === "all" && thought.isArchived) return false;
-
-      if (selectedCategory && thought.category !== selectedCategory) return false;
-      if (selectedEmotion && thought.emotion !== selectedEmotion) return false;
-      if (dateStart && new Date(thought.createdAt) < dateStart) return false;
-      if (search) {
-        const q = search.toLowerCase();
-        return (
-          thought.title.toLowerCase().includes(q) ||
-          thought.summary.toLowerCase().includes(q) ||
-          thought.tags.some((t) => t.toLowerCase().includes(q))
-        );
-      }
-      return true;
-    });
-  }, [search, selectedCategory, selectedEmotion, dateRange, viewFilter, initialThoughts]);
+  const thoughts = useMemo(
+    () =>
+      initialThoughts
+        .filter((t) => !t.isArchived)
+        .sort(
+          (a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+        ),
+    [initialThoughts],
+  );
 
   return (
-    <div className="flex flex-col gap-5">
-      {/* Daily Prompt */}
-      <div className="rounded-card border border-brand-500/20 bg-gradient-to-r from-brand-500/10 to-blue-500/10 p-4">
-        <div className="flex items-center gap-2 mb-1">
-          <Sparkles className="h-4 w-4 text-brand-400" />
-          <span className="text-xs font-medium text-brand-300">Daily Prompt</span>
-        </div>
-        <p className="text-sm text-gray-300">{prompt}</p>
-      </div>
-
-      {/* Today's Insight */}
+    <div className="flex flex-col">
+      {/* Today's insight (optional) */}
       {todayInsight && (
-        <Link href="/insights">
-          <div className="rounded-card border border-emerald-500/30 bg-gradient-to-r from-emerald-500/10 to-teal-500/10 p-4 transition-colors hover:bg-emerald-500/15">
-            <div className="flex items-center gap-2 mb-1">
-              <TrendingUp className="h-4 w-4 text-emerald-400" />
-              <span className="text-xs font-medium text-emerald-300">Today&apos;s Insight</span>
-            </div>
-            <p className="text-sm text-gray-300 leading-relaxed">{todayInsight}</p>
-          </div>
-        </Link>
+        <div className="mx-4 mt-3 mb-2 rounded-[var(--dream-radius-lg)] bg-violet-500/10 border border-violet-500/20 p-4">
+          <p className="text-xs font-medium text-violet-300 mb-1">
+            Today&apos;s insight
+          </p>
+          <p className="text-sm text-gray-300 leading-relaxed">
+            {todayInsight}
+          </p>
+        </div>
       )}
 
-      {/* Search */}
-      <SearchBar value={search} onChange={setSearch} />
-      <Link
-        href="/search"
-        className="inline-flex items-center gap-1.5 self-end text-xs text-gray-500 hover:text-brand-400 transition-colors"
-      >
-        <Search className="h-3 w-3" />
-        Advanced Search
-      </Link>
-
-      {/* View Filter */}
-      <ViewFilter selected={viewFilter} onChange={setViewFilter} />
-
-      {/* Category Filter */}
-      <CategoryFilter selected={selectedCategory} onChange={setSelectedCategory} />
-
-      {/* Emotion Filter */}
-      <EmotionFilter selected={selectedEmotion} onChange={setSelectedEmotion} />
-
-      {/* Date Range Filter */}
-      <DateRangeFilter selected={dateRange} onChange={setDateRange} />
-
-      {/* Recent Thoughts */}
-      <section>
-        <div className="mb-3 flex items-center justify-between">
-          <h2 className="text-sm font-semibold uppercase tracking-wider text-gray-500">
-            Recent Thoughts
-          </h2>
-          <span className="text-xs text-gray-600">{filteredThoughts.length} thoughts</span>
+      {/* Notes feed */}
+      {thoughts.length > 0 ? (
+        thoughts.map((thought) => (
+          <NoteCard key={thought.id} thought={thought} />
+        ))
+      ) : (
+        <div className="flex flex-col items-center justify-center py-24 px-8 text-center">
+          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-violet-500/10">
+            <Brain className="h-8 w-8 text-[var(--dream-color-primary)]" />
+          </div>
+          <p className="text-base font-medium text-gray-300">
+            Your brain starts here
+          </p>
+          <p className="mt-1 text-sm text-gray-500">
+            Record your first thought
+          </p>
         </div>
-        <div className="flex flex-col gap-3">
-          {filteredThoughts.length > 0 ? (
-            filteredThoughts.map((thought) => (
-              <ThoughtCard key={thought.id} thought={thought} />
-            ))
-          ) : (
-            <div className="flex flex-col items-center justify-center py-12 text-center">
-              <p className="text-sm text-gray-500">No thoughts found</p>
-              <p className="mt-1 text-xs text-gray-600">Try adjusting your search or filters</p>
-            </div>
-          )}
-        </div>
-      </section>
+      )}
     </div>
   );
 }
