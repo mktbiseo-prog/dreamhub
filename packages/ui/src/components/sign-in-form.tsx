@@ -128,13 +128,7 @@ function SignInForm({
       </form>
 
       <p className="text-center text-sm text-gray-500 dark:text-gray-400">
-        Don&apos;t have an account?{" "}
-        <a
-          href="/auth/sign-up"
-          className="font-medium text-brand-600 hover:text-brand-500"
-        >
-          Create one
-        </a>
+        New here? Just enter your email and password above to create an account.
       </p>
     </div>
   );
