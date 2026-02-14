@@ -10,7 +10,8 @@
     "./gate": "./src/gate.ts",
     "./mmoe": "./src/mmoe.ts",
     "./cross-domain": "./src/cross-domain.ts",
-    "./recommend": "./src/recommend.ts"
+    "./recommend": "./src/recommend.ts",
+    "./collaborative-filtering": "./src/collaborative-filtering.ts"
   },
   "dependencies": {
     "@dreamhub/shared-types": "workspace:*"

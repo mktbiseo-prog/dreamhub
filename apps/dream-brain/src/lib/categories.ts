@@ -28,6 +28,7 @@ export interface Category {
   icon: LucideIcon;
   color: string;
   bgColor: string;
+  subcategories: string[];
 }
 
 /** Map Prisma ThoughtCategory enum (UPPERCASE) to CategoryId (lowercase) */
@@ -46,6 +47,7 @@ export const categories: Record<CategoryId, Category> = {
     icon: Briefcase,
     color: "text-blue-400",
     bgColor: "bg-blue-400/15",
+    subcategories: ["Career Planning", "Side Projects", "Workplace", "Freelancing", "Job Search"],
   },
   ideas: {
     id: "ideas",
@@ -53,6 +55,7 @@ export const categories: Record<CategoryId, Category> = {
     icon: Lightbulb,
     color: "text-yellow-400",
     bgColor: "bg-yellow-400/15",
+    subcategories: ["Product Ideas", "Creative", "Research", "Innovation", "Social Impact"],
   },
   emotions: {
     id: "emotions",
@@ -60,6 +63,7 @@ export const categories: Record<CategoryId, Category> = {
     icon: Heart,
     color: "text-pink-400",
     bgColor: "bg-pink-400/15",
+    subcategories: ["Joy & Gratitude", "Anxiety & Stress", "Motivation", "Relationships", "Self-Reflection"],
   },
   daily: {
     id: "daily",
@@ -67,6 +71,7 @@ export const categories: Record<CategoryId, Category> = {
     icon: Sun,
     color: "text-orange-400",
     bgColor: "bg-orange-400/15",
+    subcategories: ["Routines", "Habits", "Productivity", "Time Management", "Life Events"],
   },
   learning: {
     id: "learning",
@@ -74,6 +79,7 @@ export const categories: Record<CategoryId, Category> = {
     icon: BookOpen,
     color: "text-emerald-400",
     bgColor: "bg-emerald-400/15",
+    subcategories: ["Tech & Code", "Languages", "Books & Articles", "Courses", "Skills"],
   },
   relationships: {
     id: "relationships",
@@ -81,6 +87,7 @@ export const categories: Record<CategoryId, Category> = {
     icon: Users,
     color: "text-violet-400",
     bgColor: "bg-violet-400/15",
+    subcategories: ["Family", "Friends", "Professional Network", "Community", "Mentorship"],
   },
   health: {
     id: "health",
@@ -88,6 +95,7 @@ export const categories: Record<CategoryId, Category> = {
     icon: Activity,
     color: "text-green-400",
     bgColor: "bg-green-400/15",
+    subcategories: ["Physical", "Mental", "Nutrition", "Sleep", "Exercise"],
   },
   finance: {
     id: "finance",
@@ -95,6 +103,7 @@ export const categories: Record<CategoryId, Category> = {
     icon: DollarSign,
     color: "text-amber-400",
     bgColor: "bg-amber-400/15",
+    subcategories: ["Budgeting", "Investing", "Savings", "Income", "Expenses"],
   },
   dreams: {
     id: "dreams",
@@ -102,5 +111,6 @@ export const categories: Record<CategoryId, Category> = {
     icon: Star,
     color: "text-purple-400",
     bgColor: "bg-purple-400/15",
+    subcategories: ["Vision", "Goals", "Aspirations", "Bucket List", "Milestones"],
   },
 };

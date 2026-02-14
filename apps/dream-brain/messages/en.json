@@ -1,0 +1,41 @@
+{
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "search": "Search",
+    "back": "Back",
+    "next": "Next",
+    "done": "Done",
+    "settings": "Settings"
+  },
+  "brain": {
+    "title": "Dream Brain",
+    "capture": "Capture Thought",
+    "thoughts": "My Thoughts",
+    "insights": "Insights",
+    "patterns": "Patterns",
+    "export": "Export Data",
+    "categories": "Categories",
+    "search_placeholder": "Search your thoughts...",
+    "empty_state": "Your brain is empty. Start capturing thoughts!",
+    "emotion_timeline": "Emotion Timeline",
+    "topic_clusters": "Topic Clusters",
+    "pattern_insights": "Pattern Insights"
+  },
+  "settings": {
+    "title": "Settings",
+    "notifications": "Notifications",
+    "privacy": "Privacy & Data",
+    "appearance": "Appearance",
+    "export": "Data Export",
+    "daily_prompts": "Daily Prompts",
+    "weekly_insights": "Weekly Insights",
+    "ai_processing": "AI Processing",
+    "delete_data": "Delete All Data",
+    "download_data": "Download My Data"
+  }
+}

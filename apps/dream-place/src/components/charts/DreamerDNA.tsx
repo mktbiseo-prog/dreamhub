@@ -16,6 +16,10 @@ interface DreamerDNAProps {
   compareWith?: WorkStyle;
   compareName?: string;
   size?: number;
+  /** Trust score (0-1) for the 6th dimension. Defaults to 0.5 if not provided. */
+  trustScore?: number;
+  /** Trust score (0-1) for the comparison partner. Defaults to 0.5 if not provided. */
+  compareTrustScore?: number;
 }
 
 export function DreamerDNA({
@@ -23,7 +27,13 @@ export function DreamerDNA({
   compareWith,
   compareName = "Partner",
   size = 300,
+  trustScore = 0.5,
+  compareTrustScore = 0.5,
 }: DreamerDNAProps) {
+  // Convert trust from 0-1 to 0-100 scale to match WorkStyle dimensions
+  const trustPercent = Math.round(trustScore * 100);
+  const compareTrustPercent = Math.round(compareTrustScore * 100);
+
   const data = [
     {
       dimension: "Ideation",
@@ -49,6 +59,11 @@ export function DreamerDNA({
       dimension: "Action",
       you: workStyle.action,
       ...(compareWith && { partner: compareWith.action }),
+    },
+    {
+      dimension: "Trust",
+      you: trustPercent,
+      ...(compareWith && { partner: compareTrustPercent }),
     },
   ];
 

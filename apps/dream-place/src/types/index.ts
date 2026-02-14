@@ -159,3 +159,41 @@ export interface ProjectTask {
   goodFirstContribution?: boolean;
   skillsRequired?: string[];
 }
+
+// ─── Trial Projects ───────────────────────────────────────────
+
+export type TrialProjectStatus = "active" | "completed" | "extended";
+
+export interface TrialGoal {
+  id: string;
+  text: string;
+  completed: boolean;
+}
+
+export interface TrialProject {
+  id: string;
+  title: string;
+  description: string;
+  goals: TrialGoal[];
+  durationWeeks: number;
+  startDate: string;
+  status: TrialProjectStatus;
+  participants: TrialParticipant[];
+  deliverables: string[];
+}
+
+export interface TrialParticipant {
+  id: string;
+  name: string;
+  avatarUrl: string;
+}
+
+// ─── Globe Dreamers ───────────────────────────────────────────
+
+export interface GlobeDreamer {
+  lat: number;
+  lng: number;
+  name: string;
+  dreamCategory: string;
+  count: number;
+}

@@ -15,6 +15,7 @@ import {
 import { updateDreamStorySchema } from "@/lib/validations";
 import { updateDreamStory, deleteDreamStory } from "@/lib/actions/stories";
 import type { DreamStory } from "@/lib/types";
+import { RichTextEditor } from "@/components/editor/RichTextEditor";
 
 interface MilestoneField {
   title: string;
@@ -260,18 +261,12 @@ export function EditDreamStoryForm({ storyId, story }: EditDreamStoryFormProps) 
               </div>
               <div className="space-y-2">
                 <Label htmlFor="origin">Your Origin Story</Label>
-                <Textarea
-                  id="origin"
-                  placeholder="It all started when..."
-                  rows={8}
+                <RichTextEditor
                   value={originStory}
-                  onChange={(e) => setOriginStory(e.target.value)}
+                  onChange={setOriginStory}
+                  placeholder="It all started when..."
                   maxLength={3000}
-                  className="resize-y text-base leading-relaxed"
                 />
-                <div className="flex justify-end text-xs text-gray-400">
-                  <span>{originStory.length}/3,000</span>
-                </div>
               </div>
             </CardContent>
           </Card>

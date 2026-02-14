@@ -1,0 +1,25 @@
+{
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "back": "Back",
+    "next": "Next"
+  },
+  "place": {
+    "title": "Dream Place",
+    "discover": "Discover",
+    "matches": "Matches",
+    "teams": "Teams",
+    "explore": "Explore",
+    "profile": "Profile",
+    "match_score": "Match Score",
+    "connect": "Invite to Connect",
+    "pass": "Pass",
+    "send_message": "Send Message",
+    "form_team": "Form a Team",
+    "trial_project": "Trial Project",
+    "dream_globe": "Dream Globe",
+    "video_intro": "Video Introduction"
+  }
+}

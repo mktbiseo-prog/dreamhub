@@ -1,0 +1,27 @@
+{
+  "common": {
+    "save": "\uc800\uc7a5",
+    "cancel": "\ucde8\uc18c",
+    "next": "\ub2e4\uc74c",
+    "back": "\ub4a4\ub85c",
+    "done": "\uc644\ub8cc"
+  },
+  "planner": {
+    "title": "\ub4dc\ub9bc \ud50c\ub798\ub108",
+    "welcome": "\ub4dc\ub9bc \ud50c\ub798\ub108\uc5d0 \uc624\uc2e0 \uac83\uc744 \ud658\uc601\ud569\ub2c8\ub2e4",
+    "part1": "\uafc8 \ubc1c\uacac\ud558\uae30",
+    "part2": "\uafc8 \ud14c\uc2a4\ud2b8\ud558\uae30",
+    "part3": "\uafc8 \ub9cc\ub4e4\uae30",
+    "part4": "\uafc8 \ub7f0\uce6d\ud558\uae30",
+    "vision_board": "\ube44\uc804 \ubcf4\ub4dc",
+    "passion_level": "\uc5f4\uc815 \uc628\ub3c4\uacc4",
+    "traffic_light": "\uc2e0\ud638\ub4f1 \ubd84\uc11d",
+    "revenue_calc": "\uc218\uc775 \uacc4\uc0b0\uae30",
+    "growth_dashboard": "\uc131\uc7a5 \ub300\uc2dc\ubcf4\ub4dc",
+    "support_map": "\uc9c0\uc6d0 \uc2dc\uc2a4\ud15c \ub9f5",
+    "sprint_plan": "90\uc77c \uc2a4\ud504\ub9b0\ud2b8 \uacc4\ud68d",
+    "export": "\uacc4\ud68d \ub0b4\ubcf4\ub0b4\uae30",
+    "streak": "\uc5f0\uc18d \uc77c\uc218",
+    "progress": "\uc9c4\ud589\ub960"
+  }
+}

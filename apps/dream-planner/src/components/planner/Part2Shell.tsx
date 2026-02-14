@@ -11,6 +11,7 @@ import { StrengthsRedefine } from "@/components/activities/part2/StrengthsRedefi
 import { MarketScan } from "@/components/activities/part2/MarketScan";
 import { WhyWhatBridge } from "@/components/activities/part2/WhyWhatBridge";
 import { Part2Reflection } from "@/components/activities/part2/Part2Reflection";
+import { TrafficLightAnalysisActivity } from "@/components/planner/TrafficLightAnalysis";
 
 const PART_COLOR = "var(--dream-part-2)";
 
@@ -70,7 +71,7 @@ export function Part2Shell() {
             currentActivity={p2.currentActivity}
             onSelect={handleSelect}
             completedActivities={completedSet}
-            totalCount={5}
+            totalCount={6}
             partNumber={2}
             partColor={PART_COLOR}
           />
@@ -122,6 +123,7 @@ export function Part2Shell() {
           {p2.currentActivity === 8 && <StrengthsRedefine onNext={handleNext} />}
           {p2.currentActivity === 9 && <MarketScan onNext={handleNext} />}
           {p2.currentActivity === 10 && <WhyWhatBridge onNext={handleNext} />}
+          {p2.currentActivity === 21 && <TrafficLightAnalysisActivity onNext={handleNext} />}
           {p2.currentActivity === 0 && <Part2Reflection />}
 
           {/* AI Insight Panel */}

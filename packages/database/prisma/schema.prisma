@@ -65,6 +65,7 @@ model User {
   notifications    Notification[]
   notificationPreferences NotificationPreference[]
   fileUploads      FileUpload[]
+  dreamExports     DreamExport[]
 
   @@map("users")
 }
@@ -983,6 +984,73 @@ model NotificationPreference {
 
   @@unique([userId, type])
   @@map("notification_preferences")
+}
+
+// ─── Trial Projects (Dream Place §4B) ──────────────────────────
+
+enum TrialProjectStatus {
+  ACTIVE
+  COMPLETED_SUCCESS
+  COMPLETED_EXTENDED
+  COMPLETED_DISBANDED
+  CANCELLED
+}
+
+model TrialProject {
+  id                 String             @id @default(cuid())
+  teamId             String
+  title              String
+  description        String             @db.Text
+  goals              String[]           @default([])
+  deliverables       String[]           @default([])
+  durationWeeks      Int                @default(2)
+  status             TrialProjectStatus @default(ACTIVE)
+  startDate          DateTime           @default(now())
+  endDate            DateTime
+  participants       String[]           @default([])
+  satisfactionScores Json               @default("{}")
+  retrospectiveNotes String?            @db.Text
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+
+  @@index([teamId])
+  @@index([status])
+  @@map("trial_projects")
+}
+
+// ─── Dream Export Tracking (Brain GDPR §1G) ─────────────────────
+
+model DreamExport {
+  id          String   @id @default(cuid())
+  userId      String
+  format      String   // "json" | "csv" | "pdf"
+  thoughtCount Int
+  fileUrl     String?
+  expiresAt   DateTime
+  createdAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("dream_exports")
+}
+
+// ─── Topic Clusters (Brain BERTopic §1C) ────────────────────────
+
+model TopicCluster {
+  id          String   @id @default(cuid())
+  userId      String
+  label       String
+  keywords    String[] @default([])
+  thoughtIds  String[] @default([])
+  centroid    Float[]  @default([])
+  size        Int      @default(0)
+  coherence   Float    @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId])
+  @@map("topic_clusters")
 }
 
 // ─── File Uploads ───────────────────────────────────────────

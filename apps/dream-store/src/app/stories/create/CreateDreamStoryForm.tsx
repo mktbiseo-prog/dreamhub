@@ -16,6 +16,7 @@ import { createDreamStorySchema } from "@/lib/validations";
 import { createDreamStory } from "@/lib/actions/stories";
 import dynamic from "next/dynamic";
 import { SingleImageUpload, ImageUpload } from "@/components/ImageUpload";
+import { RichTextEditor } from "@/components/editor/RichTextEditor";
 
 // Lazy-load AiStoryAssistant — AI feature only used in specific form steps
 const AiStoryAssistant = dynamic(
@@ -220,22 +221,18 @@ export function CreateDreamStoryForm() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="origin">Your Origin Story</Label>
-              <Textarea
-                id="origin"
-                placeholder="It all started when..."
-                rows={8}
+              <RichTextEditor
                 value={originStory}
-                onChange={(e) => setOriginStory(e.target.value)}
+                onChange={setOriginStory}
+                placeholder="It all started when..."
                 maxLength={3000}
-                className="resize-y text-base leading-relaxed"
               />
-              <div className="flex justify-between text-xs text-gray-400">
+              <div className="flex justify-start text-xs text-gray-400">
                 <AiStoryAssistant
                   context={{ title, statement, creatorStage }}
                   field="originStory"
                   onSuggestion={(text) => setOriginStory(text)}
                 />
-                <span>{originStory.length}/3,000</span>
               </div>
             </div>
             <ImageUpload

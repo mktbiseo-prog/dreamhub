@@ -12,6 +12,8 @@ import { TrafficLightAnalysis } from "@/components/activities/part4/TrafficLight
 import { SustainabilityChecklist } from "@/components/activities/part4/SustainabilityChecklist";
 import { Part4Reflection } from "@/components/activities/part4/Part4Reflection";
 import { CrossPartReference } from "./CrossPartReference";
+import { SupportSystemMap } from "@/components/planner/SupportSystemMap";
+import { SprintPlan } from "@/components/planner/SprintPlan";
 
 const PART_COLOR = "var(--dream-part-4)";
 
@@ -71,7 +73,7 @@ export function Part4Shell() {
             currentActivity={p4.currentActivity}
             onSelect={handleSelect}
             completedActivities={completedSet}
-            totalCount={6}
+            totalCount={8}
             partNumber={4}
             partColor={PART_COLOR}
           />
@@ -121,6 +123,8 @@ export function Part4Shell() {
           {p4.currentActivity === 18 && <SustainableSystem onNext={handleNext} />}
           {p4.currentActivity === 19 && <TrafficLightAnalysis onNext={handleNext} />}
           {p4.currentActivity === 20 && <SustainabilityChecklist onNext={handleNext} />}
+          {p4.currentActivity === 24 && <SupportSystemMap onNext={handleNext} />}
+          {p4.currentActivity === 25 && <SprintPlan onNext={handleNext} />}
           {p4.currentActivity === 0 && <Part4Reflection />}
 
           {/* AI Insight Panel */}

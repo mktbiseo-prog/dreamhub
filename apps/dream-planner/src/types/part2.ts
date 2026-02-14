@@ -33,6 +33,12 @@ export const PART2_ACTIVITIES: ActivityMeta[] = [
     shortTitle: "Why-What",
     description: "Bridge your Why to actionable ideas.",
   },
+  {
+    id: 21,
+    title: "Traffic Light Analysis",
+    shortTitle: "Traffic Light",
+    description: "Categorize factors into Stop, Caution, and Go to assess your dream.",
+  },
 ];
 
 // ── Activity 6: Experience Mind Map ──

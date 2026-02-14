@@ -132,6 +132,72 @@ export interface MessageTranslatedEvent extends BaseEvent {
   };
 }
 
+// ── dream.place.trial_project_created ─────────────────────────────────────
+
+/** Emitted when a trial project is created between matched users. */
+export interface TrialProjectCreatedEvent extends BaseEvent {
+  type: "dream.place.trial_project_created";
+  payload: {
+    projectId: string;
+    teamId: string;
+    participants: string[];
+    durationWeeks: number;
+  };
+}
+
+// ── dream.place.trial_project_completed ──────────────────────────────────
+
+/** Emitted when a trial project reaches its completion date. */
+export interface TrialProjectCompletedEvent extends BaseEvent {
+  type: "dream.place.trial_project_completed";
+  payload: {
+    projectId: string;
+    teamId: string;
+    participants: string[];
+    outcome: "success" | "extended" | "disbanded";
+    satisfactionScores: Record<string, number>;
+  };
+}
+
+// ── dream.brain.dream_exported ───────────────────────────────────────────
+
+/** Emitted when a user exports their dream/thought data. */
+export interface DreamExportedEvent extends BaseEvent {
+  type: "dream.brain.dream_exported";
+  payload: {
+    userId: string;
+    format: "json" | "csv" | "pdf";
+    thoughtCount: number;
+  };
+}
+
+// ── dream.brain.pattern_discovered ───────────────────────────────────────
+
+/** Emitted when the pattern engine discovers a recurring theme. */
+export interface PatternDiscoveredEvent extends BaseEvent {
+  type: "dream.brain.pattern_discovered";
+  payload: {
+    userId: string;
+    patternType: "recurring_theme" | "temporal" | "emotional" | "skill_signal";
+    description: string;
+    confidence: number;
+    relatedThoughtIds: string[];
+  };
+}
+
+// ── dream.place.team_milestone_reached ───────────────────────────────────
+
+/** Emitted when a dream team reaches a significant milestone. */
+export interface TeamMilestoneReachedEvent extends BaseEvent {
+  type: "dream.place.team_milestone_reached";
+  payload: {
+    teamId: string;
+    projectId: string;
+    milestone: string;
+    membersContributed: string[];
+  };
+}
+
 // ── Union & topic mapping ──────────────────────────────────────────────────
 
 export type DreamEvent =
@@ -143,7 +209,12 @@ export type DreamEvent =
   | UserRegisteredEvent
   | UserUpdatedEvent
   | UserDeletedEvent
-  | MessageTranslatedEvent;
+  | MessageTranslatedEvent
+  | TrialProjectCreatedEvent
+  | TrialProjectCompletedEvent
+  | DreamExportedEvent
+  | PatternDiscoveredEvent
+  | TeamMilestoneReachedEvent;
 
 export type DreamEventType = DreamEvent["type"];
 
@@ -158,4 +229,9 @@ export const DREAM_EVENT_TOPICS: Record<DreamEventType, string> = {
   "dream.auth.user_updated": "dream.auth.user_updated",
   "dream.auth.user_deleted": "dream.auth.user_deleted",
   "dream.place.message_translated": "dream.place.message_translated",
+  "dream.place.trial_project_created": "dream.place.trial_project_created",
+  "dream.place.trial_project_completed": "dream.place.trial_project_completed",
+  "dream.brain.dream_exported": "dream.brain.dream_exported",
+  "dream.brain.pattern_discovered": "dream.brain.pattern_discovered",
+  "dream.place.team_milestone_reached": "dream.place.team_milestone_reached",
 } as const;

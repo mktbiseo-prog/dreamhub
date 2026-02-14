@@ -38,6 +38,18 @@ export const PART4_ACTIVITIES: ActivityMeta[] = [
     shortTitle: "Checklist",
     description: "Check your financial, mental, and social health.",
   },
+  {
+    id: 24,
+    title: "Support System Map",
+    shortTitle: "Support Map",
+    description: "Map your support network of people, organizations, and tools.",
+  },
+  {
+    id: 25,
+    title: "90-Day Sprint Plan",
+    shortTitle: "Sprint Plan",
+    description: "Plan your next 12 weeks with tasks and priorities.",
+  },
 ];
 
 // ── Activity 15: First 10 Fans ──

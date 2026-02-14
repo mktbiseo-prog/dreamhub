@@ -10,6 +10,8 @@ import { ZeroCostMvp } from "@/components/activities/part3/ZeroCostMvp";
 import { ValueLadder } from "@/components/activities/part3/ValueLadder";
 import { Part3Reflection } from "@/components/activities/part3/Part3Reflection";
 import { CrossPartReference } from "./CrossPartReference";
+import { RevenueCalculator } from "@/components/planner/RevenueCalculator";
+import { GrowthDashboard } from "@/components/planner/GrowthDashboard";
 
 const PART_COLOR = "var(--dream-part-3)";
 
@@ -69,7 +71,7 @@ export function Part3Shell() {
             currentActivity={p3.currentActivity}
             onSelect={handleSelect}
             completedActivities={completedSet}
-            totalCount={4}
+            totalCount={6}
             partNumber={3}
             partColor={PART_COLOR}
           />
@@ -117,6 +119,8 @@ export function Part3Shell() {
           {p3.currentActivity === 12 && <HypothesisBoard onNext={handleNext} />}
           {p3.currentActivity === 13 && <ZeroCostMvp onNext={handleNext} />}
           {p3.currentActivity === 14 && <ValueLadder onNext={handleNext} />}
+          {p3.currentActivity === 22 && <RevenueCalculator onNext={handleNext} />}
+          {p3.currentActivity === 23 && <GrowthDashboard onNext={handleNext} />}
           {p3.currentActivity === 0 && <Part3Reflection />}
 
           {/* AI Insight Panel */}

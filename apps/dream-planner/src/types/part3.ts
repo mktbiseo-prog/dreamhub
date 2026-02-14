@@ -26,6 +26,18 @@ export const PART3_ACTIVITIES: ActivityMeta[] = [
     shortTitle: "Value Ladder",
     description: "Design your product tiers from free to premium.",
   },
+  {
+    id: 22,
+    title: "First Revenue Calculator",
+    shortTitle: "Revenue Calc",
+    description: "Estimate your first revenue with different scenarios.",
+  },
+  {
+    id: 23,
+    title: "Growth Dashboard",
+    shortTitle: "Growth",
+    description: "Track your progress, milestones, and growth metrics.",
+  },
 ];
 
 // ── Activity 11: One-Line Proposal ──

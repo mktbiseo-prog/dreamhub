@@ -1,0 +1,41 @@
+{
+  "common": {
+    "save": "\uc800\uc7a5",
+    "cancel": "\ucde8\uc18c",
+    "delete": "\uc0ad\uc81c",
+    "edit": "\ud3b8\uc9d1",
+    "loading": "\ub85c\ub529 \uc911...",
+    "error": "\ubb38\uc81c\uac00 \ubc1c\uc0dd\ud588\uc2b5\ub2c8\ub2e4",
+    "search": "\uac80\uc0c9",
+    "back": "\ub4a4\ub85c",
+    "next": "\ub2e4\uc74c",
+    "done": "\uc644\ub8cc",
+    "settings": "\uc124\uc815"
+  },
+  "brain": {
+    "title": "\ub4dc\ub9bc \ube0c\ub808\uc778",
+    "capture": "\uc0dd\uac01 \uae30\ub85d",
+    "thoughts": "\ub0b4 \uc0dd\uac01\ub4e4",
+    "insights": "\uc778\uc0ac\uc774\ud2b8",
+    "patterns": "\ud328\ud134",
+    "export": "\ub370\uc774\ud130 \ub0b4\ubcf4\ub0b4\uae30",
+    "categories": "\uce74\ud14c\uace0\ub9ac",
+    "search_placeholder": "\uc0dd\uac01\uc744 \uac80\uc0c9\ud558\uc138\uc694...",
+    "empty_state": "\ube0c\ub808\uc778\uc774 \ube44\uc5b4 \uc788\uc2b5\ub2c8\ub2e4. \uc0dd\uac01\uc744 \uae30\ub85d\ud574 \ubcf4\uc138\uc694!",
+    "emotion_timeline": "\uac10\uc815 \ud0c0\uc784\ub77c\uc778",
+    "topic_clusters": "\uc8fc\uc81c \ud074\ub7ec\uc2a4\ud130",
+    "pattern_insights": "\ud328\ud134 \uc778\uc0ac\uc774\ud2b8"
+  },
+  "settings": {
+    "title": "\uc124\uc815",
+    "notifications": "\uc54c\ub9bc",
+    "privacy": "\uac1c\uc778\uc815\ubcf4 \ubc0f \ub370\uc774\ud130",
+    "appearance": "\ud14c\ub9c8",
+    "export": "\ub370\uc774\ud130 \ub0b4\ubcf4\ub0b4\uae30",
+    "daily_prompts": "\uc77c\uc77c \ud504\ub86c\ud504\ud2b8",
+    "weekly_insights": "\uc8fc\uac04 \uc778\uc0ac\uc774\ud2b8",
+    "ai_processing": "AI \ucc98\ub9ac",
+    "delete_data": "\ubaa8\ub4e0 \ub370\uc774\ud130 \uc0ad\uc81c",
+    "download_data": "\ub0b4 \ub370\uc774\ud130 \ub2e4\uc6b4\ub85c\ub4dc"
+  }
+}

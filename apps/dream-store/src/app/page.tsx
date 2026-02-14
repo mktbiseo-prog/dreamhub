@@ -6,6 +6,7 @@ import { getStories, searchStories, getRecommendedStories, getWeeklyDream, getMo
 import { getCurrentUser } from "@/lib/auth";
 import { DreamCard, ProductCard } from "@/components/DreamCard";
 import { CommunityVoteButton } from "@/components/CommunityVoteButton";
+import { ForYouSection } from "@/components/recommendations/ForYouSection";
 import { CategoryFilter } from "./CategoryFilter";
 import { SearchBar } from "./SearchBar";
 
@@ -240,6 +241,11 @@ export default async function DiscoverPage({ searchParams }: PageProps) {
                 </div>
               </div>
             </section>
+          )}
+
+          {/* ── For You: Collaborative Filtering Recommendations ── */}
+          {!hasFilters && (
+            <ForYouSection stories={allStories} />
           )}
 
           {/* ── Born from Dreams: 2-col product grid ── */}

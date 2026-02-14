@@ -6,6 +6,7 @@ import { Button } from "@dreamhub/ui";
 import { cn } from "@dreamhub/ui";
 import { TeamCard } from "@/components/teams/TeamCard";
 import { CreateTeamModal } from "@/components/teams/CreateTeamModal";
+import { TrialProjectModal } from "@/components/place/TrialProjectModal";
 import { MatchScoreRing } from "@/components/discover/MatchScoreRing";
 import { VerificationBadge, getVerificationTier } from "@/components/place/VerificationBadge";
 import { useDreamStore } from "@/store/useDreamStore";
@@ -22,6 +23,11 @@ export default function TeamsPage() {
   const createTeam = useDreamStore((s) => s.createTeam);
   const [showCreate, setShowCreate] = useState(false);
   const [activeTab, setActiveTab] = useState<TabKey>("connections");
+  const [trialModal, setTrialModal] = useState<{ open: boolean; partnerId: string; partnerName: string }>({
+    open: false,
+    partnerId: "",
+    partnerName: "",
+  });
 
   useEffect(() => {
     fetchTeams();
@@ -128,6 +134,19 @@ export default function TeamsPage() {
                       }}
                     >
                       Form Team
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() =>
+                        setTrialModal({
+                          open: true,
+                          partnerId: m.profile.userId,
+                          partnerName: m.profile.name,
+                        })
+                      }
+                    >
+                      Trial Project
                     </Button>
                   </div>
                 </div>
@@ -262,9 +281,11 @@ export default function TeamsPage() {
             <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
               Test your team chemistry with a 2-week trial project before committing
             </p>
-            <Button size="sm" className="mt-4" onClick={() => setShowCreate(true)}>
-              Create Trial Project
-            </Button>
+            <Link href="/trials">
+              <Button size="sm" className="mt-4">
+                View Trial Projects
+              </Button>
+            </Link>
           </div>
         </div>
       )}
@@ -273,6 +294,19 @@ export default function TeamsPage() {
         open={showCreate}
         onClose={() => setShowCreate(false)}
         onCreate={createTeam}
+      />
+
+      <TrialProjectModal
+        open={trialModal.open}
+        onClose={() => setTrialModal({ open: false, partnerId: "", partnerName: "" })}
+        partnerId={trialModal.partnerId}
+        partnerName={trialModal.partnerName}
+        onSubmit={(data) => {
+          createTeam(
+            data.title,
+            data.description,
+          );
+        }}
       />
     </div>
   );

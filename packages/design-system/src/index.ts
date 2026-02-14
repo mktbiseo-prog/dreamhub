@@ -52,3 +52,6 @@ export type {
   ThemeContextValue,
   ThemeProviderProps,
 } from "./components/ThemeProvider";
+
+export { Confetti } from "./components/Confetti";
+export type { ConfettiProps } from "./components/Confetti";

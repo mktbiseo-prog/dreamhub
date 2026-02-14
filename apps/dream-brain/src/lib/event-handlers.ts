@@ -2,7 +2,10 @@
 // Dream Brain — Event Handlers
 //
 // PUBLISHES:
-//   dream.brain.thought_created → consumed by Planner (auto-project drafts)
+//   dream.brain.thought_created  → consumed by Planner (auto-project drafts)
+//   dream.brain.pattern_discovered → consumed by Place (matching signals)
+//   dream.brain.skill_signal      → consumed by Place (skill-based matching)
+//   dream.brain.thought_insight   → consumed by Planner (goal suggestions)
 //
 // SUBSCRIBES:
 //   dream.auth.user_registered → create empty thought space for new user
@@ -145,6 +148,117 @@ function handleUserDeleted(
   if (userRepo) {
     userRepo.delete(event.payload.userId).catch(() => {});
   }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Publisher: PATTERN_DISCOVERED (Brain → Place, Planner)
+// ═══════════════════════════════════════════════════════════════════════════
+
+interface PatternPayload {
+  type: string;
+  title: string;
+  description: string;
+  confidence: number;
+  relatedIds: string[];
+  actionable: string | null;
+}
+
+/**
+ * Publish a pattern-discovered event when Brain discovers significant patterns.
+ *
+ * Consumed by:
+ * - Dream Place: feeds into matching algorithm (user interests, recurring themes)
+ * - Dream Planner: suggests goals aligned with discovered patterns
+ */
+export async function publishPatternDiscovered(
+  userId: string,
+  pattern: PatternPayload,
+  bus: EventBus = eventBus,
+) {
+  return bus.publish("dream.brain.pattern_discovered", {
+    userId,
+    pattern: {
+      type: pattern.type,
+      title: pattern.title,
+      description: pattern.description,
+      confidence: pattern.confidence,
+      relatedIds: pattern.relatedIds,
+      actionable: pattern.actionable,
+    },
+    discoveredAt: new Date().toISOString(),
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Publisher: SKILL_SIGNAL (Brain → Place)
+// ═══════════════════════════════════════════════════════════════════════════
+
+/**
+ * Publish skill signals extracted from user's thoughts.
+ *
+ * Called after analyzing thoughts that mention skills, technologies, or
+ * expertise. Used by Dream Place for skill-based team matching.
+ *
+ * @param userId - The user's Dream ID
+ * @param skills - Array of skill strings detected across thoughts
+ */
+export async function publishSkillSignal(
+  userId: string,
+  skills: string[],
+  bus: EventBus = eventBus,
+) {
+  if (skills.length === 0) return;
+
+  return bus.publish("dream.brain.skill_signal", {
+    userId,
+    skills,
+    source: "thought_analysis",
+    extractedAt: new Date().toISOString(),
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Publisher: THOUGHT_INSIGHT (Brain → Planner)
+// ═══════════════════════════════════════════════════════════════════════════
+
+interface ThoughtInsightPayload {
+  id: string;
+  title: string;
+  summary: string;
+  category: string;
+  tags: string[];
+  keywords: string[];
+  emotion: string;
+  valence: number;
+  actionItems: Array<{ text: string; completed: boolean }>;
+}
+
+/**
+ * Sync thought insights to Planner for automatic goal suggestions.
+ *
+ * When a thought contains action items or relates to goals/dreams,
+ * this event allows Planner to suggest relevant project milestones.
+ */
+export async function syncThoughtToPlanner(
+  thought: ThoughtInsightPayload,
+  userId: string,
+  bus: EventBus = eventBus,
+) {
+  return bus.publish("dream.brain.thought_insight", {
+    userId,
+    thought: {
+      id: thought.id,
+      title: thought.title,
+      summary: thought.summary,
+      category: thought.category,
+      tags: thought.tags,
+      keywords: thought.keywords,
+      emotion: thought.emotion,
+      valence: thought.valence,
+      actionItems: thought.actionItems,
+    },
+    syncedAt: new Date().toISOString(),
+  });
 }
 
 // ═══════════════════════════════════════════════════════════════════════════

@@ -1,0 +1,27 @@
+{
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "next": "Next",
+    "back": "Back",
+    "done": "Done"
+  },
+  "planner": {
+    "title": "Dream Planner",
+    "welcome": "Welcome to Dream Planner",
+    "part1": "Discover Your Dream",
+    "part2": "Test Your Dream",
+    "part3": "Build Your Dream",
+    "part4": "Launch Your Dream",
+    "vision_board": "Vision Board",
+    "passion_level": "Passion Thermometer",
+    "traffic_light": "Traffic Light Analysis",
+    "revenue_calc": "Revenue Calculator",
+    "growth_dashboard": "Growth Dashboard",
+    "support_map": "Support System Map",
+    "sprint_plan": "90-Day Sprint Plan",
+    "export": "Export Plan",
+    "streak": "Day Streak",
+    "progress": "Progress"
+  }
+}

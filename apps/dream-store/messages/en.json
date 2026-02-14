@@ -1,0 +1,33 @@
+{
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "loading": "Loading...",
+    "search": "Search",
+    "back": "Back"
+  },
+  "store": {
+    "title": "Dream Store",
+    "discover": "Discover Dreams",
+    "my_dreams": "My Dreams",
+    "create_story": "Share Your Dream",
+    "search_placeholder": "Search dreams and products...",
+    "ai_search": "AI Search",
+    "for_you": "For You",
+    "trending": "Trending",
+    "new_arrivals": "New Arrivals",
+    "messages": "Messages",
+    "cart": "Cart",
+    "checkout": "Checkout",
+    "support": "Support This Dream"
+  },
+  "messaging": {
+    "title": "Messages",
+    "send": "Send",
+    "placeholder": "Type a message...",
+    "empty": "No messages yet",
+    "start_conversation": "Start a conversation"
+  }
+}

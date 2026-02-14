@@ -1,0 +1,25 @@
+{
+  "common": {
+    "save": "\uc800\uc7a5",
+    "cancel": "\ucde8\uc18c",
+    "delete": "\uc0ad\uc81c",
+    "back": "\ub4a4\ub85c",
+    "next": "\ub2e4\uc74c"
+  },
+  "place": {
+    "title": "\ub4dc\ub9bc \ud50c\ub808\uc774\uc2a4",
+    "discover": "\ubc1c\uacac",
+    "matches": "\ub9e4\uce6d",
+    "teams": "\ud300",
+    "explore": "\ud0d0\uc0c9",
+    "profile": "\ud504\ub85c\ud544",
+    "match_score": "\ub9e4\uce6d \uc810\uc218",
+    "connect": "\uc5f0\uacb0 \uc694\uccad",
+    "pass": "\ud328\uc2a4",
+    "send_message": "\uba54\uc2dc\uc9c0 \ubcf4\ub0b4\uae30",
+    "form_team": "\ud300 \ub9cc\ub4e4\uae30",
+    "trial_project": "\ud2b8\ub77c\uc774\uc5bc \ud504\ub85c\uc81d\ud2b8",
+    "dream_globe": "\ub4dc\ub9bc \uae00\ub85c\ube0c",
+    "video_intro": "\uc601\uc0c1 \uc18c\uac1c"
+  }
+}

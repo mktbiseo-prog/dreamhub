@@ -46,3 +46,15 @@ export {
   resetEngine,
 } from "./recommend";
 export type { RecommendationEngineConfig } from "./recommend";
+
+// Collaborative Filtering
+export {
+  getRecommendationsCF,
+  buildUserItemMatrix,
+  buildItemUserMatrix,
+  findNearestNeighbors,
+  cosineSimilarity,
+  pearsonCorrelation,
+  applyTimeDecay,
+} from "./collaborative-filtering";
+export type { Interaction, CFConfig } from "./collaborative-filtering";
