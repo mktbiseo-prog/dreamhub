@@ -11,16 +11,24 @@ const credentialsSchema = z.object({
   password: z.string().min(8),
 });
 
+// Only register Google if credentials are provided
+const providers: NextAuthConfig["providers"] = [];
+if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
+  providers.push(
+    Google({
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    })
+  );
+}
+
 export const authConfig: NextAuthConfig = {
   adapter: PrismaAdapter(prisma),
   session: {
     strategy: "jwt",
   },
   providers: [
-    Google({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    }),
+    ...providers,
     Credentials({
       name: "Email",
       credentials: {
@@ -31,9 +39,21 @@ export const authConfig: NextAuthConfig = {
         const parsed = credentialsSchema.safeParse(credentials);
         if (!parsed.success) return null;
 
-        const user = await prisma.user.findUnique({
+        let user = await prisma.user.findUnique({
           where: { email: parsed.data.email },
         });
+
+        // Auto-create user on first sign-in (sign-up via credentials)
+        if (!user) {
+          const hashed = await bcrypt.hash(parsed.data.password, 10);
+          user = await prisma.user.create({
+            data: {
+              email: parsed.data.email,
+              name: parsed.data.email.split("@")[0],
+              hashedPassword: hashed,
+            },
+          });
+        }
 
         if (!user?.hashedPassword) return null;
 

@@ -56,12 +56,25 @@ function subscribe(listener: () => void) {
   };
 }
 
+// Cache the snapshot so useSyncExternalStore gets referential equality
+let cachedSnapshot: CartStore = { items: [] };
+let cachedRaw = "";
+
 function getSnapshot(): CartStore {
-  return getStoredCart();
+  const raw = typeof window !== "undefined"
+    ? localStorage.getItem(CART_KEY) ?? ""
+    : "";
+  if (raw !== cachedRaw) {
+    cachedRaw = raw;
+    cachedSnapshot = raw ? JSON.parse(raw) : { items: [] };
+  }
+  return cachedSnapshot;
 }
 
+const SERVER_SNAPSHOT: CartStore = { items: [] };
+
 function getServerSnapshot(): CartStore {
-  return { items: [] };
+  return SERVER_SNAPSHOT;
 }
 
 interface CartContextType {
