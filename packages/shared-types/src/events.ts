@@ -198,6 +198,41 @@ export interface TeamMilestoneReachedEvent extends BaseEvent {
   };
 }
 
+// ── dream.brain.skill_signal ─────────────────────────────────────────────
+
+/** Emitted when Brain extracts skill signals from user's thoughts. Consumed by Place (matching). */
+export interface SkillSignalEvent extends BaseEvent {
+  type: "dream.brain.skill_signal";
+  payload: {
+    userId: string;
+    skills: string[];
+    source: string;
+    extractedAt: string;
+  };
+}
+
+// ── dream.brain.thought_insight ─────────────────────────────────────────
+
+/** Emitted when Brain syncs thought insights to Planner for goal suggestions. */
+export interface ThoughtInsightEvent extends BaseEvent {
+  type: "dream.brain.thought_insight";
+  payload: {
+    userId: string;
+    thought: {
+      id: string;
+      title: string;
+      summary: string;
+      category: string;
+      tags: string[];
+      keywords: string[];
+      emotion: string;
+      valence: number;
+      actionItems: Array<{ text: string; completed: boolean }>;
+    };
+    syncedAt: string;
+  };
+}
+
 // ── Union & topic mapping ──────────────────────────────────────────────────
 
 export type DreamEvent =
@@ -214,7 +249,9 @@ export type DreamEvent =
   | TrialProjectCompletedEvent
   | DreamExportedEvent
   | PatternDiscoveredEvent
-  | TeamMilestoneReachedEvent;
+  | TeamMilestoneReachedEvent
+  | SkillSignalEvent
+  | ThoughtInsightEvent;
 
 export type DreamEventType = DreamEvent["type"];
 
@@ -234,4 +271,6 @@ export const DREAM_EVENT_TOPICS: Record<DreamEventType, string> = {
   "dream.brain.dream_exported": "dream.brain.dream_exported",
   "dream.brain.pattern_discovered": "dream.brain.pattern_discovered",
   "dream.place.team_milestone_reached": "dream.place.team_milestone_reached",
+  "dream.brain.skill_signal": "dream.brain.skill_signal",
+  "dream.brain.thought_insight": "dream.brain.thought_insight",
 } as const;

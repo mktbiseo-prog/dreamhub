@@ -20,6 +20,13 @@ import type {
   UserUpdatedEvent,
   UserDeletedEvent,
   MessageTranslatedEvent,
+  TrialProjectCreatedEvent,
+  TrialProjectCompletedEvent,
+  DreamExportedEvent,
+  PatternDiscoveredEvent,
+  TeamMilestoneReachedEvent,
+  SkillSignalEvent,
+  ThoughtInsightEvent,
 } from "@dreamhub/shared-types";
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -37,6 +44,13 @@ export interface TopicEventMap {
   "dream.auth.user_updated": UserUpdatedEvent;
   "dream.auth.user_deleted": UserDeletedEvent;
   "dream.place.message_translated": MessageTranslatedEvent;
+  "dream.place.trial_project_created": TrialProjectCreatedEvent;
+  "dream.place.trial_project_completed": TrialProjectCompletedEvent;
+  "dream.brain.dream_exported": DreamExportedEvent;
+  "dream.brain.pattern_discovered": PatternDiscoveredEvent;
+  "dream.place.team_milestone_reached": TeamMilestoneReachedEvent;
+  "dream.brain.skill_signal": SkillSignalEvent;
+  "dream.brain.thought_insight": ThoughtInsightEvent;
 }
 
 /** The payload portion of an event (everything except eventId/timestamp/type) */

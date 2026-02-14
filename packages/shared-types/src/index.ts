@@ -21,6 +21,13 @@ export type {
   UserUpdatedEvent,
   UserDeletedEvent,
   MessageTranslatedEvent,
+  TrialProjectCreatedEvent,
+  TrialProjectCompletedEvent,
+  DreamExportedEvent,
+  PatternDiscoveredEvent,
+  TeamMilestoneReachedEvent,
+  SkillSignalEvent,
+  ThoughtInsightEvent,
   DreamEvent,
   DreamEventType,
 } from "./events";

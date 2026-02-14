@@ -155,7 +155,7 @@ function handleUserDeleted(
 // ═══════════════════════════════════════════════════════════════════════════
 
 interface PatternPayload {
-  type: string;
+  type: "recurring_theme" | "temporal" | "emotional" | "skill_signal";
   title: string;
   description: string;
   confidence: number;
@@ -177,15 +177,10 @@ export async function publishPatternDiscovered(
 ) {
   return bus.publish("dream.brain.pattern_discovered", {
     userId,
-    pattern: {
-      type: pattern.type,
-      title: pattern.title,
-      description: pattern.description,
-      confidence: pattern.confidence,
-      relatedIds: pattern.relatedIds,
-      actionable: pattern.actionable,
-    },
-    discoveredAt: new Date().toISOString(),
+    patternType: pattern.type,
+    description: `${pattern.title}: ${pattern.description}`,
+    confidence: pattern.confidence,
+    relatedThoughtIds: pattern.relatedIds,
   });
 }
 
