@@ -51,7 +51,7 @@ export default async function CheckoutSuccessPage({
   ]);
 
   const completedMilestones =
-    order?.dreamStory.milestones.filter((m) => m.completed).length || 0;
+    order?.dreamStory.milestones.filter((m: { completed: boolean }) => m.completed).length || 0;
   const totalMilestones = order?.dreamStory.milestones.length || 0;
   const progressPercent =
     totalMilestones > 0

@@ -9,6 +9,8 @@
     "./repositories": "./src/repositories/index.ts"
   },
   "scripts": {
+    "build": "prisma generate",
+    "postinstall": "prisma generate",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
     "db:studio": "prisma studio",

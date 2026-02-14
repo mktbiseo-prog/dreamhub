@@ -66,7 +66,7 @@ export async function GET(request: NextRequest) {
   const me: DreamerProfile = dbProfileToType(myProfile);
 
   // Compute match scores
-  let matches: MatchResult[] = otherProfiles.map((p) => {
+  let matches: MatchResult[] = otherProfiles.map((p: typeof otherProfiles[number]) => {
     const other = dbProfileToType(p);
     const scores = computeMatchScores(me, other);
     return {

@@ -5,7 +5,7 @@ import { getCurrentUserId } from "@/lib/auth";
 import type { PlannerData } from "@/lib/store";
 
 // Helper: safely cast Prisma JsonValue to a typed object
-function jsonAs<T>(val: Prisma.JsonValue, fallback: T): T {
+function jsonAs<T>(val: Prisma.InputJsonValue | null | undefined, fallback: T): T {
   if (val === null || val === undefined) return fallback;
   return val as unknown as T;
 }

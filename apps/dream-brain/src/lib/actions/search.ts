@@ -1,6 +1,6 @@
 "use server";
 
-import { prisma } from "@dreamhub/database";
+import { prisma, type Thought } from "@dreamhub/database";
 import { generateEmbedding, cosineSimilarity } from "@dreamhub/ai";
 import { z } from "zod";
 import { getCurrentUserId } from "@/lib/auth";
@@ -141,7 +141,7 @@ async function textSearch(parsed: z.infer<typeof SearchSchema>): Promise<SearchR
   });
 
   const q = parsed.query.toLowerCase();
-  let results: SearchResult[] = thoughts.map((t) => {
+  let results: SearchResult[] = thoughts.map((t: Thought) => {
     const titleMatch = t.title.toLowerCase().includes(q) ? 0.4 : 0;
     const bodyMatch = t.body.toLowerCase().includes(q) ? 0.2 : 0;
     const tagMatch = t.tags.some((tag) => tag.toLowerCase().includes(q)) ? 0.3 : 0;
