@@ -29,20 +29,15 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const authEnabled = !!process.env.DATABASE_URL;
-  const content = (
-    <>
-      <LanguageSelector />
-      {children}
-      <BottomNav />
-      <CafeToast />
-    </>
-  );
-
   return (
     <html lang="en" className={`${inter.variable} ${plusJakarta.variable} ${inter.className}`}>
       <body className="min-h-screen pb-16 antialiased">
-        {authEnabled ? <SessionProvider>{content}</SessionProvider> : content}
+        <SessionProvider>
+          <LanguageSelector />
+          {children}
+          <BottomNav />
+          <CafeToast />
+        </SessionProvider>
       </body>
     </html>
   );

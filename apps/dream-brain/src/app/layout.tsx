@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import { LanguageSelector } from "@dreamhub/ui";
+import { AuthProvider } from "@/components/providers/AuthProvider";
 import "./globals.css";
 
 const inter = Inter({
@@ -29,8 +30,10 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${plusJakarta.variable} ${inter.className} dark`}>
       <body className="min-h-screen antialiased">
-        <LanguageSelector />
-        {children}
+        <AuthProvider>
+          <LanguageSelector />
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );

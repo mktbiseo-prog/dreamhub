@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import { LanguageSelector } from "@dreamhub/ui";
+import { AuthProvider } from "@/components/providers/AuthProvider";
 import { StoreProvider } from "@/components/providers/StoreProvider";
 import "./globals.css";
 
@@ -30,10 +31,12 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${plusJakarta.variable} ${inter.className}`}>
       <body className="min-h-screen antialiased">
-        <StoreProvider>
-          <LanguageSelector />
-          {children}
-        </StoreProvider>
+        <AuthProvider>
+          <StoreProvider>
+            <LanguageSelector />
+            {children}
+          </StoreProvider>
+        </AuthProvider>
       </body>
     </html>
   );

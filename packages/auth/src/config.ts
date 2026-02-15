@@ -1,4 +1,3 @@
-import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "@dreamhub/database";
 import bcrypt from "bcryptjs";
 import type { NextAuthConfig } from "next-auth";
@@ -13,30 +12,26 @@ const credentialsSchema = z.object({
 
 const isDbAvailable = !!process.env.DATABASE_URL;
 
-// Build providers list
-const oauthProviders: NextAuthConfig["providers"] = [];
-if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
-  oauthProviders.push(
-    Google({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      // Allow linking Google account to existing user with same email
-      allowDangerousEmailAccountLinking: true,
-    })
-  );
-}
-
 export const authConfig: NextAuthConfig = {
+  debug: process.env.NODE_ENV === "development",
   secret:
     process.env.AUTH_SECRET ||
     process.env.NEXTAUTH_SECRET ||
     "dreamhub-dev-secret-do-not-use-in-production",
-  ...(isDbAvailable ? { adapter: PrismaAdapter(prisma) } : {}),
+  // No PrismaAdapter — handle DB operations manually in callbacks
+  // to avoid silent adapter errors with Google OAuth
   session: {
     strategy: "jwt",
   },
   providers: [
-    ...oauthProviders,
+    ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
+      ? [
+          Google({
+            clientId: process.env.GOOGLE_CLIENT_ID,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+          }),
+        ]
+      : []),
     Credentials({
       name: "Email",
       credentials: {
@@ -92,13 +87,65 @@ export const authConfig: NextAuthConfig = {
     }),
   ],
   callbacks: {
-    async signIn({ account, profile }) {
+    async signIn({ user, account, profile }) {
       // Allow credentials sign-in to pass through
       if (account?.provider === "credentials") return true;
-      // For OAuth (Google), ensure we have an email
-      if (account?.provider === "google") {
-        return !!profile?.email;
+
+      // Google OAuth: manually create/link user in database
+      if (account?.provider === "google" && profile?.email && isDbAvailable) {
+        try {
+          // Find or create user
+          let dbUser = await prisma.user.findUnique({
+            where: { email: profile.email },
+          });
+
+          if (!dbUser) {
+            dbUser = await prisma.user.create({
+              data: {
+                email: profile.email,
+                name: profile.name ?? profile.email.split("@")[0],
+                image: (profile as Record<string, unknown>).picture as string ?? null,
+                emailVerified: new Date(),
+              },
+            });
+          }
+
+          // Ensure Google account is linked
+          const existingAccount = await prisma.account.findUnique({
+            where: {
+              provider_providerAccountId: {
+                provider: "google",
+                providerAccountId: account.providerAccountId,
+              },
+            },
+          });
+
+          if (!existingAccount) {
+            await prisma.account.create({
+              data: {
+                userId: dbUser.id,
+                type: account.type,
+                provider: account.provider,
+                providerAccountId: account.providerAccountId,
+                access_token: account.access_token ?? null,
+                refresh_token: account.refresh_token ?? null,
+                expires_at: account.expires_at ?? null,
+                token_type: account.token_type ?? null,
+                scope: account.scope ?? null,
+                id_token: account.id_token ?? null,
+              },
+            });
+          }
+
+          // Attach DB user id so JWT callback can use it
+          user.id = dbUser.id;
+          return true;
+        } catch (error) {
+          console.error("[auth] Google signIn callback error:", error);
+          return false;
+        }
       }
+
       return true;
     },
     async session({ session, token }) {
@@ -106,7 +153,7 @@ export const authConfig: NextAuthConfig = {
         session.user.id = token.sub;
       }
       if (token.picture && session.user) {
-        session.user.image = token.picture;
+        session.user.image = token.picture as string;
       }
       return session;
     },
@@ -118,7 +165,7 @@ export const authConfig: NextAuthConfig = {
       if (account?.provider === "google" && profile) {
         token.name = profile.name;
         token.email = profile.email;
-        token.picture = profile.picture as string;
+        token.picture = (profile as Record<string, unknown>).picture as string;
       }
       return token;
     },
