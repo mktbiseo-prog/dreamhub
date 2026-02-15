@@ -2,11 +2,11 @@ import { prisma } from "@dreamhub/database";
 import type { DreamStory, Supporter, DreamUpdateView, DreamCommentView, ReviewView, PollView } from "./types";
 import {
   MOCK_STORIES,
-  MOCK_SUPPORTERS,
-  MOCK_COMMENTS,
   MOCK_REVIEWS,
   getStoryById as mockGetStoryById,
   getProductById as mockGetProductById,
+  getMockSupporters,
+  getMockComments,
   formatPrice,
 } from "./mockData";
 
@@ -167,7 +167,7 @@ export async function getSupporters(
       take: 50,
     });
 
-    if (orders.length === 0) return MOCK_SUPPORTERS;
+    if (orders.length === 0) return getMockSupporters(dreamStoryId);
 
     return orders.map((o) => ({
       id: o.id,
@@ -177,7 +177,7 @@ export async function getSupporters(
       amount: o.amount,
     }));
   } catch {
-    return MOCK_SUPPORTERS;
+    return getMockSupporters(dreamStoryId);
   }
 }
 
@@ -207,7 +207,7 @@ export async function getDreamComments(
       orderBy: { createdAt: "desc" },
     });
 
-    if (comments.length === 0) return MOCK_COMMENTS;
+    if (comments.length === 0) return getMockComments(dreamStoryId);
 
     return comments.map((c) => ({
       id: c.id,
@@ -218,7 +218,7 @@ export async function getDreamComments(
       createdAt: c.createdAt.toISOString().split("T")[0],
     }));
   } catch {
-    return MOCK_COMMENTS;
+    return getMockComments(dreamStoryId);
   }
 }
 

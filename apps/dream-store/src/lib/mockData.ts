@@ -31,7 +31,7 @@ export const MOCK_STORIES: DreamStory[] = [
       "https://images.unsplash.com/photo-1606577924006-27d39b132ae2?w=400&h=400&fit=crop",
       "https://images.unsplash.com/photo-1493106641515-6b5631de4bb9?w=400&h=400&fit=crop",
     ],
-    impactStatement: "Every purchase funds my dream of opening a community ceramics studio. One mug = one step closer to a space where anyone can learn the craft.",
+    impactStatement: "Every purchase funds my dream of opening a community ceramics studio. Each piece sold brings me one step closer to a space where anyone can learn the craft.",
     isFeatured: true,
     isStaffPick: true,
     creatorStage: "growing",
@@ -289,18 +289,67 @@ export const MOCK_STORIES: DreamStory[] = [
   },
 ];
 
-export const MOCK_SUPPORTERS: Supporter[] = [
-  { id: "s1", name: "Alex Rivera", avatar: "https://images.unsplash.com/photo-1599566150163-29194dcabd9c?w=80&h=80&fit=crop&crop=face", supportedAt: "2026-01-15", amount: 3500 },
-  { id: "s2", name: "Jordan Lee", avatar: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=80&h=80&fit=crop&crop=face", supportedAt: "2026-01-12", amount: 5800 },
-  { id: "s3", name: "Sam Patel", avatar: "https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=80&h=80&fit=crop&crop=face", supportedAt: "2026-01-10", amount: 3500 },
-  { id: "s4", name: "Casey Kim", avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=80&h=80&fit=crop&crop=face", supportedAt: "2026-01-08", amount: 5800 },
-  { id: "s5", name: "Riley Morgan", avatar: "https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=80&h=80&fit=crop&crop=face", supportedAt: "2026-01-05", amount: 3500 },
-  { id: "s6", name: "Taylor Swift", avatar: "https://images.unsplash.com/photo-1607746882042-944635dfe10e?w=80&h=80&fit=crop&crop=face", supportedAt: "2026-01-03", amount: 5800 },
-  { id: "s7", name: "Jamie Fox", avatar: "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=80&h=80&fit=crop&crop=face", supportedAt: "2025-12-28", amount: 3500 },
-  { id: "s8", name: "Morgan Yu", avatar: "https://images.unsplash.com/photo-1645830166230-187caf791b90?w=80&h=80&fit=crop&crop=face", supportedAt: "2025-12-25", amount: 3500 },
-];
+// Supporters keyed by storyId for accurate per-story display
+export const MOCK_SUPPORTERS_BY_STORY: Record<string, Supporter[]> = {
+  "story-1": [
+    { id: "s1", name: "Alex Rivera", avatar: "https://images.unsplash.com/photo-1599566150163-29194dcabd9c?w=80&h=80&fit=crop&crop=face", supportedAt: "2026-01-15", amount: 3500 },
+    { id: "s2", name: "Jordan Lee", avatar: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=80&h=80&fit=crop&crop=face", supportedAt: "2026-01-12", amount: 5800 },
+    { id: "s3", name: "Sam Patel", avatar: "https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=80&h=80&fit=crop&crop=face", supportedAt: "2026-01-10", amount: 3500 },
+    { id: "s4", name: "Casey Kim", avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=80&h=80&fit=crop&crop=face", supportedAt: "2026-01-08", amount: 5800 },
+    { id: "s5", name: "Riley Morgan", avatar: "https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=80&h=80&fit=crop&crop=face", supportedAt: "2026-01-05", amount: 3500 },
+    { id: "s6", name: "Taylor Brooks", avatar: "https://images.unsplash.com/photo-1607746882042-944635dfe10e?w=80&h=80&fit=crop&crop=face", supportedAt: "2026-01-03", amount: 5800 },
+    { id: "s7", name: "Jamie Foster", avatar: "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=80&h=80&fit=crop&crop=face", supportedAt: "2025-12-28", amount: 3500 },
+    { id: "s8", name: "Morgan Yu", avatar: "https://images.unsplash.com/photo-1645830166230-187caf791b90?w=80&h=80&fit=crop&crop=face", supportedAt: "2025-12-25", amount: 3500 },
+  ],
+  "story-2": [
+    { id: "s9", name: "Priya Sharma", avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=80&h=80&fit=crop&crop=face", supportedAt: "2026-01-20", amount: 12900 },
+    { id: "s10", name: "Kwame Asante", avatar: "https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?w=80&h=80&fit=crop&crop=face", supportedAt: "2026-01-18", amount: 12900 },
+    { id: "s11", name: "Mei Lin", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=80&h=80&fit=crop&crop=face", supportedAt: "2026-01-14", amount: 12900 },
+    { id: "s12", name: "David Okonkwo", avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&h=80&fit=crop&crop=face", supportedAt: "2026-01-10", amount: 12900 },
+    { id: "s13", name: "Anna Schmidt", avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80&h=80&fit=crop&crop=face", supportedAt: "2026-01-07", amount: 12900 },
+  ],
+  "story-3": [
+    { id: "s14", name: "Maria Santos", avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=80&h=80&fit=crop&crop=face", supportedAt: "2026-01-22", amount: 4200 },
+    { id: "s15", name: "Jake Thompson", avatar: "https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=80&h=80&fit=crop&crop=face", supportedAt: "2026-01-19", amount: 6500 },
+    { id: "s16", name: "Emma Wilson", avatar: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=80&h=80&fit=crop&crop=face", supportedAt: "2026-01-16", amount: 4200 },
+    { id: "s17", name: "Ben Carter", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop&crop=face", supportedAt: "2026-01-12", amount: 4200 },
+    { id: "s18", name: "Lily Chang", avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&h=80&fit=crop&crop=face", supportedAt: "2026-01-09", amount: 6500 },
+    { id: "s19", name: "Noah Davis", avatar: "https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=80&h=80&fit=crop&crop=face", supportedAt: "2026-01-05", amount: 4200 },
+  ],
+  "story-4": [
+    { id: "s20", name: "Sarah Al-Rashid", avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80&h=80&fit=crop&crop=face", supportedAt: "2026-01-24", amount: 15000 },
+    { id: "s21", name: "Michael O'Brien", avatar: "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=80&h=80&fit=crop&crop=face", supportedAt: "2026-01-21", amount: 15000 },
+    { id: "s22", name: "Fatima Khan", avatar: "https://images.unsplash.com/photo-1607746882042-944635dfe10e?w=80&h=80&fit=crop&crop=face", supportedAt: "2026-01-17", amount: 15000 },
+    { id: "s23", name: "Tom Eriksson", avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=80&h=80&fit=crop&crop=face", supportedAt: "2026-01-13", amount: 15000 },
+    { id: "s24", name: "Nadia Petrova", avatar: "https://images.unsplash.com/photo-1599566150163-29194dcabd9c?w=80&h=80&fit=crop&crop=face", supportedAt: "2026-01-08", amount: 15000 },
+    { id: "s25", name: "Chris Tanaka", avatar: "https://images.unsplash.com/photo-1645830166230-187caf791b90?w=80&h=80&fit=crop&crop=face", supportedAt: "2026-01-04", amount: 15000 },
+  ],
+  "story-5": [
+    { id: "s26", name: "Olivia Nguyen", avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=80&h=80&fit=crop&crop=face", supportedAt: "2026-01-23", amount: 4500 },
+    { id: "s27", name: "Ethan Park", avatar: "https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?w=80&h=80&fit=crop&crop=face", supportedAt: "2026-01-20", amount: 8900 },
+    { id: "s28", name: "Ava Rodriguez", avatar: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=80&h=80&fit=crop&crop=face", supportedAt: "2026-01-17", amount: 4500 },
+    { id: "s29", name: "Lucas Kim", avatar: "https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=80&h=80&fit=crop&crop=face", supportedAt: "2026-01-13", amount: 8900 },
+    { id: "s30", name: "Mia Jensen", avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&h=80&fit=crop&crop=face", supportedAt: "2026-01-09", amount: 4500 },
+  ],
+  "story-6": [
+    { id: "s31", name: "Devon Williams", avatar: "https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?w=80&h=80&fit=crop&crop=face", supportedAt: "2026-01-25", amount: 8000 },
+    { id: "s32", name: "Jasmine Torres", avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=80&h=80&fit=crop&crop=face", supportedAt: "2026-01-22", amount: 8000 },
+    { id: "s33", name: "Andre Mitchell", avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&h=80&fit=crop&crop=face", supportedAt: "2026-01-18", amount: 8000 },
+    { id: "s34", name: "Nina Brooks", avatar: "https://images.unsplash.com/photo-1607746882042-944635dfe10e?w=80&h=80&fit=crop&crop=face", supportedAt: "2026-01-14", amount: 8000 },
+    { id: "s35", name: "Isaiah Greene", avatar: "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=80&h=80&fit=crop&crop=face", supportedAt: "2026-01-10", amount: 8000 },
+    { id: "s36", name: "Rosa Hernandez", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=80&h=80&fit=crop&crop=face", supportedAt: "2026-01-06", amount: 8000 },
+  ],
+};
+
+// Legacy flat array for backward compatibility
+export const MOCK_SUPPORTERS: Supporter[] = MOCK_SUPPORTERS_BY_STORY["story-1"];
+
+export function getMockSupporters(dreamStoryId: string): Supporter[] {
+  return MOCK_SUPPORTERS_BY_STORY[dreamStoryId] || [];
+}
 
 export const MOCK_REVIEWS: ReviewView[] = [
+  // prod-1: Sunrise Mug
   {
     id: "rev-1",
     productId: "prod-1",
@@ -334,13 +383,186 @@ export const MOCK_REVIEWS: ReviewView[] = [
     buyerId: "s4",
     createdAt: "2026-01-10",
   },
+  // prod-2: Ocean Bowl Set
+  {
+    id: "rev-4",
+    productId: "prod-2",
+    rating: 5,
+    content: "The ocean-blue glaze on these bowls is mesmerizing. They're heavier than store-bought bowls, which makes them feel substantial and premium. Absolutely love them!",
+    images: [],
+    buyerName: "Jordan Lee",
+    buyerAvatar: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=80&h=80&fit=crop&crop=face",
+    buyerId: "s2",
+    createdAt: "2026-01-13",
+  },
+  {
+    id: "rev-5",
+    productId: "prod-2",
+    rating: 5,
+    content: "Perfectly sized for ramen and salad bowls. The glaze pattern on each one is truly unique — you can see the artist's hand in every swirl.",
+    images: [],
+    buyerName: "Riley Morgan",
+    buyerAvatar: "https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=80&h=80&fit=crop&crop=face",
+    buyerId: "s5",
+    createdAt: "2026-01-09",
+  },
+  // prod-3: FarmSight Starter Kit
+  {
+    id: "rev-6",
+    productId: "prod-3",
+    rating: 5,
+    content: "Deployed this on my family's farm in Ghana. The soil sensor data alone saved us from over-watering our yam crop. Daniel's vision is truly transformative for small-scale agriculture.",
+    images: [],
+    buyerName: "Kwame Asante",
+    buyerAvatar: "https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?w=80&h=80&fit=crop&crop=face",
+    buyerId: "s10",
+    createdAt: "2026-01-19",
+  },
+  {
+    id: "rev-7",
+    productId: "prod-3",
+    rating: 4,
+    content: "Setup was straightforward. The AI dashboard predictions need a few weeks to calibrate, but once it learned our local conditions, the recommendations became incredibly accurate.",
+    images: [],
+    buyerName: "Priya Sharma",
+    buyerAvatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=80&h=80&fit=crop&crop=face",
+    buyerId: "s9",
+    createdAt: "2026-01-16",
+  },
+  // prod-4: Monthly Bread Subscription
+  {
+    id: "rev-8",
+    productId: "prod-4",
+    rating: 5,
+    content: "The sourdough is incredible — crusty outside, pillowy inside. Knowing it's zero-waste makes it taste even better. My family looks forward to delivery day every month!",
+    images: [],
+    buyerName: "Emma Wilson",
+    buyerAvatar: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=80&h=80&fit=crop&crop=face",
+    buyerId: "s16",
+    createdAt: "2026-01-17",
+  },
+  {
+    id: "rev-9",
+    productId: "prod-4",
+    rating: 4,
+    content: "Great variety of bread each month. The seasonal special is always a fun surprise. Only wish it came with more loaves — 4 doesn't last long in our house!",
+    images: [],
+    buyerName: "Jake Thompson",
+    buyerAvatar: "https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=80&h=80&fit=crop&crop=face",
+    buyerId: "s15",
+    createdAt: "2026-01-13",
+  },
+  // prod-6: Sponsor a Student
+  {
+    id: "rev-10",
+    productId: "prod-6",
+    rating: 5,
+    content: "I sponsored a student last year and received updates throughout their journey. They just got hired as a junior developer! This is the most meaningful purchase I've ever made.",
+    images: [],
+    buyerName: "Michael O'Brien",
+    buyerAvatar: "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=80&h=80&fit=crop&crop=face",
+    buyerId: "s21",
+    createdAt: "2026-01-22",
+  },
+  {
+    id: "rev-11",
+    productId: "prod-6",
+    rating: 5,
+    content: "Amir's program is exceptional. The curriculum is well-structured, mentorship is hands-on, and the career support is genuine. Proud to have sponsored two students so far.",
+    images: [],
+    buyerName: "Sarah Al-Rashid",
+    buyerAvatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80&h=80&fit=crop&crop=face",
+    buyerId: "s20",
+    createdAt: "2026-01-18",
+  },
+  // prod-7: Ocean Tote Bag
+  {
+    id: "rev-12",
+    productId: "prod-7",
+    rating: 5,
+    content: "This tote is my daily bag now. Surprisingly sturdy for recycled material, and I love telling people it's made from ocean plastic. Great conversation starter!",
+    images: [],
+    buyerName: "Ava Rodriguez",
+    buyerAvatar: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=80&h=80&fit=crop&crop=face",
+    buyerId: "s28",
+    createdAt: "2026-01-18",
+  },
+  {
+    id: "rev-13",
+    productId: "prod-7",
+    rating: 4,
+    content: "Love the concept and the design. The material feels premium and it's truly water-resistant. Wish it had an interior pocket, but overall fantastic product.",
+    images: [],
+    buyerName: "Olivia Nguyen",
+    buyerAvatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=80&h=80&fit=crop&crop=face",
+    buyerId: "s26",
+    createdAt: "2026-01-14",
+  },
+  // prod-9: Studio Session Gift Card
+  {
+    id: "rev-14",
+    productId: "prod-9",
+    rating: 5,
+    content: "Bought this for my nephew and it changed his life. He discovered a passion for music production and his confidence has skyrocketed. Marcus is an incredible mentor.",
+    images: [],
+    buyerName: "Jasmine Torres",
+    buyerAvatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=80&h=80&fit=crop&crop=face",
+    buyerId: "s32",
+    createdAt: "2026-01-23",
+  },
+  {
+    id: "rev-15",
+    productId: "prod-9",
+    rating: 5,
+    content: "As a teacher, I've seen firsthand how music transforms kids. Marcus's studio is a safe haven — professional equipment, warm atmosphere, and genuine mentorship. Worth every penny.",
+    images: [],
+    buyerName: "Devon Williams",
+    buyerAvatar: "https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?w=80&h=80&fit=crop&crop=face",
+    buyerId: "s31",
+    createdAt: "2026-01-19",
+  },
 ];
 
-export const MOCK_COMMENTS: DreamCommentView[] = [
-  { id: "c1", content: "Your ceramics are absolutely stunning! The sunrise mug is my favorite piece in my kitchen. So proud to support this dream!", userName: "Alex Rivera", userAvatar: "https://images.unsplash.com/photo-1599566150163-29194dcabd9c?w=80&h=80&fit=crop&crop=face", userId: "s1", createdAt: "2026-01-16" },
-  { id: "c2", content: "Can't wait for the workshop! You're going to inspire so many people.", userName: "Jordan Lee", userAvatar: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=80&h=80&fit=crop&crop=face", userId: "s2", createdAt: "2026-01-14" },
-  { id: "c3", content: "Just received my ocean bowls — the glaze is even more beautiful in person. Keep dreaming, Maya!", userName: "Sam Patel", userAvatar: "https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=80&h=80&fit=crop&crop=face", userId: "s3", createdAt: "2026-01-11" },
-];
+// Comments keyed by storyId for accurate per-story display
+export const MOCK_COMMENTS_BY_STORY: Record<string, DreamCommentView[]> = {
+  "story-1": [
+    { id: "c1", content: "Your ceramics are absolutely stunning! The sunrise mug is my favorite piece in my kitchen. So proud to support this dream!", userName: "Alex Rivera", userAvatar: "https://images.unsplash.com/photo-1599566150163-29194dcabd9c?w=80&h=80&fit=crop&crop=face", userId: "s1", createdAt: "2026-01-16" },
+    { id: "c2", content: "Can't wait for the workshop! You're going to inspire so many people.", userName: "Jordan Lee", userAvatar: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=80&h=80&fit=crop&crop=face", userId: "s2", createdAt: "2026-01-14" },
+    { id: "c3", content: "Just received my ocean bowls — the glaze is even more beautiful in person. Keep dreaming, Maya!", userName: "Sam Patel", userAvatar: "https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=80&h=80&fit=crop&crop=face", userId: "s3", createdAt: "2026-01-11" },
+  ],
+  "story-2": [
+    { id: "c4", content: "Deployed the FarmSight kit on our farm in Kenya — the yield predictions are remarkably accurate. This is the future of small-scale farming!", userName: "Kwame Asante", userAvatar: "https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?w=80&h=80&fit=crop&crop=face", userId: "s10", createdAt: "2026-01-19" },
+    { id: "c5", content: "Daniel, your mission to democratize agri-tech is so important. Can't wait to see FarmSight expand to more regions.", userName: "Priya Sharma", userAvatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=80&h=80&fit=crop&crop=face", userId: "s9", createdAt: "2026-01-15" },
+    { id: "c6", content: "As an agricultural researcher, I'm thrilled to see AI being made accessible to small farmers. Keep pushing boundaries!", userName: "Mei Lin", userAvatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=80&h=80&fit=crop&crop=face", userId: "s11", createdAt: "2026-01-11" },
+  ],
+  "story-3": [
+    { id: "c7", content: "Your sourdough is the best I've ever had. The fact that it's zero-waste makes it even more special. Can't wait for the bakery to open!", userName: "Maria Santos", userAvatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=80&h=80&fit=crop&crop=face", userId: "s14", createdAt: "2026-01-20" },
+    { id: "c8", content: "Took the sourdough workshop last month — completely changed how I think about baking and food waste. Sofia is an amazing teacher!", userName: "Jake Thompson", userAvatar: "https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=80&h=80&fit=crop&crop=face", userId: "s15", createdAt: "2026-01-17" },
+    { id: "c9", content: "Love getting my monthly bread box! The seasonal specials are always a delightful surprise. Rooting for your grand opening, Sofia!", userName: "Emma Wilson", userAvatar: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=80&h=80&fit=crop&crop=face", userId: "s16", createdAt: "2026-01-13" },
+  ],
+  "story-4": [
+    { id: "c10", content: "I sponsored a student who just landed her first developer job. Seeing the impact firsthand is incredible. Thank you, Amir, for building this program!", userName: "Michael O'Brien", userAvatar: "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=80&h=80&fit=crop&crop=face", userId: "s21", createdAt: "2026-01-22" },
+    { id: "c11", content: "As a refugee myself, this program means the world. Tech skills truly are the great equalizer. Keep going, Amir!", userName: "Fatima Khan", userAvatar: "https://images.unsplash.com/photo-1607746882042-944635dfe10e?w=80&h=80&fit=crop&crop=face", userId: "s22", createdAt: "2026-01-18" },
+    { id: "c12", content: "The curriculum is incredibly well-structured. I've been mentoring students in the program and their progress is remarkable.", userName: "Tom Eriksson", userAvatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=80&h=80&fit=crop&crop=face", userId: "s23", createdAt: "2026-01-14" },
+  ],
+  "story-5": [
+    { id: "c13", content: "Wearing my ocean plastic hoodie right now! Super soft and I love knowing it removed plastic from the sea. Fashion with purpose!", userName: "Ethan Park", userAvatar: "https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?w=80&h=80&fit=crop&crop=face", userId: "s27", createdAt: "2026-01-21" },
+    { id: "c14", content: "The tote bag is gorgeous and incredibly durable. It's amazing what you can create from recycled materials. Keep cleaning our oceans, Lena!", userName: "Olivia Nguyen", userAvatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=80&h=80&fit=crop&crop=face", userId: "s26", createdAt: "2026-01-17" },
+    { id: "c15", content: "Just ordered the hoodie in Sand — can't wait! As a surfer, ocean conservation is personal for me. So glad to support this dream.", userName: "Lucas Kim", userAvatar: "https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=80&h=80&fit=crop&crop=face", userId: "s29", createdAt: "2026-01-13" },
+  ],
+  "story-6": [
+    { id: "c16", content: "My daughter attended 4 sessions and now she can't stop making beats! Marcus is an incredible mentor — patient, passionate, and genuinely cares about every kid.", userName: "Jasmine Torres", userAvatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=80&h=80&fit=crop&crop=face", userId: "s32", createdAt: "2026-01-23" },
+    { id: "c17", content: "As a music teacher myself, I know how transformative access to professional equipment can be. This studio is exactly what our community needs.", userName: "Devon Williams", userAvatar: "https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?w=80&h=80&fit=crop&crop=face", userId: "s31", createdAt: "2026-01-19" },
+    { id: "c18", content: "Gifted a studio session card to my nephew for his birthday. He came home beaming, talking about what he learned. Music really does save lives.", userName: "Andre Mitchell", userAvatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&h=80&fit=crop&crop=face", userId: "s33", createdAt: "2026-01-15" },
+  ],
+};
+
+// Legacy flat array
+export const MOCK_COMMENTS: DreamCommentView[] = MOCK_COMMENTS_BY_STORY["story-1"];
+
+export function getMockComments(dreamStoryId: string): DreamCommentView[] {
+  return MOCK_COMMENTS_BY_STORY[dreamStoryId] || [];
+}
 
 export function getStoryById(id: string): DreamStory | undefined {
   return MOCK_STORIES.find((s) => s.id === id);

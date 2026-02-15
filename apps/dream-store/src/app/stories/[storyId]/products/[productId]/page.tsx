@@ -11,6 +11,7 @@ import { ImageGallery } from "./ImageGallery";
 import { ReviewForm } from "./ReviewForm";
 import { ReviewList } from "./ReviewList";
 import { BuyerProtection } from "@/components/BuyerProtection";
+import { AddToCartButton } from "@/components/cart/AddToCartButton";
 import { getCreatorBadge } from "@/lib/types";
 
 interface PageProps {
@@ -144,6 +145,25 @@ export default async function ProductDetailPage({ params }: PageProps) {
               storyId={story.id}
               price={product.price}
             />
+
+            {/* Add to Basket */}
+            <div className="mt-3">
+              <AddToCartButton
+                product={{
+                  id: product.id,
+                  title: product.title,
+                  price: product.price,
+                  images: product.images,
+                  isDigital: product.productType === "Service" || product.productType === "Digital Product",
+                }}
+                story={{
+                  id: story.id,
+                  title: story.title,
+                  creatorName: story.creatorName,
+                }}
+                className="w-full border-2 bg-transparent font-semibold transition-all hover:bg-gray-50 dark:hover:bg-gray-900"
+              />
+            </div>
 
             {/* Buyer Protection */}
             <div className="mt-4">

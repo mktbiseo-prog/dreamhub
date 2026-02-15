@@ -23,7 +23,11 @@ export function SupportButton({
       const res = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ productId, storyId }),
+        body: JSON.stringify({
+          productId,
+          storyId,
+          cancelUrl: `${window.location.origin}/checkout/cancel?story_id=${storyId}&product_id=${productId}`,
+        }),
       });
 
       const data = await res.json();

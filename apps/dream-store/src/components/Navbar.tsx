@@ -4,6 +4,7 @@ import { ThemeToggle } from "./ThemeToggle";
 import { UserMenu } from "./UserMenu";
 import { CartDrawer } from "./cart/CartDrawer";
 import { MessageBadge } from "./messaging/MessageBadge";
+import { NavSearchBar } from "./NavSearchBar";
 import { getCurrentUser } from "@/lib/auth";
 
 export async function Navbar() {
@@ -31,10 +32,11 @@ export async function Navbar() {
         </Link>
 
         <div className="flex items-center gap-3">
+          <NavSearchBar />
           <ThemeToggle />
           <MessageBadge />
           <CartDrawer />
-          <Link href="/stories/create">
+          <Link href="/stories/create" className="hidden sm:block">
             <Button variant="outline" size="sm">
               Start Your Dream
             </Button>

@@ -88,7 +88,7 @@ export const DreamCard = memo(function DreamCard({ story, isBookmarked = false }
           {/* Funding bar */}
           <div>
             <div className="mb-1 flex items-center justify-between text-[10px] text-white/70">
-              <span>{progressPercent}% funded</span>
+              <span>{progressPercent}% complete</span>
               <span>{story.supporterCount} supporters</span>
             </div>
             <div className="h-1 overflow-hidden rounded-full bg-white/20">

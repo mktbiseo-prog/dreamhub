@@ -33,9 +33,12 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <span className="cursor-default text-gray-400">
+                <Link
+                  href="/dashboard"
+                  className="transition-colors hover:text-amber-600"
+                >
                   Creator Dashboard
-                </span>
+                </Link>
               </li>
               <li>
                 <span className="cursor-default text-gray-400">
@@ -60,9 +63,12 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <span className="cursor-default text-gray-400">
+                <Link
+                  href="/my-dreams"
+                  className="transition-colors hover:text-amber-600"
+                >
                   My Supported Dreams
-                </span>
+                </Link>
               </li>
               <li>
                 <span className="cursor-default text-gray-400">
