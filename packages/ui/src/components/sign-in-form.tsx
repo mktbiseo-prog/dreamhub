@@ -46,11 +46,18 @@ function SignInForm({
 }: SignInFormProps) {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const [mode, setMode] = React.useState<"signin" | "signup">("signin");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onEmailSignIn?.(email, password);
   };
+
+  const toggleMode = () => {
+    setMode((prev) => (prev === "signin" ? "signup" : "signin"));
+  };
+
+  const isSignUp = mode === "signup";
 
   return (
     <div
@@ -61,7 +68,7 @@ function SignInForm({
     >
       <div className="text-center">
         <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-gray-100">
-          Sign in to Dream Hub
+          {isSignUp ? "Create your Dream ID" : "Sign in to Dream Hub"}
         </h1>
         <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
           One account for all Dream Hub services
@@ -114,7 +121,7 @@ function SignInForm({
           <Input
             id="password"
             type="password"
-            placeholder="Enter your password"
+            placeholder={isSignUp ? "Create a password (8+ characters)" : "Enter your password"}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
@@ -123,12 +130,40 @@ function SignInForm({
           />
         </div>
         <Button type="submit" className="w-full" disabled={isLoading}>
-          {isLoading ? "Signing in..." : "Sign in"}
+          {isLoading
+            ? isSignUp
+              ? "Creating account..."
+              : "Signing in..."
+            : isSignUp
+              ? "Create Dream ID"
+              : "Sign in"}
         </Button>
       </form>
 
       <p className="text-center text-sm text-gray-500 dark:text-gray-400">
-        New here? Just enter your email and password above to create an account.
+        {isSignUp ? (
+          <>
+            Already have an account?{" "}
+            <button
+              type="button"
+              onClick={toggleMode}
+              className="font-semibold text-blue-600 hover:underline dark:text-blue-400"
+            >
+              Sign in
+            </button>
+          </>
+        ) : (
+          <>
+            New to Dream Hub?{" "}
+            <button
+              type="button"
+              onClick={toggleMode}
+              className="font-semibold text-blue-600 hover:underline dark:text-blue-400"
+            >
+              Create your Dream ID
+            </button>
+          </>
+        )}
       </p>
     </div>
   );

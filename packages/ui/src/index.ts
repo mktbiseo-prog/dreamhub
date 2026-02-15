@@ -10,6 +10,7 @@ export {
   CardContent,
 } from "./components/card";
 export { SignInForm, type SignInFormProps } from "./components/sign-in-form";
+export { LanguageSelector } from "./components/language-selector";
 export { cn } from "./lib/utils";
 
 // ── Chat Components ─────────────────────────────────────────────────────────

@@ -11,6 +11,8 @@ const credentialsSchema = z.object({
   password: z.string().min(8),
 });
 
+const isDbAvailable = !!process.env.DATABASE_URL;
+
 // Only register Google if credentials are provided
 const providers: NextAuthConfig["providers"] = [];
 if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
@@ -23,7 +25,11 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
 }
 
 export const authConfig: NextAuthConfig = {
-  adapter: PrismaAdapter(prisma),
+  secret:
+    process.env.AUTH_SECRET ||
+    process.env.NEXTAUTH_SECRET ||
+    "dreamhub-dev-secret-do-not-use-in-production",
+  ...(isDbAvailable ? { adapter: PrismaAdapter(prisma) } : {}),
   session: {
     strategy: "jwt",
   },
@@ -38,6 +44,16 @@ export const authConfig: NextAuthConfig = {
       async authorize(credentials) {
         const parsed = credentialsSchema.safeParse(credentials);
         if (!parsed.success) return null;
+
+        // Demo mode: no database — accept any valid email/password
+        if (!isDbAvailable) {
+          return {
+            id: `demo-${parsed.data.email}`,
+            email: parsed.data.email,
+            name: parsed.data.email.split("@")[0],
+            image: null,
+          };
+        }
 
         let user = await prisma.user.findUnique({
           where: { email: parsed.data.email },

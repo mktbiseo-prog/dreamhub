@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Plus_Jakarta_Sans } from "next/font/google";
+import { LanguageSelector } from "@dreamhub/ui";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Providers } from "./Providers";
@@ -32,6 +33,7 @@ export default function RootLayout({
     <html lang="en" className={`${inter.variable} ${plusJakarta.variable} ${inter.className}`} suppressHydrationWarning>
       <body className="min-h-screen antialiased">
         <Providers>
+          <LanguageSelector />
           <Navbar />
           {children}
           <Footer />

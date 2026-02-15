@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Plus_Jakarta_Sans } from "next/font/google";
+import { LanguageSelector } from "@dreamhub/ui";
 import { SessionProvider } from "@/components/providers/SessionProvider";
 import { BottomNav } from "@/components/layout/BottomNav";
 import { CafeToast } from "@/components/cafe/CafeToast";
@@ -31,6 +32,7 @@ export default function RootLayout({
   const authEnabled = !!process.env.DATABASE_URL;
   const content = (
     <>
+      <LanguageSelector />
       {children}
       <BottomNav />
       <CafeToast />
