@@ -1,12 +1,13 @@
-"use client";
-
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
-import { Suspense } from "react";
 
-function ErrorContent() {
-  const searchParams = useSearchParams();
-  const error = searchParams.get("error");
+export const dynamic = "force-dynamic";
+
+interface PageProps {
+  searchParams: Promise<{ error?: string }>;
+}
+
+export default async function AuthErrorPage({ searchParams }: PageProps) {
+  const { error } = await searchParams;
 
   const errorMessages: Record<string, string> = {
     Configuration: "The authentication service is not configured. Please use email sign-in for demo.",
@@ -35,13 +36,5 @@ function ErrorContent() {
         </Link>
       </div>
     </div>
-  );
-}
-
-export default function AuthErrorPage() {
-  return (
-    <Suspense fallback={<div className="flex min-h-screen items-center justify-center bg-gray-950"><p className="text-gray-400">Loading...</p></div>}>
-      <ErrorContent />
-    </Suspense>
   );
 }

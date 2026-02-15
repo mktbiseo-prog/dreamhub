@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 import { Button, Input, Card } from "@dreamhub/design-system";
 
 const SOCIAL_BUTTONS = [
@@ -39,12 +41,19 @@ const SOCIAL_BUTTONS = [
   },
 ];
 
-export default function SignInPage() {
+function SignInContent() {
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [mode, setMode] = useState<"signin" | "signup">("signin");
+
+  function getRedirectUrl(isSignup: boolean): string {
+    if (isSignup) return "/auth/onboarding";
+    return callbackUrl || "/discover";
+  }
 
   async function handleEmailSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -59,11 +68,7 @@ export default function SignInPage() {
     // Set cookie so middleware recognizes the session
     document.cookie = "dreamhub-demo-session=true; path=/; max-age=604800; SameSite=Lax";
 
-    if (mode === "signup") {
-      window.location.href = "/auth/onboarding";
-    } else {
-      window.location.href = "/";
-    }
+    window.location.href = getRedirectUrl(mode === "signup");
   }
 
   async function handleSocialLogin(provider: "google" | "apple" | "kakao") {
@@ -78,7 +83,7 @@ export default function SignInPage() {
     // Set cookie so middleware recognizes the session
     document.cookie = "dreamhub-demo-session=true; path=/; max-age=604800; SameSite=Lax";
 
-    window.location.href = "/auth/onboarding";
+    window.location.href = getRedirectUrl(true);
   }
 
   return (
@@ -208,5 +213,19 @@ export default function SignInPage() {
         </p>
       </Card>
     </div>
+  );
+}
+
+export default function SignInPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[var(--dream-hub-dark)] to-[#2D1B69]">
+          <p className="text-gray-400">Loading...</p>
+        </div>
+      }
+    >
+      <SignInContent />
+    </Suspense>
   );
 }

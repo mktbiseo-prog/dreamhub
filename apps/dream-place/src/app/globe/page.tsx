@@ -77,7 +77,7 @@ export default function GlobePage() {
       {/* Back button */}
       <div className="absolute left-4 top-4 z-10">
         <Link
-          href="/dashboard"
+          href="/explore"
           className="flex items-center gap-1 rounded-full bg-gray-900/80 px-3 py-1.5 text-sm text-gray-300 backdrop-blur-sm hover:bg-gray-800"
         >
           <svg

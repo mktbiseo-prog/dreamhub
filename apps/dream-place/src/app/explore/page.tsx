@@ -5,28 +5,40 @@ import { Button } from "@dreamhub/ui";
 import { DreamGlobe } from "@/components/place/DreamGlobe";
 import type { GlobeDreamer } from "@/types";
 
+// Mapping from dreamCategory to representative skills
+const CATEGORY_SKILLS: Record<string, string[]> = {
+  Technology: ["React / Next.js", "Node.js / Express", "Machine Learning"],
+  EdTech: ["React / Next.js", "UI Design", "Data Science / Analytics"],
+  "E-Commerce": ["React / Next.js", "Node.js / Express", "Business Strategy"],
+  HealthTech: ["Machine Learning", "Data Science / Analytics", "Node.js / Express"],
+  FinTech: ["Node.js / Express", "Data Science / Analytics", "Business Strategy"],
+  "Climate Tech": ["Data Science / Analytics", "Machine Learning", "Business Strategy"],
+  "Music Tech": ["React / Next.js", "UI Design", "Machine Learning"],
+  Productivity: ["React / Next.js", "Node.js / Express", "UI Design"],
+};
+
 // Mock dreamer data across multiple countries
-const MOCK_GLOBE_DREAMERS: GlobeDreamer[] = [
-  { lat: 37.5665, lng: 126.978, name: "Seoul", dreamCategory: "Technology", count: 42 },
-  { lat: 37.7749, lng: -122.4194, name: "San Francisco", dreamCategory: "Technology", count: 67 },
-  { lat: 35.6762, lng: 139.6503, name: "Tokyo", dreamCategory: "HealthTech", count: 38 },
-  { lat: 52.52, lng: 13.405, name: "Berlin", dreamCategory: "E-Commerce", count: 29 },
-  { lat: 6.5244, lng: 3.3792, name: "Lagos", dreamCategory: "FinTech", count: 24 },
-  { lat: 60.1699, lng: 24.9384, name: "Helsinki", dreamCategory: "Climate Tech", count: 15 },
-  { lat: 19.076, lng: 72.8777, name: "Mumbai", dreamCategory: "Music Tech", count: 31 },
-  { lat: 52.2297, lng: 21.0122, name: "Warsaw", dreamCategory: "Productivity", count: 18 },
-  { lat: 40.7128, lng: -74.006, name: "New York", dreamCategory: "FinTech", count: 55 },
-  { lat: 51.5074, lng: -0.1278, name: "London", dreamCategory: "EdTech", count: 48 },
-  { lat: -33.8688, lng: 151.2093, name: "Sydney", dreamCategory: "Climate Tech", count: 21 },
-  { lat: 48.8566, lng: 2.3522, name: "Paris", dreamCategory: "E-Commerce", count: 33 },
-  { lat: -23.5505, lng: -46.6333, name: "Sao Paulo", dreamCategory: "FinTech", count: 27 },
-  { lat: 1.3521, lng: 103.8198, name: "Singapore", dreamCategory: "Technology", count: 36 },
-  { lat: 55.7558, lng: 37.6173, name: "Moscow", dreamCategory: "Technology", count: 19 },
-  { lat: 34.0522, lng: -118.2437, name: "Los Angeles", dreamCategory: "Music Tech", count: 41 },
-  { lat: 31.2304, lng: 121.4737, name: "Shanghai", dreamCategory: "Technology", count: 52 },
-  { lat: 28.6139, lng: 77.209, name: "Delhi", dreamCategory: "EdTech", count: 45 },
-  { lat: -1.2921, lng: 36.8219, name: "Nairobi", dreamCategory: "FinTech", count: 16 },
-  { lat: 43.6532, lng: -79.3832, name: "Toronto", dreamCategory: "HealthTech", count: 30 },
+const MOCK_GLOBE_DREAMERS: (GlobeDreamer & { skills: string[]; matchScore: number })[] = [
+  { lat: 37.5665, lng: 126.978, name: "Seoul", dreamCategory: "Technology", count: 42, skills: CATEGORY_SKILLS["Technology"], matchScore: 78 },
+  { lat: 37.7749, lng: -122.4194, name: "San Francisco", dreamCategory: "Technology", count: 67, skills: CATEGORY_SKILLS["Technology"], matchScore: 85 },
+  { lat: 35.6762, lng: 139.6503, name: "Tokyo", dreamCategory: "HealthTech", count: 38, skills: CATEGORY_SKILLS["HealthTech"], matchScore: 62 },
+  { lat: 52.52, lng: 13.405, name: "Berlin", dreamCategory: "E-Commerce", count: 29, skills: CATEGORY_SKILLS["E-Commerce"], matchScore: 71 },
+  { lat: 6.5244, lng: 3.3792, name: "Lagos", dreamCategory: "FinTech", count: 24, skills: CATEGORY_SKILLS["FinTech"], matchScore: 55 },
+  { lat: 60.1699, lng: 24.9384, name: "Helsinki", dreamCategory: "Climate Tech", count: 15, skills: CATEGORY_SKILLS["Climate Tech"], matchScore: 45 },
+  { lat: 19.076, lng: 72.8777, name: "Mumbai", dreamCategory: "Music Tech", count: 31, skills: CATEGORY_SKILLS["Music Tech"], matchScore: 68 },
+  { lat: 52.2297, lng: 21.0122, name: "Warsaw", dreamCategory: "Productivity", count: 18, skills: CATEGORY_SKILLS["Productivity"], matchScore: 72 },
+  { lat: 40.7128, lng: -74.006, name: "New York", dreamCategory: "FinTech", count: 55, skills: CATEGORY_SKILLS["FinTech"], matchScore: 81 },
+  { lat: 51.5074, lng: -0.1278, name: "London", dreamCategory: "EdTech", count: 48, skills: CATEGORY_SKILLS["EdTech"], matchScore: 76 },
+  { lat: -33.8688, lng: 151.2093, name: "Sydney", dreamCategory: "Climate Tech", count: 21, skills: CATEGORY_SKILLS["Climate Tech"], matchScore: 58 },
+  { lat: 48.8566, lng: 2.3522, name: "Paris", dreamCategory: "E-Commerce", count: 33, skills: CATEGORY_SKILLS["E-Commerce"], matchScore: 64 },
+  { lat: -23.5505, lng: -46.6333, name: "Sao Paulo", dreamCategory: "FinTech", count: 27, skills: CATEGORY_SKILLS["FinTech"], matchScore: 59 },
+  { lat: 1.3521, lng: 103.8198, name: "Singapore", dreamCategory: "Technology", count: 36, skills: CATEGORY_SKILLS["Technology"], matchScore: 82 },
+  { lat: 55.7558, lng: 37.6173, name: "Moscow", dreamCategory: "Technology", count: 19, skills: CATEGORY_SKILLS["Technology"], matchScore: 47 },
+  { lat: 34.0522, lng: -118.2437, name: "Los Angeles", dreamCategory: "Music Tech", count: 41, skills: CATEGORY_SKILLS["Music Tech"], matchScore: 73 },
+  { lat: 31.2304, lng: 121.4737, name: "Shanghai", dreamCategory: "Technology", count: 52, skills: CATEGORY_SKILLS["Technology"], matchScore: 79 },
+  { lat: 28.6139, lng: 77.209, name: "Delhi", dreamCategory: "EdTech", count: 45, skills: CATEGORY_SKILLS["EdTech"], matchScore: 66 },
+  { lat: -1.2921, lng: 36.8219, name: "Nairobi", dreamCategory: "FinTech", count: 16, skills: CATEGORY_SKILLS["FinTech"], matchScore: 51 },
+  { lat: 43.6532, lng: -79.3832, name: "Toronto", dreamCategory: "HealthTech", count: 30, skills: CATEGORY_SKILLS["HealthTech"], matchScore: 70 },
 ];
 
 const DREAM_CATEGORIES = [
@@ -62,9 +74,16 @@ export default function ExplorePage() {
       if (selectedCategory !== "All" && d.dreamCategory !== selectedCategory) {
         return false;
       }
+      if (selectedSkills.length > 0) {
+        const hasSkill = selectedSkills.some((s) => d.skills.includes(s));
+        if (!hasSkill) return false;
+      }
+      if (minScore > 0 && d.matchScore < minScore) {
+        return false;
+      }
       return true;
     });
-  }, [selectedCategory]);
+  }, [selectedCategory, selectedSkills, minScore]);
 
   // Sort nearby dreamers by count (simulating distance sorting)
   const nearbyDreamers = useMemo(() => {

@@ -22,6 +22,7 @@ export default function ProfilePage() {
   const profile = useDreamStore((s) => s.currentUser);
   const isOnboarded = useDreamStore((s) => s.isOnboarded);
   const fetchProfile = useDreamStore((s) => s.fetchProfile);
+  const updateLinkedAccounts = useDreamStore((s) => s.updateLinkedAccounts);
   const storeTeams = useDreamStore((s) => s.teams);
 
   const [editingLinks, setEditingLinks] = useState(false);
@@ -62,6 +63,7 @@ export default function ProfilePage() {
   const completionPercent = Math.round((completedFields / fields.length) * 100);
 
   function handleSaveLinks() {
+    updateLinkedAccounts(linkedAccounts);
     setEditingLinks(false);
   }
 

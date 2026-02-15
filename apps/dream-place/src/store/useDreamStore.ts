@@ -80,6 +80,7 @@ interface DreamStore {
 
   // Actions — Profile
   completeOnboarding: (data: DreamProfileFormData) => void;
+  updateLinkedAccounts: (accounts: { github?: string; linkedin?: string; portfolio?: string }) => void;
 
   // Actions — Discover
   expressInterest: (matchId: string, resonatedWith?: string[]) => void;
@@ -178,6 +179,19 @@ export const useDreamStore = create<DreamStore>((set, get) => ({
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     }).catch(() => {});
+  },
+
+  updateLinkedAccounts: (accounts) => {
+    // Filter out empty strings
+    const cleaned = Object.fromEntries(
+      Object.entries(accounts).filter(([, v]) => v && v.trim() !== "")
+    );
+    set((state) => ({
+      currentUser: {
+        ...state.currentUser,
+        linkedAccounts: cleaned,
+      },
+    }));
   },
 
   // Discover
