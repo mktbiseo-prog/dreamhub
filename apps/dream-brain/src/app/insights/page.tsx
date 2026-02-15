@@ -24,7 +24,7 @@ export default async function InsightsPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col pb-20">
+    <div className="flex min-h-screen flex-col pb-20 md:pl-16">
       <Header />
       <main className="flex-1 px-5 py-5">
         <h1 className="text-lg font-bold text-gray-100 mb-4">Insights</h1>

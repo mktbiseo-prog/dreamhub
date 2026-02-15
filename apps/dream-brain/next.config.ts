@@ -2,6 +2,7 @@ import type { NextConfig } from "next";
 import path from "path";
 
 const nextConfig: NextConfig = {
+  allowedDevOrigins: ["*.app.github.dev"],
   transpilePackages: ["@dreamhub/ui", "@dreamhub/design-system", "@dreamhub/auth", "@dreamhub/database", "@dreamhub/shared-types", "@dreamhub/event-bus", "three"],
   outputFileTracingRoot: path.join(import.meta.dirname, "../../"),
   images: {
@@ -13,6 +14,7 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "avatars.githubusercontent.com" },
     ],
   },
+  serverExternalPackages: ["@prisma/client"],
   experimental: {
     optimizePackageImports: ["lucide-react", "@xyflow/react", "recharts"],
   },

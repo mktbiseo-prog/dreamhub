@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { Home, Brain, BarChart3, Link2 } from "lucide-react";
-import { MobileNav, type NavItem } from "@dreamhub/design-system";
+import { MobileNav, DesktopNav, type NavItem } from "@dreamhub/design-system";
 
 const navItems: NavItem[] = [
   { icon: Home, label: "Home", href: "/" },
@@ -30,11 +30,25 @@ export function BottomNav() {
   }, [activeHref, router]);
 
   return (
-    <MobileNav
-      items={navItems}
-      activeHref={activeHref}
-      onNavigate={(href) => router.push(href)}
-      className="!bg-gray-950/90 !backdrop-blur-xl !border-white/[0.06]"
-    />
+    <>
+      {/* Desktop sidebar */}
+      <DesktopNav
+        items={navItems}
+        activeHref={activeHref}
+        onNavigate={(href) => router.push(href)}
+        collapsed
+        header={
+          <Brain className="h-6 w-6 text-[var(--dream-color-primary)]" />
+        }
+        className="!bg-gray-950/90 !backdrop-blur-xl !border-white/[0.06]"
+      />
+      {/* Mobile bottom nav */}
+      <MobileNav
+        items={navItems}
+        activeHref={activeHref}
+        onNavigate={(href) => router.push(href)}
+        className="!bg-gray-950/90 !backdrop-blur-xl !border-white/[0.06]"
+      />
+    </>
   );
 }

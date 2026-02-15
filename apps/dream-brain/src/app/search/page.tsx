@@ -3,7 +3,7 @@ import { BottomNav } from "@/components/BottomNav";
 
 export default function SearchPage() {
   return (
-    <div className="flex min-h-screen flex-col pb-20">
+    <div className="flex min-h-screen flex-col pb-20 md:pl-16">
       <main className="flex-1 px-4 pt-4">
         <SemanticSearchView />
       </main>

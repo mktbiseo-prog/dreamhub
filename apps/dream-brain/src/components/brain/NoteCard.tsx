@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { memo, useState, useEffect } from "react";
 import Link from "next/link";
 import { categories } from "@/lib/categories";
 import type { ThoughtData } from "@/lib/data";
@@ -18,6 +18,15 @@ function formatRelativeTime(dateStr: string): string {
   return `${diffDays}d ago`;
 }
 
+/** Client-only relative time to avoid SSR/hydration mismatch */
+function useRelativeTime(dateStr: string): string {
+  const [text, setText] = useState("");
+  useEffect(() => {
+    setText(formatRelativeTime(dateStr));
+  }, [dateStr]);
+  return text;
+}
+
 interface NoteCardProps {
   thought: ThoughtData;
   className?: string;
@@ -26,6 +35,7 @@ interface NoteCardProps {
 export const NoteCard = memo(function NoteCard({ thought, className }: NoteCardProps) {
   const category = categories[thought.category];
   const Icon = category.icon;
+  const relativeTime = useRelativeTime(thought.createdAt);
 
   // Get first line of summary/body
   const firstLine = thought.summary || thought.body;
@@ -43,8 +53,8 @@ export const NoteCard = memo(function NoteCard({ thought, className }: NoteCardP
             <h3 className="text-base font-bold text-gray-100 leading-snug line-clamp-1">
               {thought.title}
             </h3>
-            <time className="shrink-0 text-xs text-gray-500">
-              {formatRelativeTime(thought.createdAt)}
+            <time className="shrink-0 text-xs text-gray-500" suppressHydrationWarning>
+              {relativeTime}
             </time>
           </div>
           <p className="mt-0.5 text-sm text-gray-400 line-clamp-1">

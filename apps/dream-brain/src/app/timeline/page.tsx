@@ -16,7 +16,7 @@ export default async function TimelinePage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col pb-20">
+    <div className="flex min-h-screen flex-col pb-20 md:pl-16">
       <Header />
       <main className="flex-1 px-5 py-5">
         <TimelineView initialThoughts={thoughts} />

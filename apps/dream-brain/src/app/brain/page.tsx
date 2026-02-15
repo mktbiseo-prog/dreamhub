@@ -14,7 +14,7 @@ export default async function BrainPage() {
   }
 
   return (
-    <div className="flex h-screen flex-col">
+    <div className="flex h-screen flex-col md:pl-16">
       <main className="flex-1 relative">
         <BrainViewToggle
           thoughts={graphData.thoughts}

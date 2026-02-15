@@ -5,6 +5,8 @@ import { analyzeThought, generateEmbedding, cosineSimilarity } from "@dreamhub/a
 import type { ActionItem } from "@dreamhub/ai";
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
+import { isDbAvailable } from "@/lib/queries";
+import { mockThoughts } from "@/lib/mock-data";
 
 // ── Validation ──────────────────────────────────────────────
 
@@ -60,10 +62,76 @@ async function invalidateInsightCache(userId: string) {
   }
 }
 
+// ── Demo mode helpers ───────────────────────────────────────
+
+const CATEGORIES = ["IDEAS", "WORK", "EMOTIONS", "DAILY", "LEARNING", "RELATIONSHIPS", "HEALTH", "FINANCE", "DREAMS"] as const;
+
+function pickDemoCategory(body: string): string {
+  const lower = body.toLowerCase();
+  if (lower.match(/idea|concept|what if|build|create|app/)) return "IDEAS";
+  if (lower.match(/work|meeting|team|project|deadline/)) return "WORK";
+  if (lower.match(/feel|emotion|anxious|happy|sad|grateful/)) return "EMOTIONS";
+  if (lower.match(/learn|study|read|course|tutorial/)) return "LEARNING";
+  if (lower.match(/health|exercise|run|sleep|meditat/)) return "HEALTH";
+  if (lower.match(/dream|vision|aspir|imagine|future/)) return "DREAMS";
+  if (lower.match(/money|budget|invest|save|expense/)) return "FINANCE";
+  if (lower.match(/friend|family|relation|meet|call/)) return "RELATIONSHIPS";
+  return CATEGORIES[Math.floor(Math.random() * CATEGORIES.length)];
+}
+
+function demoCreateThought(parsed: { title?: string; body: string }) {
+  const category = pickDemoCategory(parsed.body);
+  const id = `demo-${Date.now()}`;
+  const words = parsed.body.split(/\s+/).slice(0, 6);
+  const title = parsed.title || words.join(" ") + "...";
+  const summary = parsed.body.length > 100 ? parsed.body.slice(0, 100) + "..." : parsed.body;
+
+  const thought = {
+    id,
+    userId: "demo-user",
+    title,
+    body: parsed.body,
+    summary,
+    category,
+    tags: [category.toLowerCase()],
+    keywords: words.slice(0, 3),
+    importance: 3,
+    inputMethod: "TEXT" as const,
+    isFavorite: false,
+    isArchived: false,
+    isPinned: false,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    embedding: [],
+    emotion: "calm",
+    valence: 0.5,
+    emotionConfidence: 0.7,
+    actionItems: [],
+    peopleMentioned: [],
+    placesMentioned: [],
+  };
+
+  // Add to in-memory mock list so it shows on the feed
+  mockThoughts.unshift({
+    ...thought,
+    createdAt: thought.createdAt.toISOString(),
+    emotionSecondary: undefined,
+  } as (typeof mockThoughts)[number]);
+
+  return thought;
+}
+
 // ── Actions ─────────────────────────────────────────────────
 
 export async function createThought(input: { title?: string; body: string }) {
   const parsed = CreateThoughtSchema.parse(input);
+
+  if (!(await isDbAvailable())) {
+    const thought = demoCreateThought(parsed);
+    revalidatePath("/");
+    revalidatePath("/brain");
+    return thought;
+  }
 
   const userId = await getCurrentUserId();
   if (userId === "demo-user") await ensureDemoUser();
@@ -183,6 +251,17 @@ export async function updateThought(input: {
   const parsed = UpdateThoughtSchema.parse(input);
   const { id, ...data } = parsed;
 
+  if (!(await isDbAvailable())) {
+    // Demo mode: update in-memory mock
+    const mock = mockThoughts.find((t) => t.id === id);
+    if (mock) {
+      if (data.title) mock.title = data.title;
+      if (data.body) mock.body = data.body;
+    }
+    revalidatePath(`/thoughts/${id}`);
+    return { id, ...data };
+  }
+
   // Ownership check
   const userId = await getCurrentUserId();
   const existing = await prisma.thought.findUnique({ where: { id } });
@@ -219,6 +298,14 @@ export async function updateThought(input: {
 }
 
 export async function deleteThought(id: string) {
+  if (!(await isDbAvailable())) {
+    const idx = mockThoughts.findIndex((t) => t.id === id);
+    if (idx !== -1) mockThoughts.splice(idx, 1);
+    revalidatePath("/");
+    revalidatePath("/brain");
+    return;
+  }
+
   // Ownership check
   const userId = await getCurrentUserId();
   const existing = await prisma.thought.findUnique({ where: { id } });
@@ -246,6 +333,13 @@ export async function createVoiceThought(input: {
       voiceDurationSeconds: z.number().min(0).max(300),
     })
     .parse(input);
+
+  if (!(await isDbAvailable())) {
+    const thought = demoCreateThought({ body: parsed.body });
+    revalidatePath("/");
+    revalidatePath("/brain");
+    return thought;
+  }
 
   const userId = await getCurrentUserId();
   if (userId === "demo-user") await ensureDemoUser();
@@ -289,6 +383,13 @@ export async function createVoiceThought(input: {
 }
 
 export async function toggleFavorite(id: string) {
+  if (!(await isDbAvailable())) {
+    const mock = mockThoughts.find((t) => t.id === id);
+    if (mock) mock.isFavorite = !mock.isFavorite;
+    revalidatePath(`/thoughts/${id}`);
+    return mock;
+  }
+
   const thought = await prisma.thought.findUnique({ where: { id } });
   if (!thought) throw new Error("Thought not found");
 
@@ -302,6 +403,14 @@ export async function toggleFavorite(id: string) {
 }
 
 export async function togglePin(id: string) {
+  if (!(await isDbAvailable())) {
+    const mock = mockThoughts.find((t) => t.id === id);
+    if (mock) mock.isPinned = !mock.isPinned;
+    revalidatePath(`/thoughts/${id}`);
+    revalidatePath("/");
+    return mock;
+  }
+
   const thought = await prisma.thought.findUnique({ where: { id } });
   if (!thought) throw new Error("Thought not found");
 
@@ -317,6 +426,14 @@ export async function togglePin(id: string) {
 }
 
 export async function toggleArchive(id: string) {
+  if (!(await isDbAvailable())) {
+    const mock = mockThoughts.find((t) => t.id === id);
+    if (mock) mock.isArchived = !mock.isArchived;
+    revalidatePath(`/thoughts/${id}`);
+    revalidatePath("/");
+    return mock;
+  }
+
   const thought = await prisma.thought.findUnique({ where: { id } });
   if (!thought) throw new Error("Thought not found");
 
@@ -333,6 +450,15 @@ export async function toggleArchive(id: string) {
 }
 
 export async function toggleActionItem(thoughtId: string, itemIndex: number) {
+  if (!(await isDbAvailable())) {
+    const mock = mockThoughts.find((t) => t.id === thoughtId);
+    if (mock && mock.actionItems[itemIndex]) {
+      mock.actionItems[itemIndex].completed = !mock.actionItems[itemIndex].completed;
+    }
+    revalidatePath(`/thoughts/${thoughtId}`);
+    return;
+  }
+
   const userId = await getCurrentUserId();
   const thought = await prisma.thought.findUnique({ where: { id: thoughtId } });
 

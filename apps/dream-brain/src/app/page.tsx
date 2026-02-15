@@ -37,7 +37,7 @@ export default async function Home() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col pb-20">
+    <div className="flex min-h-screen flex-col pb-20 md:pl-16">
       <Header />
       <main className="flex-1 pb-48">
         <HomeFeed initialThoughts={thoughts} todayInsight={todayInsight} />
