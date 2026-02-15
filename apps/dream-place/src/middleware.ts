@@ -37,9 +37,11 @@ export function middleware(request: NextRequest) {
     const sessionToken =
       request.cookies.get("__Secure-authjs.session-token")?.value ??
       request.cookies.get("authjs.session-token")?.value;
+    // Also accept demo session cookie (set by the mock sign-in page)
+    const demoSession = request.cookies.get("dreamhub-demo-session")?.value;
 
-    if (!sessionToken) {
-      const signInUrl = new URL("/api/auth/signin", request.url);
+    if (!sessionToken && !demoSession) {
+      const signInUrl = new URL("/auth/sign-in", request.url);
       signInUrl.searchParams.set("callbackUrl", pathname);
       return NextResponse.redirect(signInUrl);
     }

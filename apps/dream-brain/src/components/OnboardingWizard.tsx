@@ -65,7 +65,11 @@ export function OnboardingWizard() {
 
   function handleSkip() {
     startTransition(async () => {
-      await completeOnboarding({ name, dreamStatement, interests: selectedInterests });
+      try {
+        await completeOnboarding({ name, dreamStatement, interests: selectedInterests });
+      } catch {
+        // Continue even if onboarding save fails (e.g., no DB)
+      }
       router.push("/");
     });
   }
@@ -85,7 +89,11 @@ export function OnboardingWizard() {
 
   function handleFinish() {
     startTransition(async () => {
-      await completeOnboarding({ name, dreamStatement, interests: selectedInterests });
+      try {
+        await completeOnboarding({ name, dreamStatement, interests: selectedInterests });
+      } catch {
+        // Continue even if onboarding save fails (e.g., no DB)
+      }
       router.push("/");
     });
   }

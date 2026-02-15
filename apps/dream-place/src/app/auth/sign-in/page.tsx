@@ -56,6 +56,8 @@ export default function SignInPage() {
 
     localStorage.setItem("dreamhub_access_token", "demo-token");
     localStorage.setItem("dreamhub_user_email", email);
+    // Set cookie so middleware recognizes the session
+    document.cookie = "dreamhub-demo-session=true; path=/; max-age=604800; SameSite=Lax";
 
     if (mode === "signup") {
       window.location.href = "/auth/onboarding";
@@ -73,6 +75,8 @@ export default function SignInPage() {
 
     localStorage.setItem("dreamhub_access_token", "demo-token");
     localStorage.setItem("dreamhub_user_email", `demo@${provider}.com`);
+    // Set cookie so middleware recognizes the session
+    document.cookie = "dreamhub-demo-session=true; path=/; max-age=604800; SameSite=Lax";
 
     window.location.href = "/auth/onboarding";
   }
