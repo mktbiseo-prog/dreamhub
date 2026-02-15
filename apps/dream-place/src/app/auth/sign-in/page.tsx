@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
+import { signIn } from "next-auth/react";
 import { Button, Input, Card } from "@dreamhub/design-system";
 
 const SOCIAL_BUTTONS = [
@@ -60,30 +61,39 @@ function SignInContent() {
     setError(null);
     setIsLoading(true);
 
-    // Simulate auth delay for realistic demo feel
-    await new Promise((r) => setTimeout(r, 800));
+    try {
+      const result = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+      });
 
-    localStorage.setItem("dreamhub_access_token", "demo-token");
-    localStorage.setItem("dreamhub_user_email", email);
-    // Set cookie so middleware recognizes the session
-    document.cookie = "dreamhub-demo-session=true; path=/; max-age=604800; SameSite=Lax";
-
-    window.location.href = getRedirectUrl(mode === "signup");
+      if (result?.error) {
+        setError("Invalid email or password. Please try again.");
+        setIsLoading(false);
+      } else {
+        window.location.href = getRedirectUrl(mode === "signup");
+      }
+    } catch (err) {
+      console.error("Email sign-in error:", err);
+      setError("Sign-in failed. Please try again.");
+      setIsLoading(false);
+    }
   }
 
   async function handleSocialLogin(provider: "google" | "apple" | "kakao") {
     setError(null);
     setIsLoading(true);
 
-    // Simulate auth delay for realistic demo feel
-    await new Promise((r) => setTimeout(r, 800));
-
-    localStorage.setItem("dreamhub_access_token", "demo-token");
-    localStorage.setItem("dreamhub_user_email", `demo@${provider}.com`);
-    // Set cookie so middleware recognizes the session
-    document.cookie = "dreamhub-demo-session=true; path=/; max-age=604800; SameSite=Lax";
-
-    window.location.href = getRedirectUrl(true);
+    try {
+      await signIn(provider, {
+        callbackUrl: getRedirectUrl(true),
+      });
+    } catch (err) {
+      console.error(`${provider} sign-in error:`, err);
+      setError(`${provider.charAt(0).toUpperCase() + provider.slice(1)} sign-in failed. Please try again.`);
+      setIsLoading(false);
+    }
   }
 
   return (

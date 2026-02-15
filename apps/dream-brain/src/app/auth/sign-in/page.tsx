@@ -20,10 +20,13 @@ export default function SignInPage() {
 
   async function handleGoogleSignIn() {
     setIsLoading(true);
+    setError(undefined);
     try {
       await signIn("google", { callbackUrl: "/" });
-    } catch {
-      useDemoAuth("demo@google.com", "/");
+    } catch (err) {
+      console.error("Google sign-in error:", err);
+      setError("Google sign-in failed. Please try again.");
+      setIsLoading(false);
     }
   }
 

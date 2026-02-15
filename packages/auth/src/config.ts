@@ -13,13 +13,15 @@ const credentialsSchema = z.object({
 
 const isDbAvailable = !!process.env.DATABASE_URL;
 
-// Only register Google if credentials are provided
-const providers: NextAuthConfig["providers"] = [];
+// Build providers list
+const oauthProviders: NextAuthConfig["providers"] = [];
 if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
-  providers.push(
+  oauthProviders.push(
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      // Allow linking Google account to existing user with same email
+      allowDangerousEmailAccountLinking: true,
     })
   );
 }
@@ -34,7 +36,7 @@ export const authConfig: NextAuthConfig = {
     strategy: "jwt",
   },
   providers: [
-    ...providers,
+    ...oauthProviders,
     Credentials({
       name: "Email",
       credentials: {
@@ -90,15 +92,33 @@ export const authConfig: NextAuthConfig = {
     }),
   ],
   callbacks: {
+    async signIn({ account, profile }) {
+      // Allow credentials sign-in to pass through
+      if (account?.provider === "credentials") return true;
+      // For OAuth (Google), ensure we have an email
+      if (account?.provider === "google") {
+        return !!profile?.email;
+      }
+      return true;
+    },
     async session({ session, token }) {
       if (token.sub && session.user) {
         session.user.id = token.sub;
       }
+      if (token.picture && session.user) {
+        session.user.image = token.picture;
+      }
       return session;
     },
-    async jwt({ token, user }) {
+    async jwt({ token, user, account, profile }) {
       if (user) {
         token.sub = user.id;
+      }
+      // On initial OAuth sign-in, store profile data in the token
+      if (account?.provider === "google" && profile) {
+        token.name = profile.name;
+        token.email = profile.email;
+        token.picture = profile.picture as string;
       }
       return token;
     },
