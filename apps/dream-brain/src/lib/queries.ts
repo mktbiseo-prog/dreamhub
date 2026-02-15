@@ -6,8 +6,18 @@ import { mockThoughts, mockConnections, getRelatedThoughts as getMockRelated } f
 import { getCurrentUserId } from "./auth";
 import type { ThoughtData, ConnectionData, RelatedThoughtData } from "./data";
 
-function isDbAvailable(): boolean {
-  return !!process.env.DATABASE_URL;
+let _dbAvailable: boolean | null = null;
+
+export async function isDbAvailable(): Promise<boolean> {
+  if (!process.env.DATABASE_URL) return false;
+  if (_dbAvailable !== null) return _dbAvailable;
+  try {
+    await prisma.$queryRaw`SELECT 1`;
+    _dbAvailable = true;
+  } catch {
+    _dbAvailable = false;
+  }
+  return _dbAvailable;
 }
 
 function parseActionItems(raw: unknown): ActionItem[] {
@@ -75,7 +85,7 @@ export async function fetchThoughts(options?: {
   favoritesOnly?: boolean;
   pinnedOnly?: boolean;
 }): Promise<ThoughtData[]> {
-  if (!isDbAvailable()) {
+  if (!(await isDbAvailable())) {
     let results = [...mockThoughts];
     if (!options?.includeArchived) {
       results = results.filter((t) => !t.isArchived);
@@ -142,7 +152,7 @@ export async function fetchThoughts(options?: {
 }
 
 export async function fetchThoughtById(id: string): Promise<ThoughtData | null> {
-  if (!isDbAvailable()) {
+  if (!(await isDbAvailable())) {
     const found = mockThoughts.find((t) => t.id === id);
     return found || null;
   }
@@ -153,7 +163,7 @@ export async function fetchThoughtById(id: string): Promise<ThoughtData | null> 
 }
 
 export async function fetchRelatedThoughts(thoughtId: string): Promise<RelatedThoughtData[]> {
-  if (!isDbAvailable()) {
+  if (!(await isDbAvailable())) {
     return getMockRelated(thoughtId);
   }
 
@@ -175,7 +185,7 @@ export async function fetchGraphData(): Promise<{
   thoughts: ThoughtData[];
   connections: ConnectionData[];
 }> {
-  if (!isDbAvailable()) {
+  if (!(await isDbAvailable())) {
     return {
       thoughts: mockThoughts,
       connections: mockConnections.map((c) => ({
@@ -215,7 +225,7 @@ export async function fetchGraphData(): Promise<{
 }
 
 export async function fetchInsight(periodType: "weekly" | "monthly"): Promise<InsightData> {
-  if (!isDbAvailable()) {
+  if (!(await isDbAvailable())) {
     // Use mock thoughts to generate insight
     return generateInsight(mockThoughts.map((t) => ({
       category: t.category.toUpperCase(),
@@ -324,7 +334,7 @@ export interface UserStats {
 }
 
 export async function fetchUserProfile(): Promise<UserProfile> {
-  if (!isDbAvailable()) {
+  if (!(await isDbAvailable())) {
     return {
       name: "Demo User",
       email: "demo@dreambrain.app",
@@ -355,7 +365,7 @@ export async function fetchUserProfile(): Promise<UserProfile> {
 }
 
 export async function fetchUserStats(): Promise<UserStats> {
-  if (!isDbAvailable()) {
+  if (!(await isDbAvailable())) {
     const categoryCounts: Record<string, number> = {};
     for (const t of mockThoughts) {
       categoryCounts[t.category] = (categoryCounts[t.category] || 0) + 1;
@@ -403,7 +413,7 @@ const DEFAULT_PREFERENCES: UserPreferencesData = {
 };
 
 export async function fetchUserPreferences(): Promise<UserPreferencesData> {
-  if (!isDbAvailable()) return DEFAULT_PREFERENCES;
+  if (!(await isDbAvailable())) return DEFAULT_PREFERENCES;
 
   const userId = await getCurrentUserId();
   const prefs = await prisma.userPreferences.findUnique({
@@ -424,7 +434,7 @@ export async function fetchUserPreferences(): Promise<UserPreferencesData> {
 }
 
 export async function fetchOnboardingStatus(): Promise<boolean> {
-  if (!isDbAvailable()) return true;
+  if (!(await isDbAvailable())) return true;
 
   const userId = await getCurrentUserId();
   if (userId === "demo-user") return true;
