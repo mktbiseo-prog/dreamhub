@@ -17,6 +17,7 @@
     "@dreamhub/i18n": "workspace:*",
     "@dreamhub/shared-types": "workspace:*",
     "@dreamhub/ui": "workspace:*",
+    "@tanstack/react-virtual": "^3.0.0",
     "@xyflow/react": "^12.10.0",
     "lucide-react": "^0.563.0",
     "next": "^15.0.0",
