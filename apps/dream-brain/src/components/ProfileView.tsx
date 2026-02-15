@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { signOut } from "next-auth/react";
 import { Pencil, X, Check, LogOut, Sparkles } from "lucide-react";
 import { updateUserProfile } from "@/lib/actions/profile";
 
@@ -269,9 +270,7 @@ export function ProfileView({ profile, stats, isDemo }: ProfileViewProps) {
       {!isDemo && (
         <button
           type="button"
-          onClick={() => {
-            window.location.href = "/api/auth/signout";
-          }}
+          onClick={() => signOut({ callbackUrl: "/" })}
           className="mx-auto inline-flex items-center gap-2 rounded-xl border border-red-500/20 px-5 py-2.5 text-sm text-red-400 transition-colors hover:bg-red-500/5"
         >
           <LogOut className="h-4 w-4" />

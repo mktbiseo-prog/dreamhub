@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Brain, Search } from "lucide-react";
-import { Avatar } from "@dreamhub/design-system";
 import { getCurrentUserId } from "@/lib/auth";
+import { HeaderAvatarMenu } from "./HeaderAvatarMenu";
 
 async function getUserInfo(userId: string): Promise<{ name: string; isDemo: boolean }> {
   if (userId === "demo-user") return { name: "Demo", isDemo: true };
@@ -42,7 +42,7 @@ export async function Header() {
         <Search className="h-5 w-5 text-gray-400" />
       </Link>
 
-      {/* Right: Profile */}
+      {/* Right: Profile / Sign in */}
       {isDemo ? (
         <Link
           href="/auth/sign-in"
@@ -51,9 +51,7 @@ export async function Header() {
           Sign in
         </Link>
       ) : (
-        <Link href="/profile">
-          <Avatar size="sm" name={name} />
-        </Link>
+        <HeaderAvatarMenu name={name} />
       )}
     </header>
   );
