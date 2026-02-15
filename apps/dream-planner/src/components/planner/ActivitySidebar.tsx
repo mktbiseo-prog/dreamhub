@@ -34,7 +34,7 @@ export function ActivitySidebar({
           Part {partNumber}
         </h3>
         <p className="mb-3 text-[10px] text-gray-400">
-          Activity {currentActivity || "—"} of {total}
+          Activity {currentActivity ? activities.findIndex((a) => a.id === currentActivity) + 1 || "—" : "—"} of {total}
         </p>
 
         {/* Progress dots */}

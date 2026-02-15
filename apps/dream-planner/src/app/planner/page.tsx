@@ -23,14 +23,15 @@ function isPart1Complete(data: { completedActivities: number[]; reflectionAnswer
 }
 
 function isPart2Complete(data: { part2: { completedActivities: number[] } }) {
-  return [6, 7, 8, 9, 10].every((id) => data.part2.completedActivities.includes(id));
+  return PART2_ACTIVITIES.every((a) => data.part2.completedActivities.includes(a.id));
 }
 
 function isPart3Complete(data: { part3: { completedActivities: number[] } }) {
-  return [11, 12, 13, 14].every((id) => data.part3.completedActivities.includes(id));
+  return PART3_ACTIVITIES.every((a) => data.part3.completedActivities.includes(a.id));
 }
 
 const ALL_ACTIVITIES = [...PART1_ACTIVITIES, ...PART2_ACTIVITIES, ...PART3_ACTIVITIES, ...PART4_ACTIVITIES];
+const TOTAL_ACTIVITY_COUNT = ALL_ACTIVITIES.length;
 
 function getCurrentActivityName(
   activePart: number,
@@ -122,10 +123,10 @@ const TIP_ICONS: Record<string, React.ReactNode> = {
 };
 
 const PARTS = [
-  { num: 1, title: "Face My Reality", activities: 5, href: "/planner/part1" },
-  { num: 2, title: "Discover My Dream", activities: 5, href: "/planner/part2" },
-  { num: 3, title: "Validate & Build", activities: 4, href: "/planner/part3" },
-  { num: 4, title: "Connect & Expand", activities: 6, href: "/planner/part4" },
+  { num: 1, title: "Face My Reality", activities: PART1_ACTIVITIES.length, href: "/planner/part1" },
+  { num: 2, title: "Discover My Dream", activities: PART2_ACTIVITIES.length, href: "/planner/part2" },
+  { num: 3, title: "Validate & Build", activities: PART3_ACTIVITIES.length, href: "/planner/part3" },
+  { num: 4, title: "Connect & Expand", activities: PART4_ACTIVITIES.length, href: "/planner/part4" },
 ];
 
 const PART_COLORS = [
@@ -170,7 +171,7 @@ export default function DashboardPage() {
       5: "Quarter way there! PART 1 skills are mapped.",
       10: "Halfway! Your dream is taking shape.",
       15: "Three quarters done! Your idea is validated.",
-      20: "You did it! The entire Dream Planner is complete!",
+      [TOTAL_ACTIVITY_COUNT]: "You did it! The entire Dream Planner is complete!",
     };
 
     const shownKey = "dream-planner-milestones-shown";
@@ -195,10 +196,10 @@ export default function DashboardPage() {
   const partAvailable = [true, part1Done, part1Done && part2Done, part1Done && part2Done && part3Done];
 
   const partProgress = [
-    Math.round((data.completedActivities.length / 5) * 100),
-    Math.round((data.part2.completedActivities.length / 5) * 100),
-    Math.round((data.part3.completedActivities.length / 4) * 100),
-    Math.round((data.part4.completedActivities.length / 6) * 100),
+    Math.round((data.completedActivities.length / PART1_ACTIVITIES.length) * 100),
+    Math.round((data.part2.completedActivities.length / PART2_ACTIVITIES.length) * 100),
+    Math.round((data.part3.completedActivities.length / PART3_ACTIVITIES.length) * 100),
+    Math.round((data.part4.completedActivities.length / PART4_ACTIVITIES.length) * 100),
   ];
 
   const total = totalCompleted(data);
@@ -250,7 +251,7 @@ export default function DashboardPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
           <div className="mx-4 w-full max-w-md animate-in zoom-in-95 fade-in rounded-2xl border border-amber-200 bg-white p-8 text-center shadow-2xl dark:border-amber-800 dark:bg-gray-900">
             <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-amber-100 to-orange-100 text-4xl dark:from-amber-900 dark:to-orange-900">
-              {milestonePopup.count === 20 ? "\u{1F680}" : milestonePopup.count >= 15 ? "\u{1F31F}" : milestonePopup.count >= 10 ? "\u{1F525}" : "\u{1F3AF}"}
+              {milestonePopup.count === TOTAL_ACTIVITY_COUNT ? "\u{1F680}" : milestonePopup.count >= 15 ? "\u{1F31F}" : milestonePopup.count >= 10 ? "\u{1F525}" : "\u{1F3AF}"}
             </div>
             <h3 className="mb-2 text-xl font-bold text-gray-900 dark:text-gray-100">
               {milestonePopup.count} Activities Complete!
@@ -259,7 +260,7 @@ export default function DashboardPage() {
               {milestonePopup.message}
             </p>
             <div className="mb-4 flex justify-center gap-1">
-              {Array.from({ length: 20 }).map((_, i) => (
+              {Array.from({ length: TOTAL_ACTIVITY_COUNT }).map((_, i) => (
                 <div
                   key={i}
                   className={cn(
@@ -338,7 +339,7 @@ export default function DashboardPage() {
         </div>
         <div className="mt-4 text-center">
           <span className="text-xs text-gray-400">
-            <strong className="text-gray-600 dark:text-gray-300">{total}</strong> of 20 activities completed
+            <strong className="text-gray-600 dark:text-gray-300">{total}</strong> of {TOTAL_ACTIVITY_COUNT} activities completed
           </span>
         </div>
       </div>
@@ -356,7 +357,7 @@ export default function DashboardPage() {
       )}
 
       {/* Current Activity CTA */}
-      {total > 0 && total < 20 && (
+      {total > 0 && total < TOTAL_ACTIVITY_COUNT && (
         <div className="mb-6 rounded-xl border-2 p-5 shadow-lg" style={{ borderColor: "var(--dream-color-primary)" }}>
           <div className="flex items-center gap-4">
             <div

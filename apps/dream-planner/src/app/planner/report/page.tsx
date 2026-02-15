@@ -5,6 +5,12 @@ import Link from "next/link";
 import { Button, cn } from "@dreamhub/ui";
 import { usePlannerStore } from "@/lib/store";
 import type { JourneyReportData } from "@/lib/ai-insights";
+import { PART1_ACTIVITIES } from "@/types/planner";
+import { PART2_ACTIVITIES } from "@/types/part2";
+import { PART3_ACTIVITIES } from "@/types/part3";
+import { PART4_ACTIVITIES } from "@/types/part4";
+
+const TOTAL_ACTIVITY_COUNT = PART1_ACTIVITIES.length + PART2_ACTIVITIES.length + PART3_ACTIVITIES.length + PART4_ACTIVITIES.length;
 
 function PillarBar({ label, score, color }: { label: string; score: number; color: string }) {
   return (
@@ -75,20 +81,20 @@ export default function ReportPage() {
       <div className="mb-6 rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-900">
         <div className="mb-4 flex items-center justify-between">
           <span className="text-sm font-medium text-gray-500">Activities Completed</span>
-          <span className="text-2xl font-bold text-gray-900 dark:text-white">{totalActivities}/20</span>
+          <span className="text-2xl font-bold text-gray-900 dark:text-white">{totalActivities}/{TOTAL_ACTIVITY_COUNT}</span>
         </div>
         <div className="h-3 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
           <div
             className="h-full rounded-full bg-gradient-to-r from-purple-500 to-blue-500 transition-all duration-500"
-            style={{ width: `${(totalActivities / 20) * 100}%` }}
+            style={{ width: `${(totalActivities / TOTAL_ACTIVITY_COUNT) * 100}%` }}
           />
         </div>
         <div className="mt-4 grid grid-cols-4 gap-2">
           {[
-            { label: "PART 1", count: data.completedActivities.length, total: 5 },
-            { label: "PART 2", count: data.part2.completedActivities.length, total: 5 },
-            { label: "PART 3", count: data.part3.completedActivities.length, total: 4 },
-            { label: "PART 4", count: data.part4.completedActivities.length, total: 6 },
+            { label: "PART 1", count: data.completedActivities.length, total: PART1_ACTIVITIES.length },
+            { label: "PART 2", count: data.part2.completedActivities.length, total: PART2_ACTIVITIES.length },
+            { label: "PART 3", count: data.part3.completedActivities.length, total: PART3_ACTIVITIES.length },
+            { label: "PART 4", count: data.part4.completedActivities.length, total: PART4_ACTIVITIES.length },
           ].map((p) => (
             <div key={p.label} className="text-center">
               <p className="text-xs text-gray-500">{p.label}</p>

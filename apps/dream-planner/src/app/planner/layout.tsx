@@ -1,7 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { signOut } from "next-auth/react";
 import dynamic from "next/dynamic";
 import { cn } from "@dreamhub/ui";
 import { Avatar } from "@dreamhub/design-system";
@@ -13,6 +15,53 @@ const AiCoach = dynamic(
   () => import("@/components/planner/AiCoach").then((m) => m.AiCoach),
   { ssr: false },
 );
+
+function AvatarMenu({ name, onDashboard }: { name: string; onDashboard: () => void }) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen(!open)}
+        className="dream-press"
+      >
+        <Avatar size="sm" name={name} />
+      </button>
+      {open && (
+        <>
+          <div className="fixed inset-0 z-20" onClick={() => setOpen(false)} />
+          <div className="absolute right-0 top-full z-30 mt-2 w-44 rounded-xl border border-gray-200 bg-white py-1 shadow-lg dark:border-gray-700 dark:bg-gray-900">
+            <button
+              type="button"
+              onClick={() => { onDashboard(); setOpen(false); }}
+              className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+                <polyline points="9 22 9 12 15 12 15 22" />
+              </svg>
+              Dashboard
+            </button>
+            <div className="my-1 border-t border-gray-200 dark:border-gray-700" />
+            <button
+              type="button"
+              onClick={() => signOut({ callbackUrl: "/" })}
+              className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/30"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" />
+                <polyline points="16 17 21 12 16 7" />
+                <line x1="21" y1="12" x2="9" y2="12" />
+              </svg>
+              Sign Out
+            </button>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
 
 export default function PlannerLayout({
   children,
@@ -70,19 +119,13 @@ export default function PlannerLayout({
             </div>
           )}
 
-          {/* Right: Streak + Avatar */}
+          {/* Right: Streak + Avatar + Menu */}
           <div className="flex items-center gap-3">
             <StreakCounter streak={data.streak} maxStreak={data.maxStreak} />
-            <button
-              type="button"
-              onClick={() => router.push("/planner")}
-              className="dream-press"
-            >
-              <Avatar
-                size="sm"
-                name={data.userName || "Dreamer"}
-              />
-            </button>
+            <AvatarMenu
+              name={data.userName || "Dreamer"}
+              onDashboard={() => router.push("/planner")}
+            />
           </div>
         </div>
       </header>
