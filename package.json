@@ -22,6 +22,7 @@
     ]
   },
   "dependencies": {
-    "@tanstack/react-virtual": "^3.13.18"
+    "@tanstack/react-virtual": "^3.13.18",
+    "playwright": "^1.58.2"
   }
 }
