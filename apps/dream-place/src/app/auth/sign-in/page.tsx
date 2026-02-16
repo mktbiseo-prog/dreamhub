@@ -69,7 +69,14 @@ function SignInContent() {
       });
 
       if (result?.error) {
-        setError("Invalid email or password. Please try again.");
+        console.error("[sign-in] NextAuth error:", result.error, result);
+        if (result.error === "CredentialsSignin") {
+          setError("Invalid email or password. Please try again.");
+        } else if (result.error === "Configuration") {
+          setError("Authentication service configuration error. Please try again later.");
+        } else {
+          setError(`Sign-in error: ${result.error}. Please try again.`);
+        }
         setIsLoading(false);
       } else {
         window.location.href = getRedirectUrl(mode === "signup");

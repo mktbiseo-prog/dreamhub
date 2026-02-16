@@ -14,7 +14,7 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "avatars.githubusercontent.com" },
     ],
   },
-  serverExternalPackages: ["@prisma/client"],
+  serverExternalPackages: ["@prisma/client", "prisma", "bcryptjs"],
   experimental: {
     optimizePackageImports: ["lucide-react", "@xyflow/react", "recharts"],
   },

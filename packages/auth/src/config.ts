@@ -14,6 +14,7 @@ const isDbAvailable = !!process.env.DATABASE_URL;
 
 export const authConfig: NextAuthConfig = {
   debug: process.env.NODE_ENV === "development",
+  trustHost: true,
   secret:
     process.env.AUTH_SECRET ||
     process.env.NEXTAUTH_SECRET ||
@@ -52,37 +53,48 @@ export const authConfig: NextAuthConfig = {
           };
         }
 
-        let user = await prisma.user.findUnique({
-          where: { email: parsed.data.email },
-        });
-
-        // Auto-create user on first sign-in (sign-up via credentials)
-        if (!user) {
-          const hashed = await bcrypt.hash(parsed.data.password, 10);
-          user = await prisma.user.create({
-            data: {
-              email: parsed.data.email,
-              name: parsed.data.email.split("@")[0],
-              hashedPassword: hashed,
-            },
+        try {
+          let user = await prisma.user.findUnique({
+            where: { email: parsed.data.email },
           });
+
+          // Auto-create user on first sign-in (sign-up via credentials)
+          if (!user) {
+            const hashed = await bcrypt.hash(parsed.data.password, 10);
+            user = await prisma.user.create({
+              data: {
+                email: parsed.data.email,
+                name: parsed.data.email.split("@")[0],
+                hashedPassword: hashed,
+              },
+            });
+          }
+
+          if (!user?.hashedPassword) return null;
+
+          const isValid = await bcrypt.compare(
+            parsed.data.password,
+            user.hashedPassword
+          );
+
+          if (!isValid) return null;
+
+          return {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            image: user.avatar,
+          };
+        } catch (error) {
+          console.error("[auth] Credentials authorize DB error:", error);
+          // Fallback to demo mode if DB is unreachable
+          return {
+            id: `demo-${parsed.data.email}`,
+            email: parsed.data.email,
+            name: parsed.data.email.split("@")[0],
+            image: null,
+          };
         }
-
-        if (!user?.hashedPassword) return null;
-
-        const isValid = await bcrypt.compare(
-          parsed.data.password,
-          user.hashedPassword
-        );
-
-        if (!isValid) return null;
-
-        return {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          image: user.avatar,
-        };
       },
     }),
   ],

@@ -3,6 +3,7 @@ import path from "path";
 
 const nextConfig: NextConfig = {
   transpilePackages: ["@dreamhub/ui", "@dreamhub/design-system", "@dreamhub/auth", "@dreamhub/database", "@dreamhub/shared-types", "@dreamhub/event-bus"],
+  serverExternalPackages: ["@prisma/client", "prisma", "bcryptjs"],
   outputFileTracingRoot: path.join(import.meta.dirname, "../../"),
   images: {
     formats: ["image/webp", "image/avif"],
