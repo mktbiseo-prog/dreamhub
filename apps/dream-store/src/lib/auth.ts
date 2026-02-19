@@ -1,6 +1,10 @@
 import { auth } from "@dreamhub/auth";
 
 export async function getCurrentUser() {
+  if (!process.env.AUTH_SECRET && !process.env.NEXTAUTH_SECRET) {
+    return null;
+  }
+
   try {
     const session = await auth();
     return session?.user ?? null;
@@ -10,6 +14,10 @@ export async function getCurrentUser() {
 }
 
 export async function getCurrentUserId(): Promise<string> {
+  if (!process.env.AUTH_SECRET && !process.env.NEXTAUTH_SECRET) {
+    return "demo-user";
+  }
+
   try {
     const session = await auth();
     if (session?.user?.id) {
