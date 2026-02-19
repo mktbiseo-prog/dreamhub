@@ -40,7 +40,7 @@ export function PlannerShell() {
 
       {/* Instruction card */}
       {currentActivityMeta && data.currentActivity > 0 && (
-        <div className="mb-6 flex items-start gap-3 rounded-xl border border-rose-100 bg-rose-50/50 p-4 dark:border-rose-900/30 dark:bg-rose-950/20">
+        <div className="mb-6 flex items-start gap-3 rounded-xl border border-orange-100 bg-[#FFF3ED]/50 p-4 dark:border-orange-900/30 dark:bg-orange-950/20">
           <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full" style={{ backgroundColor: PART_COLOR }}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />

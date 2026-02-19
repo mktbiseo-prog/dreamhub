@@ -54,7 +54,7 @@ export function AiSummary({ partNumber, dataSummary }: AiSummaryProps) {
   }, [partNumber, dataSummary]);
 
   const partColors: Record<number, { gradient: string; text: string; bg: string }> = {
-    1: { gradient: "from-purple-50 to-brand-50 dark:from-purple-950 dark:to-brand-950", text: "text-purple-700 dark:text-purple-300", bg: "bg-purple-100 dark:bg-purple-900" },
+    1: { gradient: "from-[#FFF8F5] to-orange-50 dark:from-orange-950 dark:to-orange-950", text: "text-orange-700 dark:text-orange-300", bg: "bg-[#FFF3ED] dark:bg-orange-900" },
     2: { gradient: "from-brand-50 to-blue-50 dark:from-brand-950 dark:to-blue-950", text: "text-brand-700 dark:text-brand-300", bg: "bg-brand-100 dark:bg-brand-900" },
     3: { gradient: "from-blue-50 to-cyan-50 dark:from-blue-950 dark:to-cyan-950", text: "text-blue-700 dark:text-blue-300", bg: "bg-blue-100 dark:bg-blue-900" },
     4: { gradient: "from-emerald-50 to-teal-50 dark:from-emerald-950 dark:to-teal-950", text: "text-emerald-700 dark:text-emerald-300", bg: "bg-emerald-100 dark:bg-emerald-900" },

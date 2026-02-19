@@ -169,8 +169,8 @@ export function GrowthDashboard({ onNext }: { onNext: () => void }) {
         </div>
 
         <div className="rounded-[12px] border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-900">
-          <div className="mb-2 flex h-8 w-8 items-center justify-center rounded-full bg-purple-100 dark:bg-purple-900">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-purple-600 dark:text-purple-300">
+          <div className="mb-2 flex h-8 w-8 items-center justify-center rounded-full bg-[#FFF3ED] dark:bg-orange-900">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-[#FF6B35] dark:text-orange-300">
               <path d="M18 20V10M12 20V4M6 20v-6" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </div>
@@ -178,7 +178,7 @@ export function GrowthDashboard({ onNext }: { onNext: () => void }) {
           <p className="mt-1 text-2xl font-bold text-gray-900 dark:text-gray-100">{overallProgress}%</p>
           <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
             <div
-              className="h-full rounded-full bg-purple-500 transition-all duration-500"
+              className="h-full rounded-full bg-[#FF6B35] transition-all duration-500"
               style={{ width: `${overallProgress}%` }}
             />
           </div>
@@ -346,7 +346,7 @@ export function GrowthDashboard({ onNext }: { onNext: () => void }) {
         <h4 className="mb-3 text-xs font-semibold uppercase tracking-wider text-gray-400">Progress by Part</h4>
         <div className="space-y-2">
           {[
-            { label: "PART 1: Face My Reality", completed: data.completedActivities.length, total: 5, color: "bg-rose-500" },
+            { label: "PART 1: Face My Reality", completed: data.completedActivities.length, total: 5, color: "bg-[#FF6B35]" },
             { label: "PART 2: Discover My Dream", completed: data.part2.completedActivities.length, total: 5, color: "bg-violet-500" },
             { label: "PART 3: Validate & Build", completed: data.part3.completedActivities.length, total: 4, color: "bg-cyan-500" },
             { label: "PART 4: Connect & Expand", completed: data.part4.completedActivities.length, total: 6, color: "bg-amber-500" },

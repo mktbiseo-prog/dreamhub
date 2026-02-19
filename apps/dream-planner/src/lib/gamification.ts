@@ -135,7 +135,7 @@ export function getHighestTitle(data: {
 
 export const BADGE_ICONS: Record<Badge["icon"], { emoji: string; color: string }> = {
   first_activity: { emoji: "\u{1F3AF}", color: "from-gray-400 to-gray-500" },
-  part1: { emoji: "\u{1F4AA}", color: "from-purple-400 to-purple-600" },
+  part1: { emoji: "\u{1F4AA}", color: "from-[#FF6B35] to-orange-600" },
   part2: { emoji: "\u{2728}", color: "from-brand-400 to-brand-600" },
   part3: { emoji: "\u{1F6E0}\u{FE0F}", color: "from-blue-400 to-blue-600" },
   part4: { emoji: "\u{1F91D}", color: "from-emerald-400 to-emerald-600" },

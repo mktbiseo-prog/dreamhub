@@ -38,7 +38,7 @@ export function AiInsightPanel({ activityId, activityName, className }: AiInsigh
   }, [activityId, data]);
 
   return (
-    <div className={cn("rounded-xl border border-purple-200 bg-gradient-to-br from-purple-50 to-blue-50 dark:border-purple-800 dark:from-purple-950/50 dark:to-blue-950/50", className)}>
+    <div className={cn("rounded-xl border border-orange-200 bg-gradient-to-br from-[#FFF8F5] to-orange-50 dark:border-orange-800 dark:from-orange-950/50 dark:to-orange-950/50", className)}>
       {/* Header */}
       <button
         type="button"
@@ -52,13 +52,13 @@ export function AiInsightPanel({ activityId, activityName, className }: AiInsigh
         className="flex w-full items-center justify-between px-4 py-3"
       >
         <div className="flex items-center gap-2">
-          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-purple-100 text-xs dark:bg-purple-900">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-purple-600 dark:text-purple-400">
+          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#FFF3ED] text-xs dark:bg-orange-900">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#FF6B35] dark:text-orange-400">
               <path d="M12 2a7 7 0 017 7c0 3-1.5 5-3 6.5V18H8v-2.5C6.5 14 5 12 5 9a7 7 0 017-7z" />
               <path d="M9 21h6" /><path d="M10 18v3" /><path d="M14 18v3" />
             </svg>
           </span>
-          <span className="text-sm font-medium text-purple-800 dark:text-purple-200">
+          <span className="text-sm font-medium text-orange-800 dark:text-orange-200">
             AI Analysis — {activityName}
           </span>
         </div>
@@ -67,7 +67,7 @@ export function AiInsightPanel({ activityId, activityName, className }: AiInsigh
             <button
               type="button"
               onClick={(e) => { e.stopPropagation(); fetchInsight(); }}
-              className="rounded-md p-1 text-purple-400 hover:bg-purple-100 hover:text-purple-600 dark:hover:bg-purple-900"
+              className="rounded-md p-1 text-orange-400 hover:bg-[#FFF3ED] hover:text-[#FF6B35] dark:hover:bg-orange-900"
               title="Refresh analysis"
             >
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -77,7 +77,7 @@ export function AiInsightPanel({ activityId, activityName, className }: AiInsigh
           )}
           <svg
             width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-            className={cn("text-purple-400 transition-transform", expanded && "rotate-180")}
+            className={cn("text-orange-400 transition-transform", expanded && "rotate-180")}
           >
             <path d="M6 9l6 6 6-6" />
           </svg>
@@ -87,7 +87,7 @@ export function AiInsightPanel({ activityId, activityName, className }: AiInsigh
       {/* Loading */}
       {loading && (
         <div className="px-4 pb-4">
-          <div className="flex items-center gap-2 text-sm text-purple-600 dark:text-purple-400">
+          <div className="flex items-center gap-2 text-sm text-[#FF6B35] dark:text-orange-400">
             <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24">
               <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" className="opacity-25" />
               <path fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" className="opacity-75" />
@@ -103,13 +103,13 @@ export function AiInsightPanel({ activityId, activityName, className }: AiInsigh
           {/* Insights */}
           {insight.insights.length > 0 && (
             <div>
-              <h4 className="mb-1.5 text-xs font-semibold uppercase tracking-wider text-purple-500 dark:text-purple-400">
+              <h4 className="mb-1.5 text-xs font-semibold uppercase tracking-wider text-[#FF6B35] dark:text-orange-400">
                 Insights
               </h4>
               <ul className="space-y-1.5">
                 {insight.insights.map((item, i) => (
                   <li key={i} className="flex items-start gap-2 text-sm text-gray-700 dark:text-gray-300">
-                    <span className="mt-1 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-purple-200 text-[10px] font-bold text-purple-700 dark:bg-purple-800 dark:text-purple-300">
+                    <span className="mt-1 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-orange-200 text-[10px] font-bold text-orange-700 dark:bg-orange-800 dark:text-orange-300">
                       {i + 1}
                     </span>
                     {item}

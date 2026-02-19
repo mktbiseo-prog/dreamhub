@@ -343,7 +343,7 @@ function AiPricingCoach({ ladder, data }: { ladder: ValueLadderItem[]; data: Pla
   if (!hasData) return null;
 
   return (
-    <div className="mb-6 rounded-card border border-purple-200 bg-gradient-to-r from-purple-50 to-pink-50 p-4 dark:border-purple-800 dark:from-purple-950 dark:to-pink-950">
+    <div className="mb-6 rounded-card border border-cyan-200 bg-gradient-to-r from-cyan-50 to-blue-50 p-4 dark:border-cyan-800 dark:from-cyan-950 dark:to-blue-950">
       <div className="mb-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span className="rounded-md bg-purple-100 px-1.5 py-0.5 text-[10px] font-bold text-purple-700 dark:bg-purple-900 dark:text-purple-300">AI</span>

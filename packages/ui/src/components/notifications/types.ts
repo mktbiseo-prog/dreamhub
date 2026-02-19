@@ -66,7 +66,7 @@ export const NOTIFICATION_CONFIG: Record<
 export const SERVICE_NOTIFICATION_COLORS: Record<ServiceSource | "system", string> = {
   place: "#2563EB",
   store: "#E5A100",
-  planner: "#E11D73",
+  planner: "#FF6B35",
   brain: "#7C3AED",
   cafe: "#22C55E",
   system: "#737373",

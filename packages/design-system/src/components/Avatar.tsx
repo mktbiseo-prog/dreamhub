@@ -38,7 +38,7 @@ function hashColor(name: string): string {
     "#7C3AED",
     "#2563EB",
     "#10B981",
-    "#E11D73",
+    "#FF6B35",
     "#F59E0B",
   ];
   return colors[Math.abs(hash) % colors.length];

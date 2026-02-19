@@ -346,7 +346,7 @@ export default function DashboardPage() {
 
       {/* Dream Statement */}
       {data.dreamStatement && (
-        <div className="mb-6 rounded-xl p-5" style={{ backgroundColor: "rgba(225, 29, 115, 0.06)" }}>
+        <div className="mb-6 rounded-xl p-5" style={{ backgroundColor: "rgba(255, 107, 53, 0.06)" }}>
           <h4 className="mb-1 text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--dream-color-primary)" }}>
             My Dream
           </h4>
@@ -410,7 +410,7 @@ export default function DashboardPage() {
               AI Recommendations
             </h3>
             {tips.map((tip, i) => (
-              <div key={i} className="flex items-start gap-3 rounded-lg border px-4 py-3" style={{ borderColor: "rgba(225, 29, 115, 0.15)", backgroundColor: "rgba(225, 29, 115, 0.04)" }}>
+              <div key={i} className="flex items-start gap-3 rounded-lg border px-4 py-3" style={{ borderColor: "rgba(255, 107, 53, 0.15)", backgroundColor: "rgba(255, 107, 53, 0.04)" }}>
                 <span className="mt-0.5" style={{ color: "var(--dream-color-primary)" }}>{TIP_ICONS[tip.icon]}</span>
                 <p className="flex-1 text-xs text-gray-700 dark:text-gray-300">{tip.text}</p>
                 {tip.actionLabel && tip.actionHref && (
@@ -439,7 +439,7 @@ export default function DashboardPage() {
                 stuck: "border-l-amber-400",
                 completion: "border-l-green-400",
                 entry: "border-l-blue-400",
-                chat: "border-l-rose-400",
+                chat: "border-l-orange-400",
               };
               const typeLabels: Record<string, string> = {
                 stuck: "Nudge",
@@ -559,7 +559,7 @@ export default function DashboardPage() {
       {total >= 5 && (
         <div className="mb-8">
           <Link href="/planner/report">
-            <div className="rounded-xl border border-rose-200 bg-gradient-to-r from-rose-50 to-pink-50 p-5 transition-all hover:shadow-md dark:border-rose-800 dark:from-rose-950/50 dark:to-pink-950/50">
+            <div className="rounded-xl border border-orange-200 bg-gradient-to-r from-[#FFF8F5] to-orange-50 p-5 transition-all hover:shadow-md dark:border-orange-800 dark:from-orange-950/50 dark:to-orange-950/50">
               <div className="flex items-center gap-4">
                 <div
                   className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full"

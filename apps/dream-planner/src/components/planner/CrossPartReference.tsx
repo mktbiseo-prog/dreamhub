@@ -227,9 +227,9 @@ function getReferenceData(
 
 const COLOR_MAP: Record<string, { badge: string; border: string; bg: string }> = {
   purple: {
-    badge: "bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300",
-    border: "border-purple-200 dark:border-purple-800",
-    bg: "bg-purple-50/50 dark:bg-purple-950/30",
+    badge: "bg-[#FFF3ED] text-orange-700 dark:bg-orange-900 dark:text-orange-300",
+    border: "border-orange-200 dark:border-orange-800",
+    bg: "bg-[#FFF8F5]/50 dark:bg-orange-950/30",
   },
   brand: {
     badge: "bg-brand-100 text-brand-700 dark:bg-brand-900 dark:text-brand-300",

@@ -8,8 +8,8 @@ const PART_CONFIG = {
   1: {
     title: "Part 1 Complete!",
     subtitle: "You now know your reality better than 90% of dreamers.",
-    gradient: "from-rose-500 to-pink-600",
-    bgGradient: "from-rose-500/20 via-pink-500/10 to-transparent",
+    gradient: "from-[#FF6B35] to-orange-600",
+    bgGradient: "from-[#FF6B35]/20 via-orange-500/10 to-transparent",
     emoji: "\u{1F331}",
     emojiLabel: "Seed sprouting",
     badgeDefault: "Reality Facer",

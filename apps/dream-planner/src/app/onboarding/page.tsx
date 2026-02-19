@@ -156,7 +156,7 @@ function PrinciplesStep({ onNext }: { onNext: () => void }) {
 
 function JourneyStep({ onNext }: { onNext: () => void }) {
   const parts = [
-    { num: 1, title: "Face My Reality", desc: "Know where you stand", color: "from-purple-500 to-brand-500" },
+    { num: 1, title: "Face My Reality", desc: "Know where you stand", color: "from-[#FF6B35] to-orange-500" },
     { num: 2, title: "Discover My Dream", desc: "Find your Why", color: "from-brand-500 to-blue-500" },
     { num: 3, title: "Validate & Build", desc: "Test with $0", color: "from-blue-500 to-cyan-500" },
     { num: 4, title: "Connect & Expand", desc: "Find your people", color: "from-cyan-500 to-emerald-500" },

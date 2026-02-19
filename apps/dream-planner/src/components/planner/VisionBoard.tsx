@@ -20,7 +20,7 @@ interface VisionCard {
 const STORAGE_KEY = "dream-planner-vision-board";
 
 const PASTEL_BACKGROUNDS = [
-  "bg-gradient-to-br from-rose-100 to-pink-100 dark:from-rose-950 dark:to-pink-950",
+  "bg-gradient-to-br from-[#FFF3ED] to-orange-100 dark:from-orange-950 dark:to-orange-950",
   "bg-gradient-to-br from-violet-100 to-purple-100 dark:from-violet-950 dark:to-purple-950",
   "bg-gradient-to-br from-blue-100 to-cyan-100 dark:from-blue-950 dark:to-cyan-950",
   "bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-950 dark:to-teal-950",

@@ -260,7 +260,7 @@ export function VersionHistory() {
                 if (acts > 5) return 2;
                 return 1;
               })();
-              const dotColors = ["bg-purple-400", "bg-brand-400", "bg-blue-400", "bg-emerald-400"];
+              const dotColors = ["bg-[#FF6B35]", "bg-brand-400", "bg-blue-400", "bg-emerald-400"];
 
               return (
                 <button

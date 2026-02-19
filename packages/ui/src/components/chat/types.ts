@@ -85,7 +85,7 @@ export interface IcebreakerPrompt {
 export const SERVICE_COLORS: Record<ServiceSource, { bg: string; text: string; label: string }> = {
   place: { bg: "#DBEAFE", text: "#2563EB", label: "Dream Place" },
   store: { bg: "#FEF3C7", text: "#E5A100", label: "Dream Store" },
-  planner: { bg: "#FCE7F3", text: "#E11D73", label: "Dream Planner" },
+  planner: { bg: "#FFF3ED", text: "#FF6B35", label: "Dream Planner" },
   brain: { bg: "#EDE9FE", text: "#7C3AED", label: "Dream Brain" },
   cafe: { bg: "#DCFCE7", text: "#22C55E", label: "Dream Cafe" },
 };

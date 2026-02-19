@@ -17,9 +17,9 @@ export function WelcomeBack({
 }: WelcomeBackProps) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-      <div className="mx-4 w-full max-w-md animate-in zoom-in-95 fade-in rounded-2xl border border-rose-200 bg-white p-8 text-center shadow-2xl dark:border-rose-800/40 dark:bg-gray-900">
+      <div className="mx-4 w-full max-w-md animate-in zoom-in-95 fade-in rounded-2xl border border-orange-200 bg-white p-8 text-center shadow-2xl dark:border-orange-800/40 dark:bg-gray-900">
         {/* Welcome icon */}
-        <div className="mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-rose-100 to-pink-100 text-4xl dark:from-rose-900/40 dark:to-pink-900/40">
+        <div className="mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-[#FFF3ED] to-orange-100 text-4xl dark:from-orange-900/40 dark:to-orange-900/40">
           &#x1F44B;
         </div>
 
@@ -34,8 +34,8 @@ export function WelcomeBack({
         </p>
 
         {dreamStatement && (
-          <div className="mb-6 rounded-xl bg-rose-50 px-4 py-3 dark:bg-rose-950/30">
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-rose-500">
+          <div className="mb-6 rounded-xl bg-[#FFF3ED] px-4 py-3 dark:bg-orange-950/30">
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-[#FF6B35]">
               Your Dream
             </p>
             <p className="mt-1 text-sm italic text-gray-700 dark:text-gray-300">

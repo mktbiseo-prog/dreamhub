@@ -85,7 +85,7 @@ export default function ReportPage() {
         </div>
         <div className="h-3 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
           <div
-            className="h-full rounded-full bg-gradient-to-r from-purple-500 to-blue-500 transition-all duration-500"
+            className="h-full rounded-full bg-gradient-to-r from-[#FF6B35] to-orange-400 transition-all duration-500"
             style={{ width: `${(totalActivities / TOTAL_ACTIVITY_COUNT) * 100}%` }}
           />
         </div>
@@ -110,7 +110,7 @@ export default function ReportPage() {
           <Button
             onClick={handleGenerate}
             disabled={loading || totalActivities < 1}
-            className="bg-gradient-to-r from-purple-600 to-blue-600 px-8 py-3 text-white hover:from-purple-700 hover:to-blue-700"
+            className="bg-[#FF6B35] px-8 py-3 text-white hover:bg-[#E85A24]"
           >
             {loading ? (
               <span className="flex items-center gap-2">
@@ -134,9 +134,9 @@ export default function ReportPage() {
       {report && (
         <div className="space-y-6">
           {/* Title & Score */}
-          <div className="rounded-xl border border-purple-200 bg-gradient-to-br from-purple-50 to-blue-50 p-6 text-center dark:border-purple-800 dark:from-purple-950/50 dark:to-blue-950/50">
+          <div className="rounded-xl border border-orange-200 bg-gradient-to-br from-[#FFF8F5] to-orange-50 p-6 text-center dark:border-orange-800 dark:from-orange-950/50 dark:to-orange-950/50">
             <h2 className="text-xl font-bold text-gray-900 dark:text-white">{report.title}</h2>
-            <div className="mt-4 inline-flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-purple-500 to-blue-500">
+            <div className="mt-4 inline-flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-[#FF6B35] to-orange-500">
               <span className="text-3xl font-bold text-white">{report.overallScore}%</span>
             </div>
             <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">Overall Journey Score</p>
@@ -146,7 +146,7 @@ export default function ReportPage() {
           <div className="rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-900">
             <h3 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">Journey Pillars</h3>
             <div className="space-y-4">
-              <PillarBar label="Reality (PART 1)" score={report.pillarScores.reality} color="bg-purple-500" />
+              <PillarBar label="Reality (PART 1)" score={report.pillarScores.reality} color="bg-[#FF6B35]" />
               <PillarBar label="Discovery (PART 2)" score={report.pillarScores.discovery} color="bg-blue-500" />
               <PillarBar label="Validation (PART 3)" score={report.pillarScores.validation} color="bg-emerald-500" />
               <PillarBar label="Connection (PART 4)" score={report.pillarScores.connection} color="bg-amber-500" />
@@ -159,7 +159,7 @@ export default function ReportPage() {
             <ul className="space-y-2">
               {report.coreAssets.map((asset, i) => (
                 <li key={i} className="flex items-start gap-2 text-sm text-gray-700 dark:text-gray-300">
-                  <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-purple-100 text-[10px] font-bold text-purple-700 dark:bg-purple-900 dark:text-purple-300">
+                  <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#FFF3ED] text-[10px] font-bold text-orange-700 dark:bg-orange-900 dark:text-orange-300">
                     {i + 1}
                   </span>
                   {asset}
@@ -192,7 +192,7 @@ export default function ReportPage() {
             <ul className="space-y-3">
               {report.keyInsights.map((insight, i) => (
                 <li key={i} className="flex items-start gap-3 rounded-lg bg-gray-50 p-3 dark:bg-gray-800">
-                  <span className="mt-0.5 text-purple-500">
+                  <span className="mt-0.5 text-[#FF6B35]">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M12 2a7 7 0 017 7c0 3-1.5 5-3 6.5V18H8v-2.5C6.5 14 5 12 5 9a7 7 0 017-7z" />
                       <path d="M9 21h6" />
@@ -210,7 +210,7 @@ export default function ReportPage() {
             <ol className="space-y-2">
               {report.nextSteps.map((step, i) => (
                 <li key={i} className="flex items-start gap-3">
-                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-purple-500 to-blue-500 text-xs font-bold text-white">
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#FF6B35] to-orange-500 text-xs font-bold text-white">
                     {i + 1}
                   </span>
                   <span className="text-sm text-gray-700 dark:text-gray-300">{step}</span>
@@ -220,7 +220,7 @@ export default function ReportPage() {
           </div>
 
           {/* Encouragement */}
-          <div className="rounded-xl bg-gradient-to-r from-purple-600 to-blue-600 p-6 text-center text-white">
+          <div className="rounded-xl bg-gradient-to-r from-[#FF6B35] to-[#E85A24] p-6 text-center text-white">
             <p className="text-lg font-medium">{report.encouragement}</p>
           </div>
 
