@@ -39,14 +39,14 @@ export function SplineHero() {
   }, [splineLoaded]);
 
   return (
-    <section className="relative flex h-screen w-full items-center justify-center overflow-hidden bg-[#0F0F1A]">
+    <section className="relative flex h-screen w-full flex-col overflow-hidden bg-[#0F0F1A]">
       <Script
         src="https://unpkg.com/@splinetool/viewer@1.12.58/build/spline-viewer.js"
         type="module"
-        strategy="lazyOnload"
+        strategy="afterInteractive"
       />
 
-      {/* Spline 3D Background */}
+      {/* Spline 3D — takes the full screen, fully visible */}
       {!splineError && (
         <div ref={containerRef} className="absolute inset-0 z-0">
           {/* @ts-expect-error — spline-viewer is a web component loaded via script */}
@@ -58,24 +58,24 @@ export function SplineHero() {
         </div>
       )}
 
-      {/* Loading shimmer / Star field fallback */}
+      {/* Loading: star field + subtle shimmer (no heavy overlay) */}
       {!splineLoaded && (
         <div className="absolute inset-0 z-0">
           <div className="star-field absolute inset-0" />
           {!splineError && (
-            <div className="absolute inset-0 animate-pulse bg-gradient-to-b from-[#0F0F1A] via-[#1A1A2E] to-[#0F0F1A]" />
+            <div className="absolute inset-0 animate-pulse bg-[#1A1A2E]/30" />
           )}
         </div>
       )}
 
-      {/* Gradient overlay for text readability */}
-      <div className="absolute inset-0 z-[1] bg-gradient-to-b from-[#0F0F1A]/40 via-transparent to-[#0F0F1A]/70" />
+      {/* Minimal gradient — only at bottom for text readability, keeps 3D fully visible */}
+      <div className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-b from-transparent via-transparent to-[#0F0F1A]/80" />
 
-      {/* Text overlay */}
-      <div className="relative z-[2] flex w-full max-w-3xl flex-col items-center px-6 text-center md:px-8">
+      {/* Text pinned to bottom, leaving 3D globe prominent above */}
+      <div className="relative z-[2] mt-auto px-6 pb-24 text-center md:px-8 md:pb-28">
         <h1
           className="font-display text-[32px] font-bold leading-[1.1] tracking-[-0.02em] text-white md:text-[48px]"
-          style={{ textShadow: "0 2px 20px rgba(0,0,0,0.5)" }}
+          style={{ textShadow: "0 2px 30px rgba(0,0,0,0.7)" }}
         >
           The universe is vast.
           <br />
@@ -83,16 +83,16 @@ export function SplineHero() {
         </h1>
 
         <p
-          className="mt-5 max-w-lg text-base text-white/70 md:mt-6 md:text-lg"
-          style={{ textShadow: "0 1px 10px rgba(0,0,0,0.4)" }}
+          className="mx-auto mt-4 max-w-lg text-base text-white/70 md:mt-5 md:text-lg"
+          style={{ textShadow: "0 1px 15px rgba(0,0,0,0.6)" }}
         >
           Find your perfect co-dreamer across borders.
         </p>
 
-        <Link href="/auth/onboarding" className="mt-8 md:mt-10">
+        <Link href="/auth/onboarding" className="mt-7 inline-block md:mt-8">
           <button
             className="h-14 rounded-lg bg-[#6C3CE1] px-8 text-lg font-bold text-white transition-colors duration-150 hover:bg-[#5429C7]"
-            style={{ boxShadow: "0 4px 20px rgba(108, 60, 225, 0.4)" }}
+            style={{ boxShadow: "0 4px 24px rgba(108, 60, 225, 0.5)" }}
           >
             Start Exploring
           </button>
@@ -100,7 +100,7 @@ export function SplineHero() {
       </div>
 
       {/* Scroll down indicator */}
-      <div className="absolute bottom-8 left-1/2 z-[2] -translate-x-1/2">
+      <div className="absolute bottom-6 left-1/2 z-[2] -translate-x-1/2">
         <ChevronDown
           className={`h-6 w-6 text-white/50 ${!reducedMotion ? "animate-bounce-scroll" : ""}`}
           strokeWidth={1.5}
