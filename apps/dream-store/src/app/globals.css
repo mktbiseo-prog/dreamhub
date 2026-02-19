@@ -23,3 +23,13 @@
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
+
+/* Landing page animations */
+@keyframes dream-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-30px); }
+}
+
+/* Hide scrollbar for horizontal scroll containers */
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }

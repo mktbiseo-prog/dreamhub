@@ -1,104 +1,80 @@
 import Link from "next/link";
 
+const FOOTER_LINKS = {
+  "For Dreamers": [
+    { label: "Start Your Dream", href: "/stories/create" },
+    { label: "Creator Dashboard", href: "/dashboard" },
+    { label: "Pricing & Fees", href: "#" },
+  ],
+  "For Supporters": [
+    { label: "Discover Dreams", href: "/" },
+    { label: "My Supported Dreams", href: "/my-dreams" },
+    { label: "How It Works", href: "#" },
+  ],
+  "Dream Hub": [
+    { label: "About", href: "#" },
+    { label: "Blog", href: "#" },
+    { label: "Support", href: "#" },
+  ],
+};
+
 export function Footer() {
   return (
-    <footer className="border-t border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-950">
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+    <footer className="bg-[#0F172A]">
+      <div className="mx-auto max-w-[1200px] px-4 py-12 sm:px-6 lg:px-8">
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {/* Brand */}
           <div className="sm:col-span-2 lg:col-span-1">
-            <Link href="/" className="inline-block">
-              <span className="text-lg font-bold bg-gradient-to-r from-amber-600 to-orange-500 bg-clip-text text-transparent">
-                Dream Store
+            <Link href="/" className="inline-flex items-center gap-2">
+              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#2563EB]">
+                <svg className="h-4 w-4" fill="white" viewBox="0 0 24 24">
+                  <path d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
+                </svg>
               </span>
+              <span className="text-lg font-bold text-white">Dream Store</span>
             </Link>
-            <p className="mt-3 text-sm leading-relaxed text-gray-500 dark:text-gray-400">
+            <p className="mt-3 max-w-xs text-sm leading-relaxed text-[#94A3B8]">
               Support a dream, not just buy a product. Every purchase makes a
               creator&apos;s dream closer to reality.
             </p>
+            {/* Social icons */}
+            <div className="mt-5 flex gap-3">
+              {["X", "IG", "YT"].map((label) => (
+                <div
+                  key={label}
+                  className="flex h-9 w-9 items-center justify-center rounded-full border border-[#1E293B] text-xs font-medium text-[#94A3B8] transition-colors hover:border-[#94A3B8] hover:text-white"
+                >
+                  {label}
+                </div>
+              ))}
+            </div>
           </div>
 
-          {/* For Dreamers */}
-          <div>
-            <h3 className="mb-3 text-sm font-semibold text-gray-900 dark:text-white">
-              For Dreamers
-            </h3>
-            <ul className="space-y-2 text-sm text-gray-500 dark:text-gray-400">
-              <li>
-                <Link
-                  href="/stories/create"
-                  className="transition-colors hover:text-amber-600"
-                >
-                  Start Your Dream
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/dashboard"
-                  className="transition-colors hover:text-amber-600"
-                >
-                  Creator Dashboard
-                </Link>
-              </li>
-              <li>
-                <span className="cursor-default text-gray-400">
-                  Pricing & Fees
-                </span>
-              </li>
-            </ul>
-          </div>
-
-          {/* For Supporters */}
-          <div>
-            <h3 className="mb-3 text-sm font-semibold text-gray-900 dark:text-white">
-              For Supporters
-            </h3>
-            <ul className="space-y-2 text-sm text-gray-500 dark:text-gray-400">
-              <li>
-                <Link
-                  href="/"
-                  className="transition-colors hover:text-amber-600"
-                >
-                  Discover Dreams
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/my-dreams"
-                  className="transition-colors hover:text-amber-600"
-                >
-                  My Supported Dreams
-                </Link>
-              </li>
-              <li>
-                <span className="cursor-default text-gray-400">
-                  How It Works
-                </span>
-              </li>
-            </ul>
-          </div>
-
-          {/* Company */}
-          <div>
-            <h3 className="mb-3 text-sm font-semibold text-gray-900 dark:text-white">
-              Dream Hub
-            </h3>
-            <ul className="space-y-2 text-sm text-gray-500 dark:text-gray-400">
-              <li>
-                <span className="cursor-default text-gray-400">About</span>
-              </li>
-              <li>
-                <span className="cursor-default text-gray-400">Blog</span>
-              </li>
-              <li>
-                <span className="cursor-default text-gray-400">Support</span>
-              </li>
-            </ul>
-          </div>
+          {/* Link columns */}
+          {Object.entries(FOOTER_LINKS).map(([title, links]) => (
+            <div key={title}>
+              <h3 className="mb-3 text-sm font-semibold text-white">
+                {title}
+              </h3>
+              <ul className="space-y-2.5 text-sm">
+                {links.map((link) => (
+                  <li key={link.label}>
+                    <Link
+                      href={link.href}
+                      className="text-[#94A3B8] transition-colors hover:text-white"
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </div>
 
-        <div className="mt-10 border-t border-gray-200 pt-6 dark:border-gray-800">
-          <p className="text-center text-xs text-gray-400">
+        {/* Bottom bar */}
+        <div className="mt-10 border-t border-[#1E293B] pt-6">
+          <p className="text-center text-xs text-[#64748B]">
             &copy; {new Date().getFullYear()} Dream Hub. All rights reserved.
           </p>
         </div>
