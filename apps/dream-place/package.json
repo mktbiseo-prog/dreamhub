@@ -4,21 +4,21 @@
   "private": true,
   "scripts": {
     "dev": "next dev --port 3004",
-    "build": "pnpm -C ../../packages/database exec prisma generate && next build",
+    "build": "prisma generate --schema=../../packages/database/prisma/schema.prisma && next build",
     "start": "next start --port 3004",
     "lint": "next lint"
   },
   "dependencies": {
     "@dreamhub/auth": "workspace:*",
-    "@dreamhub/design-system": "workspace:*",
     "@dreamhub/database": "workspace:*",
+    "@dreamhub/design-system": "workspace:*",
     "@dreamhub/event-bus": "workspace:*",
     "@dreamhub/file-storage": "workspace:*",
-    "@dreamhub/i18n": "workspace:*",
-    "@dreamhub/shared-types": "workspace:*",
     "@dreamhub/flywheel-metrics": "workspace:*",
+    "@dreamhub/i18n": "workspace:*",
     "@dreamhub/recommendation-engine": "workspace:*",
     "@dreamhub/sharding-strategy": "workspace:*",
+    "@dreamhub/shared-types": "workspace:*",
     "@dreamhub/trust-engine": "workspace:*",
     "@dreamhub/ui": "workspace:*",
     "@dreamhub/zkp-matching": "workspace:*",
@@ -42,6 +42,7 @@
     "graphql": "^16.12.0",
     "graphql-tag": "^2.12.6",
     "postcss": "^8.4.0",
+    "prisma": "^6.19.2",
     "tailwindcss": "^3.4.0",
     "typescript": "^5.7.0",
     "vitest": "^4.0.18"
