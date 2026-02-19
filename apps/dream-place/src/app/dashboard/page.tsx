@@ -44,12 +44,12 @@ export default function DashboardPage() {
       {/* Header */}
       <div className="mb-6">
         <div className="flex items-center gap-2">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+          <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
             Dashboard
           </h1>
           {verificationTier && <VerificationBadge level={verificationTier} size="md" />}
         </div>
-        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+        <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
           Welcome back, {profile.name}
         </p>
       </div>
@@ -71,23 +71,23 @@ export default function DashboardPage() {
 
       {/* Profile completion */}
       {completionPercent < 100 && (
-        <div className="mb-6 rounded-[12px] border border-blue-100 bg-blue-50/30 p-4 dark:border-blue-900/30 dark:bg-blue-900/10">
+        <div className="mb-6 rounded-2xl border border-[#E8E0FF] bg-[#F5F1FF] p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-blue-700 dark:text-blue-300">
+              <p className="text-sm font-medium text-[#6C3CE1]">
                 Profile Completion
               </p>
-              <p className="mt-0.5 text-xs text-blue-500 dark:text-blue-400">
+              <p className="mt-0.5 text-xs text-neutral-500">
                 Complete your profile for better matches
               </p>
             </div>
-            <span className="text-lg font-bold text-blue-600">
+            <span className="text-lg font-bold text-[#6C3CE1]">
               {completionPercent}%
             </span>
           </div>
-          <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-blue-100 dark:bg-blue-900/30">
+          <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-[#E8E0FF]">
             <div
-              className="h-full rounded-full bg-blue-500 transition-all"
+              className="h-full rounded-full bg-[#6C3CE1] transition-all"
               style={{ width: `${completionPercent}%` }}
             />
           </div>
@@ -102,12 +102,12 @@ export default function DashboardPage() {
       {/* Active Matches Carousel */}
       <section className="mb-6">
         <div className="mb-3 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+          <h2 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100">
             Active Matches
           </h2>
           <Link
             href="/matches"
-            className="text-sm text-blue-600 hover:underline dark:text-blue-400"
+            className="text-sm text-[#6C3CE1] hover:underline"
           >
             View all
           </Link>
@@ -119,23 +119,23 @@ export default function DashboardPage() {
               <Link
                 key={m.id}
                 href={`/matches/${m.id}`}
-                className="flex w-40 shrink-0 flex-col items-center rounded-[12px] border border-gray-200 bg-white p-4 transition-shadow hover:shadow-md dark:border-gray-800 dark:bg-gray-950"
+                className="flex w-40 shrink-0 flex-col items-center rounded-2xl border border-neutral-200 bg-white p-4 transition-shadow hover:shadow-md dark:border-neutral-800 dark:bg-neutral-950"
               >
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-blue-400 to-blue-600 text-lg font-bold text-white">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#6C3CE1] text-lg font-bold text-white">
                   {m.profile.name?.[0] ?? "?"}
                 </div>
-                <p className="mt-2 text-center text-sm font-medium text-gray-900 dark:text-gray-100">
+                <p className="mt-2 text-center text-sm font-medium text-neutral-900 dark:text-neutral-100">
                   {m.profile.name}
                 </p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">
+                <p className="text-xs text-neutral-500 dark:text-neutral-400">
                   {m.matchScore}% match
                 </p>
               </Link>
             ))}
           </div>
         ) : (
-          <div className="rounded-[12px] border border-gray-200 bg-gray-50 p-6 text-center dark:border-gray-800 dark:bg-gray-900">
-            <p className="text-sm text-gray-500 dark:text-gray-400">
+          <div className="rounded-2xl border border-neutral-200 bg-neutral-50 p-6 text-center dark:border-neutral-800 dark:bg-neutral-900">
+            <p className="text-sm text-neutral-500 dark:text-neutral-400">
               No active matches yet
             </p>
             <Link href="/discover">
@@ -150,7 +150,7 @@ export default function DashboardPage() {
       {/* Pending matches */}
       {pendingMatches.length > 0 && (
         <section className="mb-6">
-          <h2 className="mb-3 text-lg font-semibold text-gray-900 dark:text-gray-100">
+          <h2 className="mb-3 text-lg font-semibold text-neutral-900 dark:text-neutral-100">
             Pending Requests
           </h2>
           <div className="space-y-2">
@@ -158,16 +158,16 @@ export default function DashboardPage() {
               <Link
                 key={m.id}
                 href={`/matches/${m.id}`}
-                className="flex items-center gap-3 rounded-[8px] border border-gray-200 bg-white p-3 transition-shadow hover:shadow-sm dark:border-gray-800 dark:bg-gray-950"
+                className="flex items-center gap-3 rounded-2xl border border-neutral-200 bg-white p-3 transition-shadow hover:shadow-sm dark:border-neutral-800 dark:bg-neutral-950"
               >
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-400 to-blue-600 text-sm font-bold text-white">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#6C3CE1] text-sm font-bold text-white">
                   {m.profile.name?.[0] ?? "?"}
                 </div>
                 <div className="flex-1 overflow-hidden">
-                  <p className="truncate text-sm font-medium text-gray-900 dark:text-gray-100">
+                  <p className="truncate text-sm font-medium text-neutral-900 dark:text-neutral-100">
                     {m.profile.name}
                   </p>
-                  <p className="truncate text-xs text-gray-500 dark:text-gray-400">
+                  <p className="truncate text-xs text-neutral-500 dark:text-neutral-400">
                     {m.profile.dreamHeadline}
                   </p>
                 </div>
@@ -180,7 +180,7 @@ export default function DashboardPage() {
 
       {/* Recent activity */}
       <section className="mb-6">
-        <h2 className="mb-3 text-lg font-semibold text-gray-900 dark:text-gray-100">
+        <h2 className="mb-3 text-lg font-semibold text-neutral-900 dark:text-neutral-100">
           Recent Messages
         </h2>
         {conversations.length > 0 ? (
@@ -189,21 +189,21 @@ export default function DashboardPage() {
               <Link
                 key={c.matchId}
                 href={`/messages/${c.matchId}`}
-                className="flex items-center gap-3 rounded-[8px] border border-gray-200 bg-white p-3 transition-shadow hover:shadow-sm dark:border-gray-800 dark:bg-gray-950"
+                className="flex items-center gap-3 rounded-2xl border border-neutral-200 bg-white p-3 transition-shadow hover:shadow-sm dark:border-neutral-800 dark:bg-neutral-950"
               >
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-400 to-blue-600 text-sm font-bold text-white">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#6C3CE1] text-sm font-bold text-white">
                   {c.partner.name?.[0] ?? "?"}
                 </div>
                 <div className="flex-1 overflow-hidden">
-                  <p className="truncate text-sm font-medium text-gray-900 dark:text-gray-100">
+                  <p className="truncate text-sm font-medium text-neutral-900 dark:text-neutral-100">
                     {c.partner.name}
                   </p>
-                  <p className="truncate text-xs text-gray-500 dark:text-gray-400">
+                  <p className="truncate text-xs text-neutral-500 dark:text-neutral-400">
                     {c.lastMessage}
                   </p>
                 </div>
                 {c.unreadCount > 0 && (
-                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-blue-600 text-[10px] font-bold text-white">
+                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#6C3CE1] text-[10px] font-bold text-white">
                     {c.unreadCount}
                   </span>
                 )}
@@ -211,7 +211,7 @@ export default function DashboardPage() {
             ))}
           </div>
         ) : (
-          <p className="text-sm text-gray-400 dark:text-gray-500">
+          <p className="text-sm text-neutral-400 dark:text-neutral-500">
             No messages yet
           </p>
         )}
@@ -220,12 +220,12 @@ export default function DashboardPage() {
       {/* Teams */}
       <section>
         <div className="mb-3 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+          <h2 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100">
             My Teams
           </h2>
           <Link
             href="/teams"
-            className="text-sm text-blue-600 hover:underline dark:text-blue-400"
+            className="text-sm text-[#6C3CE1] hover:underline"
           >
             View all
           </Link>
@@ -236,20 +236,20 @@ export default function DashboardPage() {
               <Link
                 key={t.id}
                 href={`/teams/${t.id}`}
-                className="block rounded-[8px] border border-gray-200 bg-white p-3 transition-shadow hover:shadow-sm dark:border-gray-800 dark:bg-gray-950"
+                className="block rounded-2xl border border-neutral-200 bg-white p-3 transition-shadow hover:shadow-sm dark:border-neutral-800 dark:bg-neutral-950"
               >
-                <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
                   {t.name}
                 </p>
-                <p className="mt-0.5 text-xs text-gray-500 dark:text-gray-400">
+                <p className="mt-0.5 text-xs text-neutral-500 dark:text-neutral-400">
                   {t.members.length} member{t.members.length !== 1 ? "s" : ""}
                 </p>
               </Link>
             ))}
           </div>
         ) : (
-          <div className="rounded-[12px] border border-gray-200 bg-gray-50 p-4 text-center dark:border-gray-800 dark:bg-gray-900">
-            <p className="text-sm text-gray-500 dark:text-gray-400">
+          <div className="rounded-2xl border border-neutral-200 bg-neutral-50 p-4 text-center dark:border-neutral-800 dark:bg-neutral-900">
+            <p className="text-sm text-neutral-500 dark:text-neutral-400">
               No teams yet — match with dreamers and form your team!
             </p>
           </div>
@@ -269,13 +269,13 @@ function StatCard({
   accent?: boolean;
 }) {
   return (
-    <div className="rounded-[12px] border border-gray-200 bg-white p-3 text-center dark:border-gray-800 dark:bg-gray-950">
+    <div className="rounded-2xl border border-neutral-200 bg-white p-3 text-center dark:border-neutral-800 dark:bg-neutral-950">
       <p
-        className={`text-2xl font-bold ${accent ? "text-blue-600 dark:text-blue-400" : "text-gray-900 dark:text-gray-100"}`}
+        className={`text-2xl font-bold ${accent ? "text-[#6C3CE1]" : "text-neutral-900 dark:text-neutral-100"}`}
       >
         {value}
       </p>
-      <p className="text-xs text-gray-500 dark:text-gray-400">{label}</p>
+      <p className="text-xs text-neutral-500 dark:text-neutral-400">{label}</p>
     </div>
   );
 }

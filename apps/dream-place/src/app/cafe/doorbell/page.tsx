@@ -61,7 +61,7 @@ export default function DoorbellPage() {
       <div className="flex items-center gap-3">
         <Link
           href="/cafe"
-          className="flex h-9 w-9 items-center justify-center rounded-[8px] border border-gray-200 text-gray-500 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800"
+          className="flex h-9 w-9 items-center justify-center rounded-lg border border-neutral-200 text-neutral-500 hover:bg-neutral-50 dark:border-neutral-700 dark:hover:bg-neutral-800"
         >
           <svg
             className="h-5 w-5"
@@ -77,7 +77,7 @@ export default function DoorbellPage() {
             />
           </svg>
         </Link>
-        <h1 className="flex-1 text-lg font-bold text-gray-900 dark:text-gray-100">
+        <h1 className="flex-1 text-lg font-bold text-neutral-900 dark:text-neutral-100">
           Dream Doorbell
         </h1>
         <ConnectionStatus status={connectionStatus} />
@@ -100,11 +100,11 @@ export default function DoorbellPage() {
 
           {isLoadingDreams ? (
             <div className="flex min-h-[200px] items-center justify-center">
-              <div className="h-8 w-8 animate-spin rounded-full border-2 border-brand-500 border-t-transparent" />
+              <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#6C3CE1] border-t-transparent" />
             </div>
           ) : filteredDreams.length === 0 ? (
-            <div className="rounded-[12px] border border-gray-200 bg-white p-8 text-center dark:border-gray-800 dark:bg-gray-950">
-              <p className="text-sm text-gray-500 dark:text-gray-400">
+            <div className="rounded-2xl border border-neutral-200 bg-white p-8 text-center dark:border-neutral-800 dark:bg-neutral-950">
+              <p className="text-sm text-neutral-500 dark:text-neutral-400">
                 {doorbellTab === "here-now"
                   ? "No dreamers here right now. Check back later!"
                   : "No dreams match this filter."}

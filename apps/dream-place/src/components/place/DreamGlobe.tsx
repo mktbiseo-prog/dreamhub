@@ -101,7 +101,7 @@ export function DreamGlobe({ dreamers, onRegionClick }: DreamGlobeProps) {
   );
 
   return (
-    <div className="relative w-full overflow-hidden rounded-[16px] bg-gray-950">
+    <div className="relative w-full overflow-hidden rounded-2xl bg-neutral-950">
       {/* Globe container with perspective */}
       <div
         className="relative aspect-[2/1] w-full overflow-hidden"
@@ -243,9 +243,9 @@ export function DreamGlobe({ dreamers, onRegionClick }: DreamGlobeProps) {
 
         {/* Hover tooltip */}
         {hoveredRegion && (
-          <div className="pointer-events-none absolute left-1/2 top-4 z-10 -translate-x-1/2 rounded-[8px] bg-gray-800/90 px-3 py-2 text-sm text-white backdrop-blur-sm">
+          <div className="pointer-events-none absolute left-1/2 top-4 z-10 -translate-x-1/2 rounded-lg bg-neutral-800/90 px-3 py-2 text-sm text-white backdrop-blur-sm">
             <span className="font-medium">{hoveredRegion}</span>
-            <span className="ml-2 text-gray-300">
+            <span className="ml-2 text-neutral-300">
               {regionCounts[hoveredRegion] ?? 0} dreamer{(regionCounts[hoveredRegion] ?? 0) !== 1 ? "s" : ""}
             </span>
           </div>
@@ -254,18 +254,18 @@ export function DreamGlobe({ dreamers, onRegionClick }: DreamGlobeProps) {
 
       {/* Selected region indicator */}
       {selectedRegion && (
-        <div className="absolute bottom-4 left-4 right-4 z-10 rounded-[8px] bg-gray-800/90 px-4 py-3 backdrop-blur-sm">
+        <div className="absolute bottom-4 left-4 right-4 z-10 rounded-lg bg-neutral-800/90 px-4 py-3 backdrop-blur-sm">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-white">{selectedRegion}</p>
-              <p className="text-xs text-gray-400">
+              <p className="text-xs text-neutral-400">
                 {regionCounts[selectedRegion] ?? 0} dreamer{(regionCounts[selectedRegion] ?? 0) !== 1 ? "s" : ""} in this region
               </p>
             </div>
             <button
               type="button"
               onClick={() => setSelectedRegion(null)}
-              className="rounded-full p-1 text-gray-400 hover:bg-gray-700 hover:text-white"
+              className="rounded-full p-1 text-neutral-400 hover:bg-neutral-700 hover:text-white"
             >
               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -285,7 +285,7 @@ export function DreamGlobe({ dreamers, onRegionClick }: DreamGlobeProps) {
                 className="h-2 w-2 rounded-full"
                 style={{ backgroundColor: color }}
               />
-              <span className="text-[10px] text-gray-400">{category}</span>
+              <span className="text-[10px] text-neutral-400">{category}</span>
             </div>
           ))}
       </div>

@@ -29,11 +29,11 @@ export function CreateTeamModal({ open, onClose, onCreate }: CreateTeamModalProp
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-      <div className="mx-4 w-full max-w-md rounded-[16px] bg-white p-6 shadow-xl dark:bg-gray-950">
-        <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100">
+      <div className="mx-4 w-full max-w-md rounded-2xl bg-white p-6 shadow-xl dark:bg-neutral-950">
+        <h2 className="text-lg font-bold text-neutral-900 dark:text-neutral-100">
           Create Dream Team
         </h2>
-        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+        <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
           Start a team to collaborate on your dream.
         </p>
 

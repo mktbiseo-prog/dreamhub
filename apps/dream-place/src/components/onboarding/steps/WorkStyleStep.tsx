@@ -43,10 +43,10 @@ export function WorkStyleStep({ data, onChange }: WorkStyleStepProps) {
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+        <h2 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
           Your Work Style
         </h2>
-        <p className="mt-2 text-gray-500 dark:text-gray-400">
+        <p className="mt-2 text-neutral-500 dark:text-neutral-400">
           Rate each statement to help us find complementary teammates.
         </p>
       </div>
@@ -55,16 +55,16 @@ export function WorkStyleStep({ data, onChange }: WorkStyleStepProps) {
         {WORK_STYLE_QUESTIONS.map((q, idx) => (
           <div
             key={q.id}
-            className="rounded-[12px] border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-900"
+            className="rounded-2xl border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-900"
           >
-            <p className="mb-3 text-sm font-medium text-gray-800 dark:text-gray-200">
-              <span className="mr-2 text-xs text-gray-400">{idx + 1}.</span>
+            <p className="mb-3 text-sm font-medium text-neutral-800 dark:text-neutral-200">
+              <span className="mr-2 text-xs text-neutral-400">{idx + 1}.</span>
               {q.question}
             </p>
 
             {/* Likert scale 1-5 */}
             <div className="flex items-center justify-between gap-2">
-              <span className="w-20 text-right text-xs text-gray-400">
+              <span className="w-20 text-right text-xs text-neutral-400">
                 {q.lowLabel}
               </span>
               <div className="flex gap-2">
@@ -78,8 +78,8 @@ export function WorkStyleStep({ data, onChange }: WorkStyleStepProps) {
                       className={cn(
                         "flex h-10 w-10 items-center justify-center rounded-full border-2 text-sm font-medium transition-all",
                         isSelected
-                          ? "border-brand-500 bg-brand-500 text-white shadow-sm"
-                          : "border-gray-200 bg-white text-gray-500 hover:border-brand-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400"
+                          ? "border-[#6C3CE1] bg-[#6C3CE1] text-white shadow-sm"
+                          : "border-neutral-200 bg-white text-neutral-500 hover:border-[#E8E0FF] dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-400"
                       )}
                     >
                       {val}
@@ -87,7 +87,7 @@ export function WorkStyleStep({ data, onChange }: WorkStyleStepProps) {
                   );
                 })}
               </div>
-              <span className="w-20 text-xs text-gray-400">{q.highLabel}</span>
+              <span className="w-20 text-xs text-neutral-400">{q.highLabel}</span>
             </div>
           </div>
         ))}
@@ -95,8 +95,8 @@ export function WorkStyleStep({ data, onChange }: WorkStyleStepProps) {
 
       {/* Mini preview of scores */}
       {Object.keys(answers).length >= 5 && (
-        <div className="mx-auto max-w-lg rounded-[12px] border border-brand-100 bg-brand-50/50 p-4 dark:border-brand-900/30 dark:bg-brand-900/10">
-          <p className="mb-3 text-sm font-medium text-brand-700 dark:text-brand-300">
+        <div className="mx-auto max-w-lg rounded-2xl border border-[#E8E0FF] bg-[#F5F1FF] p-4 dark:border-[#6C3CE1]/15 dark:bg-[#6C3CE1]/5">
+          <p className="mb-3 text-sm font-medium text-[#6C3CE1] dark:text-[#B4A0F0]">
             Your Dreamer DNA
           </p>
           <div className="grid grid-cols-5 gap-2 text-center">
@@ -110,10 +110,10 @@ export function WorkStyleStep({ data, onChange }: WorkStyleStepProps) {
               ] as const
             ).map(([label, score]) => (
               <div key={label}>
-                <div className="text-lg font-bold text-brand-600 dark:text-brand-400">
+                <div className="text-lg font-bold text-[#6C3CE1] dark:text-[#B4A0F0]">
                   {score}
                 </div>
-                <div className="text-[10px] text-gray-500 dark:text-gray-400">
+                <div className="text-[10px] text-neutral-500 dark:text-neutral-400">
                   {label}
                 </div>
               </div>

@@ -50,7 +50,7 @@ export function DreamGlobe({ points, arcs = [] }: DreamGlobeProps) {
       >
         <div className="text-center">
           <svg
-            className="mx-auto h-8 w-8 animate-spin text-brand-500"
+            className="mx-auto h-8 w-8 animate-spin text-[#6C3CE1]"
             viewBox="0 0 24 24"
             fill="none"
           >
@@ -68,7 +68,7 @@ export function DreamGlobe({ points, arcs = [] }: DreamGlobeProps) {
               d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
             />
           </svg>
-          <p className="mt-2 text-sm text-gray-400">Loading Globe...</p>
+          <p className="mt-2 text-sm text-neutral-400">Loading Globe...</p>
         </div>
       </div>
     );

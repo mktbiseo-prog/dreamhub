@@ -238,7 +238,7 @@ export default function SignInPage() {
     <Suspense
       fallback={
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[var(--dream-hub-dark)] to-[#2D1B69]">
-          <p className="text-gray-400">Loading...</p>
+          <p className="text-neutral-400">Loading...</p>
         </div>
       }
     >

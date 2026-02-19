@@ -30,11 +30,11 @@ export function ResonateSheet({ partnerName, onSubmit, onClose }: ResonateSheetP
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center">
       <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative w-full max-w-sm rounded-t-[16px] bg-white p-6 shadow-xl sm:rounded-[16px] dark:bg-gray-950">
-        <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">
+      <div className="relative w-full max-w-sm rounded-t-2xl bg-white p-6 shadow-xl sm:rounded-2xl dark:bg-neutral-950">
+        <h3 className="text-lg font-bold text-neutral-900 dark:text-neutral-100">
           What resonated with you?
         </h3>
-        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+        <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
           Tell {partnerName} what caught your eye
         </p>
 
@@ -45,10 +45,10 @@ export function ResonateSheet({ partnerName, onSubmit, onClose }: ResonateSheetP
               type="button"
               onClick={() => toggle(opt.id)}
               className={cn(
-                "w-full rounded-[8px] border px-4 py-3 text-left text-sm font-medium transition-colors",
+                "w-full rounded-xl border px-4 py-3 text-left text-sm font-medium transition-colors",
                 selected.includes(opt.id)
-                  ? "border-brand-500 bg-brand-50 text-brand-700 dark:border-brand-400 dark:bg-brand-900/20 dark:text-brand-300"
-                  : "border-gray-200 text-gray-600 hover:border-gray-300 dark:border-gray-700 dark:text-gray-400 dark:hover:border-gray-600"
+                  ? "border-[#6C3CE1] bg-[#F5F1FF] text-[#6C3CE1]"
+                  : "border-neutral-200 text-neutral-600 hover:border-neutral-300 dark:border-neutral-700 dark:text-neutral-400 dark:hover:border-neutral-600"
               )}
             >
               {opt.label}

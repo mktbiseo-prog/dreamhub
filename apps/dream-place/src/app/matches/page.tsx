@@ -28,24 +28,24 @@ export default function MatchesPage() {
 
   return (
     <div className="mx-auto max-w-lg px-4 py-6">
-      <h1 className="mb-1 text-2xl font-bold text-gray-900 dark:text-gray-100">
+      <h1 className="mb-1 text-2xl font-bold text-neutral-900 dark:text-neutral-100">
         My Matches
       </h1>
-      <p className="mb-6 text-sm text-gray-500 dark:text-gray-400">
+      <p className="mb-6 text-sm text-neutral-500 dark:text-neutral-400">
         People who share your dream vision
       </p>
 
       {/* Tabs */}
-      <div className="mb-6 flex rounded-[8px] border border-gray-200 p-1 dark:border-gray-700">
+      <div className="mb-6 flex rounded-lg border border-neutral-200 p-1 dark:border-neutral-700">
         {(["accepted", "pending"] as TabKey[]).map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
             className={cn(
-              "flex-1 rounded-[6px] py-2 text-sm font-medium transition-colors",
+              "flex-1 rounded-md py-2 text-sm font-medium transition-colors",
               activeTab === tab
-                ? "bg-blue-600 text-white"
-                : "text-gray-500 hover:text-gray-700 dark:text-gray-400"
+                ? "bg-[#6C3CE1] text-white"
+                : "text-neutral-500 hover:text-neutral-700 dark:text-neutral-400"
             )}
           >
             {tab === "accepted"
@@ -69,7 +69,7 @@ export default function MatchesPage() {
 
       {displayedMatches.length === 0 && (
         <div className="py-16 text-center">
-          <p className="text-gray-400 dark:text-gray-500">
+          <p className="text-neutral-400 dark:text-neutral-500">
             {activeTab === "accepted"
               ? "No connections yet. Start discovering dreamers!"
               : "No pending requests"}
@@ -100,16 +100,16 @@ function MatchListItem({
   const verificationTier = getVerificationTier(profile.verificationLevel);
 
   return (
-    <div className="rounded-[12px] border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-950">
+    <div className="rounded-2xl border border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-950">
       <Link href={isAccepted ? `/messages/${match.id}` : `/matches/${match.id}`}>
-        <div className="flex items-center gap-4 p-4 transition-colors hover:bg-gray-50 dark:hover:bg-gray-900">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-400 to-blue-600 text-lg font-bold text-white">
+        <div className="flex items-center gap-4 p-4 transition-colors hover:bg-neutral-50 dark:hover:bg-neutral-900">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#6C3CE1] text-lg font-bold text-white">
             {profile.name?.[0] ?? "?"}
           </div>
 
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-1.5">
-              <h3 className="font-medium text-gray-900 dark:text-gray-100">
+              <h3 className="font-medium text-neutral-900 dark:text-neutral-100">
                 {profile.name}
               </h3>
               {verificationTier && <VerificationBadge level={verificationTier} />}
@@ -119,7 +119,7 @@ function MatchListItem({
                 </span>
               )}
             </div>
-            <p className="truncate text-sm text-gray-500 dark:text-gray-400">
+            <p className="truncate text-sm text-neutral-500 dark:text-neutral-400">
               {profile.dreamHeadline}
             </p>
             {complementarySkills.length > 0 && (
@@ -136,7 +136,7 @@ function MatchListItem({
 
       {/* Accept / Decline for pending */}
       {isPending && (
-        <div className="flex gap-2 border-t border-gray-100 px-4 py-3 dark:border-gray-800">
+        <div className="flex gap-2 border-t border-neutral-100 px-4 py-3 dark:border-neutral-800">
           <Button
             variant="outline"
             size="sm"

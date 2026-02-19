@@ -17,15 +17,14 @@ export function MatchBar({ score, className }: MatchBarProps) {
 
   return (
     <div className={cn("flex items-center gap-2", className)}>
-      <div className="h-2 flex-1 overflow-hidden rounded-full bg-gray-100 dark:bg-gray-800">
+      <div className="h-2 flex-1 overflow-hidden rounded-full bg-[#E8E0FF]">
         <div
-          className="h-full rounded-full transition-all duration-500"
-          style={{ width: `${score}%`, backgroundColor: color }}
+          className="h-full rounded-full bg-[#6C3CE1] transition-all duration-500"
+          style={{ width: `${score}%` }}
         />
       </div>
       <span
-        className="text-sm font-bold tabular-nums"
-        style={{ color }}
+        className="text-sm font-bold tabular-nums text-[#6C3CE1]"
       >
         {score}%
       </span>

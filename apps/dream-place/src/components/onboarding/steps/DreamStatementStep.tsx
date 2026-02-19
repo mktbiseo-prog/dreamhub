@@ -53,10 +53,10 @@ export function DreamStatementStep({
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+        <h2 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
           What&apos;s your dream?
         </h2>
-        <p className="mt-2 text-gray-500 dark:text-gray-400">
+        <p className="mt-2 text-neutral-500 dark:text-neutral-400">
           Describe the dream you want to bring to life. Be specific — this helps
           us find people who share your vision.
         </p>
@@ -77,7 +77,7 @@ export function DreamStatementStep({
           maxLength={1000}
         />
         <div className="flex items-center justify-between">
-          <p className="text-xs text-gray-400 dark:text-gray-500">
+          <p className="text-xs text-neutral-400 dark:text-neutral-500">
             {data.dreamStatement.length} / 1,000
           </p>
           <Button
@@ -104,30 +104,30 @@ export function DreamStatementStep({
 
       {/* AI Enrichment result */}
       {enrichResult && (
-        <div className="rounded-[12px] border border-brand-200 bg-brand-50/50 p-4 dark:border-brand-800 dark:bg-brand-900/10">
-          <p className="mb-3 text-sm font-medium text-brand-700 dark:text-brand-300">
+        <div className="rounded-2xl border border-[#E8E0FF] bg-[#F5F1FF] p-4 dark:border-[#4520A0] dark:bg-[#6C3CE1]/5">
+          <p className="mb-3 text-sm font-medium text-[#6C3CE1] dark:text-[#B4A0F0]">
             AI-suggested enhancements
           </p>
           <div className="space-y-2">
             <div>
-              <span className="text-xs font-medium text-gray-500">Headline:</span>
-              <p className="text-sm font-medium text-gray-800 dark:text-gray-200">
+              <span className="text-xs font-medium text-neutral-500">Headline:</span>
+              <p className="text-sm font-medium text-neutral-800 dark:text-neutral-200">
                 {enrichResult.headline}
               </p>
             </div>
             <div>
-              <span className="text-xs font-medium text-gray-500">Category:</span>
-              <p className="text-sm text-gray-700 dark:text-gray-300">
+              <span className="text-xs font-medium text-neutral-500">Category:</span>
+              <p className="text-sm text-neutral-700 dark:text-neutral-300">
                 {enrichResult.category}
               </p>
             </div>
             <div>
-              <span className="text-xs font-medium text-gray-500">Interests:</span>
+              <span className="text-xs font-medium text-neutral-500">Interests:</span>
               <div className="mt-1 flex flex-wrap gap-1.5">
                 {enrichResult.interests.map((i) => (
                   <span
                     key={i}
-                    className="rounded-full bg-brand-100 px-2.5 py-0.5 text-xs text-brand-700 dark:bg-brand-900/30 dark:text-brand-300"
+                    className="rounded-full bg-[#E8E0FF] px-2.5 py-0.5 text-xs text-[#6C3CE1] dark:bg-[#6C3CE1]/15 dark:text-[#B4A0F0]"
                   >
                     {i}
                   </span>
@@ -146,11 +146,11 @@ export function DreamStatementStep({
         </div>
       )}
 
-      <div className="rounded-[12px] border border-brand-100 bg-brand-50/50 p-4 dark:border-brand-900/30 dark:bg-brand-900/10">
-        <p className="text-sm font-medium text-brand-700 dark:text-brand-300">
+      <div className="rounded-2xl border border-[#E8E0FF] bg-[#F5F1FF] p-4 dark:border-[#6C3CE1]/15 dark:bg-[#6C3CE1]/5">
+        <p className="text-sm font-medium text-[#6C3CE1] dark:text-[#B4A0F0]">
           Tips for a great dream statement:
         </p>
-        <ul className="mt-2 space-y-1 text-sm text-brand-600 dark:text-brand-400">
+        <ul className="mt-2 space-y-1 text-sm text-[#6C3CE1] dark:text-[#B4A0F0]">
           <li>&#8226; Be specific about what you want to create</li>
           <li>&#8226; Mention the impact you hope to make</li>
           <li>&#8226; Include the field or industry you&apos;re targeting</li>

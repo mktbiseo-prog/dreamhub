@@ -9,7 +9,7 @@ interface CategoryFilterProps {
 }
 
 const CATEGORIES: { id: DoorbellCategory; label: string; color: string }[] = [
-  { id: "tech", label: "Tech", color: "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-800" },
+  { id: "tech", label: "Tech", color: "bg-[#F5F1FF] text-[#5429C7] border-[#E8E0FF] dark:bg-[#6C3CE1]/10 dark:text-[#B4A0F0] dark:border-[#4520A0]" },
   { id: "design", label: "Design", color: "bg-pink-50 text-pink-700 border-pink-200 dark:bg-pink-900/20 dark:text-pink-400 dark:border-pink-800" },
   { id: "business", label: "Business", color: "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-900/20 dark:text-amber-400 dark:border-amber-800" },
   { id: "social-impact", label: "Social Impact", color: "bg-green-50 text-green-700 border-green-200 dark:bg-green-900/20 dark:text-green-400 dark:border-green-800" },
@@ -26,8 +26,8 @@ export function CategoryFilter({ selected, onSelect }: CategoryFilterProps) {
         className={cn(
           "shrink-0 rounded-full border px-3 py-1 text-xs font-medium transition-colors",
           selected === null
-            ? "border-brand-500 bg-brand-50 text-brand-700 dark:bg-brand-900/20 dark:text-brand-400"
-            : "border-gray-200 text-gray-500 hover:border-gray-300 dark:border-gray-700 dark:text-gray-400"
+            ? "border-[#6C3CE1] bg-[#F5F1FF] text-[#5429C7] dark:bg-[#6C3CE1]/10 dark:text-[#B4A0F0]"
+            : "border-neutral-200 text-neutral-500 hover:border-neutral-300 dark:border-neutral-700 dark:text-neutral-400"
         )}
       >
         All
@@ -41,7 +41,7 @@ export function CategoryFilter({ selected, onSelect }: CategoryFilterProps) {
             "shrink-0 rounded-full border px-3 py-1 text-xs font-medium transition-colors",
             selected === cat.id
               ? cat.color
-              : "border-gray-200 text-gray-500 hover:border-gray-300 dark:border-gray-700 dark:text-gray-400"
+              : "border-neutral-200 text-neutral-500 hover:border-neutral-300 dark:border-neutral-700 dark:text-neutral-400"
           )}
         >
           {cat.label}

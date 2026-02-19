@@ -36,7 +36,7 @@ export function MatchScoreRing({
           fill="none"
           stroke="currentColor"
           strokeWidth={strokeWidth}
-          className="text-gray-100 dark:text-gray-800"
+          className="text-neutral-100 dark:text-neutral-800"
         />
         <circle
           cx={size / 2}

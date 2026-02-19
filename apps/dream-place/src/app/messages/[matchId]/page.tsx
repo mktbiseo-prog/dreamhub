@@ -54,7 +54,7 @@ export default function ChatPage({
   if (!match) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <p className="text-gray-500">Conversation not found</p>
+        <p className="text-neutral-500">Conversation not found</p>
       </div>
     );
   }
@@ -77,23 +77,23 @@ export default function ChatPage({
   return (
     <div className="flex h-[calc(100vh-4rem)] flex-col">
       {/* Chat header */}
-      <div className="flex items-center gap-3 border-b border-gray-200 bg-white px-4 py-3 dark:border-gray-800 dark:bg-gray-950">
+      <div className="flex items-center gap-3 border-b border-neutral-200 bg-white px-4 py-3 dark:border-neutral-800 dark:bg-neutral-950">
         <Link
           href="/messages"
-          className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+          className="text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200"
         >
           <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
           </svg>
         </Link>
-        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-brand-400 to-blue-500 text-sm font-bold text-white">
+        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-[#B4A0F0] to-[#6C3CE1] text-sm font-bold text-white">
           {partner.name?.[0] ?? "?"}
         </div>
         <div className="flex-1">
-          <h2 className="font-medium text-gray-900 dark:text-gray-100">
+          <h2 className="font-medium text-neutral-900 dark:text-neutral-100">
             {partner.name}
           </h2>
-          <p className="text-xs text-gray-500 dark:text-gray-400">
+          <p className="text-xs text-neutral-500 dark:text-neutral-400">
             {partner.dreamHeadline}
           </p>
         </div>
@@ -107,11 +107,11 @@ export default function ChatPage({
       {/* Messages area */}
       <div className="flex-1 overflow-y-auto px-4 py-4">
         {/* Match info banner */}
-        <div className="mb-6 rounded-[12px] bg-brand-50 p-3 text-center dark:bg-brand-900/10">
-          <p className="text-sm font-medium text-brand-700 dark:text-brand-300">
+        <div className="mb-6 rounded-2xl bg-[#F5F1FF] p-3 text-center dark:bg-[#6C3CE1]/5">
+          <p className="text-sm font-medium text-[#5429C7] dark:text-[#B4A0F0]">
             You matched with {partner.name}!
           </p>
-          <p className="mt-0.5 text-xs text-brand-500 dark:text-brand-400">
+          <p className="mt-0.5 text-xs text-[#6C3CE1] dark:text-[#B4A0F0]">
             {match.matchScore}% dream match — {match.complementarySkills.length}{" "}
             complementary skills
           </p>
@@ -120,7 +120,7 @@ export default function ChatPage({
         {/* AI Icebreaker suggestions */}
         {icebreakers.length > 0 && messages.length === 0 && (
           <div className="mb-6">
-            <p className="mb-2 text-center text-xs font-medium text-gray-400">
+            <p className="mb-2 text-center text-xs font-medium text-neutral-400">
               AI-suggested conversation starters
             </p>
             <div className="space-y-2">
@@ -129,7 +129,7 @@ export default function ChatPage({
                   key={i}
                   type="button"
                   onClick={() => handleIcebreakerClick(text)}
-                  className="block w-full rounded-[8px] border border-brand-200 bg-brand-50/50 p-3 text-left text-sm text-brand-700 transition-colors hover:bg-brand-100 dark:border-brand-800 dark:bg-brand-900/10 dark:text-brand-300 dark:hover:bg-brand-900/20"
+                  className="block w-full rounded-lg border border-[#E8E0FF] bg-[#F5F1FF]/50 p-3 text-left text-sm text-[#5429C7] transition-colors hover:bg-[#E8E0FF] dark:border-[#4520A0] dark:bg-[#6C3CE1]/5 dark:text-[#B4A0F0] dark:hover:bg-[#6C3CE1]/10"
                 >
                   {text}
                 </button>
@@ -151,8 +151,8 @@ export default function ChatPage({
                   className={cn(
                     "max-w-[75%] rounded-2xl px-4 py-2.5",
                     isMe
-                      ? "rounded-br-md bg-brand-600 text-white"
-                      : "rounded-bl-md bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100"
+                      ? "rounded-br-md bg-[#6C3CE1] text-white"
+                      : "rounded-bl-md bg-neutral-100 text-neutral-900 dark:bg-neutral-800 dark:text-neutral-100"
                   )}
                 >
                   <p className="text-sm leading-relaxed">{msg.content}</p>
@@ -160,8 +160,8 @@ export default function ChatPage({
                     className={cn(
                       "mt-1 text-right text-[10px]",
                       isMe
-                        ? "text-brand-200"
-                        : "text-gray-400 dark:text-gray-500"
+                        ? "text-[#E8E0FF]"
+                        : "text-neutral-400 dark:text-neutral-500"
                     )}
                   >
                     {formatTime(msg.createdAt)}
@@ -177,14 +177,14 @@ export default function ChatPage({
       {/* Input area */}
       <form
         onSubmit={handleSend}
-        className="flex items-center gap-2 border-t border-gray-200 bg-white px-4 py-3 dark:border-gray-800 dark:bg-gray-950"
+        className="flex items-center gap-2 border-t border-neutral-200 bg-white px-4 py-3 dark:border-neutral-800 dark:bg-neutral-950"
       >
         <input
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Type a message..."
-          className="flex-1 rounded-full border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm outline-none transition-colors focus:border-brand-500 focus:ring-1 focus:ring-brand-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
+          className="flex-1 rounded-full border border-neutral-200 bg-neutral-50 px-4 py-2.5 text-sm outline-none transition-colors focus:border-[#6C3CE1] focus:ring-1 focus:ring-[#6C3CE1] dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100"
         />
         <Button
           type="submit"

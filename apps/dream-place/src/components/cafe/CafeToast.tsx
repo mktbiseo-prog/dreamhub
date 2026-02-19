@@ -13,11 +13,11 @@ const iconByType: Record<ToastType, { color: string; path: string }> = {
     path: "M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z",
   },
   info: {
-    color: "text-blue-500",
+    color: "text-[#6C3CE1]",
     path: "M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z",
   },
   ring: {
-    color: "text-purple-500",
+    color: "text-[#6C3CE1]",
     path: "M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0",
   },
   checkin: {
@@ -40,7 +40,7 @@ function ToastItem({ toast }: { toast: CafeToastMessage }) {
   return (
     <div
       className={cn(
-        "flex items-center gap-2 rounded-[12px] border border-gray-200 bg-white px-4 py-3 shadow-lg dark:border-gray-700 dark:bg-gray-900",
+        "flex items-center gap-2 rounded-2xl border border-neutral-200 bg-white px-4 py-3 shadow-lg dark:border-neutral-700 dark:bg-neutral-900",
         "animate-in fade-in slide-in-from-right-4 duration-300"
       )}
     >
@@ -49,10 +49,10 @@ function ToastItem({ toast }: { toast: CafeToastMessage }) {
           className={cn(
             "flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white",
             toast.type === "ring"
-              ? "bg-purple-500"
+              ? "bg-[#6C3CE1]"
               : toast.type === "checkin"
                 ? "bg-emerald-500"
-                : "bg-brand-500"
+                : "bg-[#6C3CE1]"
           )}
         >
           {toast.avatarInitial}
@@ -68,13 +68,13 @@ function ToastItem({ toast }: { toast: CafeToastMessage }) {
           <path strokeLinecap="round" strokeLinejoin="round" d={icon.path} />
         </svg>
       )}
-      <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+      <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
         {toast.message}
       </p>
       <button
         type="button"
         onClick={() => dismissToast(toast.id)}
-        className="ml-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+        className="ml-2 text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300"
       >
         <svg
           className="h-4 w-4"

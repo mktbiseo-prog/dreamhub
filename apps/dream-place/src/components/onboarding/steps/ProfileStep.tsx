@@ -35,10 +35,10 @@ export function ProfileStep({ data, onChange }: ProfileStepProps) {
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+        <h2 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
           Complete Your Profile
         </h2>
-        <p className="mt-2 text-gray-500 dark:text-gray-400">
+        <p className="mt-2 text-neutral-500 dark:text-neutral-400">
           Add a photo and a short bio so other dreamers can get to know you.
         </p>
       </div>
@@ -46,7 +46,7 @@ export function ProfileStep({ data, onChange }: ProfileStepProps) {
       {/* Avatar upload */}
       <div className="flex flex-col items-center gap-4">
         <div
-          className="relative flex h-28 w-28 items-center justify-center overflow-hidden rounded-full border-2 border-dashed border-gray-300 bg-gray-50 dark:border-gray-700 dark:bg-gray-900"
+          className="relative flex h-28 w-28 items-center justify-center overflow-hidden rounded-full border-2 border-dashed border-neutral-300 bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-900"
           onClick={() => fileInputRef.current?.click()}
           role="button"
           tabIndex={0}
@@ -66,7 +66,7 @@ export function ProfileStep({ data, onChange }: ProfileStepProps) {
           ) : (
             <div className="text-center">
               <svg
-                className="mx-auto h-8 w-8 text-gray-400"
+                className="mx-auto h-8 w-8 text-neutral-400"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -83,7 +83,7 @@ export function ProfileStep({ data, onChange }: ProfileStepProps) {
                   d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0z"
                 />
               </svg>
-              <p className="mt-1 text-xs text-gray-400">Upload</p>
+              <p className="mt-1 text-xs text-neutral-400">Upload</p>
             </div>
           )}
         </div>
@@ -104,7 +104,7 @@ export function ProfileStep({ data, onChange }: ProfileStepProps) {
         >
           {data.avatarPreview ? "Change Photo" : "Upload Photo"}
         </Button>
-        <p className="text-xs text-gray-400 dark:text-gray-500">
+        <p className="text-xs text-neutral-400 dark:text-neutral-500">
           JPG, PNG or WebP. Max 5MB.
         </p>
       </div>
@@ -121,7 +121,7 @@ export function ProfileStep({ data, onChange }: ProfileStepProps) {
           className="resize-none"
           maxLength={500}
         />
-        <p className="text-right text-xs text-gray-400 dark:text-gray-500">
+        <p className="text-right text-xs text-neutral-400 dark:text-neutral-500">
           {data.bio.length} / 500
         </p>
       </div>

@@ -145,10 +145,10 @@ export default function ExplorePage() {
             </svg>
           </div>
           <div>
-            <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">
+            <h1 className="text-xl font-bold text-neutral-900 dark:text-neutral-100">
               Dream Globe
             </h1>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
+            <p className="text-sm text-neutral-500 dark:text-neutral-400">
               Explore dreamers worldwide
             </p>
           </div>
@@ -164,12 +164,12 @@ export default function ExplorePage() {
       </div>
 
       {/* Stats bar */}
-      <div className="mb-4 flex items-center justify-between rounded-[8px] bg-gray-100 px-4 py-2.5 dark:bg-gray-900">
+      <div className="mb-4 flex items-center justify-between rounded-lg bg-neutral-100 px-4 py-2.5 dark:bg-neutral-900">
         <div>
-          <span className="text-lg font-bold text-gray-900 dark:text-gray-100">
+          <span className="text-lg font-bold text-neutral-900 dark:text-neutral-100">
             {totalDreamers}
           </span>
-          <span className="ml-1.5 text-sm text-gray-500 dark:text-gray-400">
+          <span className="ml-1.5 text-sm text-neutral-500 dark:text-neutral-400">
             dreamer{totalDreamers !== 1 ? "s" : ""}
           </span>
         </div>
@@ -193,10 +193,10 @@ export default function ExplorePage() {
 
       {/* Filter panel */}
       {showFilters && (
-        <div className="mb-4 rounded-[12px] border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-950">
+        <div className="mb-4 rounded-2xl border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-950">
           {/* Category filter */}
           <div className="mb-4">
-            <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-gray-400">
+            <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-neutral-400">
               Dream Category
             </label>
             <div className="flex flex-wrap gap-1.5">
@@ -208,7 +208,7 @@ export default function ExplorePage() {
                   className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
                     selectedCategory === cat
                       ? "bg-indigo-600 text-white"
-                      : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"
+                      : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-700"
                   }`}
                 >
                   {cat}
@@ -219,7 +219,7 @@ export default function ExplorePage() {
 
           {/* Skills filter */}
           <div className="mb-4">
-            <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-gray-400">
+            <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-neutral-400">
               Skills
             </label>
             <div className="flex flex-wrap gap-1.5">
@@ -230,8 +230,8 @@ export default function ExplorePage() {
                   onClick={() => toggleSkill(skill)}
                   className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
                     selectedSkills.includes(skill)
-                      ? "bg-blue-600 text-white"
-                      : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"
+                      ? "bg-[#6C3CE1] text-white"
+                      : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-700"
                   }`}
                 >
                   {skill}
@@ -242,7 +242,7 @@ export default function ExplorePage() {
 
           {/* Min score */}
           <div>
-            <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-gray-400">
+            <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-neutral-400">
               Min Match Score: {minScore}%
             </label>
             <input
@@ -259,14 +259,14 @@ export default function ExplorePage() {
 
       {/* Nearby dreamers list */}
       <div>
-        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-gray-400">
+        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-neutral-400">
           {selectedRegion ? `Dreamers in ${selectedRegion}` : "All Dreamers by City"}
         </h2>
         <div className="space-y-2">
           {nearbyDreamers.map((dreamer, i) => (
             <div
               key={`${dreamer.name}-${i}`}
-              className="flex items-center gap-3 rounded-[8px] border border-gray-200 bg-white p-3 dark:border-gray-800 dark:bg-gray-950"
+              className="flex items-center gap-3 rounded-lg border border-neutral-200 bg-white p-3 dark:border-neutral-800 dark:bg-neutral-950"
             >
               <div
                 className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full"
@@ -318,25 +318,25 @@ export default function ExplorePage() {
                 </svg>
               </div>
               <div className="min-w-0 flex-1">
-                <p className="font-medium text-gray-900 dark:text-gray-100">
+                <p className="font-medium text-neutral-900 dark:text-neutral-100">
                   {dreamer.name}
                 </p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">
+                <p className="text-xs text-neutral-500 dark:text-neutral-400">
                   {dreamer.dreamCategory}
                 </p>
               </div>
               <div className="text-right">
-                <span className="text-lg font-bold text-gray-900 dark:text-gray-100">
+                <span className="text-lg font-bold text-neutral-900 dark:text-neutral-100">
                   {dreamer.count}
                 </span>
-                <p className="text-[10px] text-gray-400">dreamers</p>
+                <p className="text-[10px] text-neutral-400">dreamers</p>
               </div>
             </div>
           ))}
 
           {nearbyDreamers.length === 0 && (
             <div className="py-12 text-center">
-              <p className="text-gray-400 dark:text-gray-500">
+              <p className="text-neutral-400 dark:text-neutral-500">
                 No dreamers found in this region
               </p>
               <Button

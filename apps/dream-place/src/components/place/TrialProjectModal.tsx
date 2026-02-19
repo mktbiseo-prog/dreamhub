@@ -86,12 +86,12 @@ export function TrialProjectModal({
       />
 
       {/* Modal */}
-      <div className="relative z-10 w-full max-w-lg rounded-[16px] bg-white p-6 shadow-2xl dark:bg-gray-900">
+      <div className="relative z-10 w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl dark:bg-neutral-900">
         {/* Close button */}
         <button
           type="button"
           onClick={onClose}
-          className="absolute right-4 top-4 rounded-full p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-800 dark:hover:text-gray-300"
+          className="absolute right-4 top-4 rounded-full p-1 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600 dark:hover:bg-neutral-800 dark:hover:text-neutral-300"
         >
           <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -100,10 +100,10 @@ export function TrialProjectModal({
 
         {/* Header */}
         <div className="mb-6">
-          <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">
+          <h2 className="text-xl font-bold text-neutral-900 dark:text-neutral-100">
             Start Trial Project
           </h2>
-          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+          <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
             Test your collaboration with {partnerName}
           </p>
         </div>
@@ -112,7 +112,7 @@ export function TrialProjectModal({
         <div className="space-y-5">
           {/* Project Title */}
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">
+            <label className="mb-1.5 block text-sm font-medium text-neutral-700 dark:text-neutral-300">
               Project Title
             </label>
             <input
@@ -120,13 +120,13 @@ export function TrialProjectModal({
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="e.g., MVP Landing Page"
-              className="w-full rounded-[8px] border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-500"
+              className="w-full rounded-xl border border-neutral-300 bg-white px-4 py-3 text-sm text-neutral-900 placeholder-neutral-400 focus:border-[#6C3CE1] focus:outline-none focus:ring-2 focus:ring-[#E8E0FF] dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
             />
           </div>
 
           {/* Description */}
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">
+            <label className="mb-1.5 block text-sm font-medium text-neutral-700 dark:text-neutral-300">
               Description
             </label>
             <textarea
@@ -134,13 +134,13 @@ export function TrialProjectModal({
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Describe what you want to accomplish together..."
               rows={3}
-              className="w-full rounded-[8px] border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-500"
+              className="w-full rounded-xl border border-neutral-300 bg-white px-4 py-3 text-sm text-neutral-900 placeholder-neutral-400 focus:border-[#6C3CE1] focus:outline-none focus:ring-2 focus:ring-[#E8E0FF] dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
             />
           </div>
 
           {/* Goals */}
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">
+            <label className="mb-1.5 block text-sm font-medium text-neutral-700 dark:text-neutral-300">
               Goals
             </label>
             <div className="flex gap-2">
@@ -150,7 +150,7 @@ export function TrialProjectModal({
                 onChange={(e) => setNewGoal(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && addGoal()}
                 placeholder="Add a goal..."
-                className="flex-1 rounded-[8px] border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-500"
+                className="flex-1 rounded-xl border border-neutral-300 bg-white px-4 py-3 text-sm text-neutral-900 placeholder-neutral-400 focus:border-[#6C3CE1] focus:outline-none focus:ring-2 focus:ring-[#E8E0FF] dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
               />
               <Button size="sm" variant="outline" onClick={addGoal}>
                 Add
@@ -161,13 +161,13 @@ export function TrialProjectModal({
                 {goals.map((goal, i) => (
                   <span
                     key={i}
-                    className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-700 dark:bg-blue-900/20 dark:text-blue-300"
+                    className="inline-flex items-center gap-1 rounded-full bg-[#E8E0FF] px-2.5 py-1 text-xs font-medium text-[#6C3CE1]"
                   >
                     {goal}
                     <button
                       type="button"
                       onClick={() => removeGoal(i)}
-                      className="ml-0.5 inline-flex h-3.5 w-3.5 items-center justify-center rounded-full hover:bg-blue-200 dark:hover:bg-blue-800"
+                      className="ml-0.5 inline-flex h-3.5 w-3.5 items-center justify-center rounded-full hover:bg-[#d5c9ff]"
                     >
                       &#215;
                     </button>
@@ -179,7 +179,7 @@ export function TrialProjectModal({
 
           {/* Duration */}
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">
+            <label className="mb-1.5 block text-sm font-medium text-neutral-700 dark:text-neutral-300">
               Duration
             </label>
             <div className="flex gap-3">
@@ -188,10 +188,10 @@ export function TrialProjectModal({
                   key={weeks}
                   type="button"
                   onClick={() => setDurationWeeks(weeks)}
-                  className={`flex-1 rounded-[8px] border py-2 text-sm font-medium transition-colors ${
+                  className={`flex-1 rounded-lg border py-2 text-sm font-medium transition-colors ${
                     durationWeeks === weeks
-                      ? "border-blue-500 bg-blue-50 text-blue-700 dark:border-blue-400 dark:bg-blue-900/30 dark:text-blue-300"
-                      : "border-gray-300 text-gray-600 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-800"
+                      ? "border-[#6C3CE1] bg-[#F5F1FF] text-[#6C3CE1]"
+                      : "border-neutral-300 text-neutral-600 hover:bg-neutral-50 dark:border-neutral-700 dark:text-neutral-400 dark:hover:bg-neutral-800"
                   }`}
                 >
                   {weeks} weeks
@@ -202,7 +202,7 @@ export function TrialProjectModal({
 
           {/* Deliverables */}
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">
+            <label className="mb-1.5 block text-sm font-medium text-neutral-700 dark:text-neutral-300">
               Deliverables
             </label>
             <div className="flex gap-2">
@@ -212,7 +212,7 @@ export function TrialProjectModal({
                 onChange={(e) => setNewDeliverable(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && addDeliverable()}
                 placeholder="Add a deliverable..."
-                className="flex-1 rounded-[8px] border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-500"
+                className="flex-1 rounded-xl border border-neutral-300 bg-white px-4 py-3 text-sm text-neutral-900 placeholder-neutral-400 focus:border-[#6C3CE1] focus:outline-none focus:ring-2 focus:ring-[#E8E0FF] dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
               />
               <Button size="sm" variant="outline" onClick={addDeliverable}>
                 Add

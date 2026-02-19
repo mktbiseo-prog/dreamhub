@@ -70,22 +70,22 @@ export function DreamerDNA({
   return (
     <ResponsiveContainer width="100%" height={size}>
       <RadarChart data={data}>
-        <PolarGrid stroke="#e5e7eb" />
+        <PolarGrid stroke="#d4d4d4" />
         <PolarAngleAxis
           dataKey="dimension"
-          tick={{ fill: "#9ca3af", fontSize: 12 }}
+          tick={{ fill: "#a3a3a3", fontSize: 12 }}
         />
         <PolarRadiusAxis
           angle={90}
           domain={[0, 100]}
-          tick={{ fill: "#d1d5db", fontSize: 10 }}
+          tick={{ fill: "#d4d4d4", fontSize: 10 }}
           tickCount={5}
         />
         <Radar
           name="You"
           dataKey="you"
-          stroke="#8b5cf6"
-          fill="#8b5cf6"
+          stroke="#6C3CE1"
+          fill="#6C3CE1"
           fillOpacity={0.25}
           strokeWidth={2}
         />
@@ -93,8 +93,8 @@ export function DreamerDNA({
           <Radar
             name={compareName}
             dataKey="partner"
-            stroke="#3b82f6"
-            fill="#3b82f6"
+            stroke="#B4A0F0"
+            fill="#B4A0F0"
             fillOpacity={0.15}
             strokeWidth={2}
           />

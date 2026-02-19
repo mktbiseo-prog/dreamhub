@@ -44,13 +44,13 @@ export function TagSelector({ selected, onChange, maxTags }: TagSelectorProps) {
           {selected.map((skill) => (
             <span
               key={skill}
-              className="inline-flex items-center gap-1 rounded-full bg-brand-100 px-3 py-1.5 text-sm font-medium text-brand-700 dark:bg-brand-900/30 dark:text-brand-300"
+              className="inline-flex items-center gap-1 rounded-full bg-[#E8E0FF] px-3 py-1.5 text-sm font-medium text-[#6C3CE1] dark:bg-[#6C3CE1]/15 dark:text-[#B4A0F0]"
             >
               {skill}
               <button
                 type="button"
                 onClick={() => removeTag(skill)}
-                className="ml-0.5 inline-flex h-4 w-4 items-center justify-center rounded-full hover:bg-brand-200 dark:hover:bg-brand-800"
+                className="ml-0.5 inline-flex h-4 w-4 items-center justify-center rounded-full hover:bg-[#d5c9ff] dark:hover:bg-[#4520A0]"
                 aria-label={`Remove ${skill}`}
               >
                 ×
@@ -61,7 +61,7 @@ export function TagSelector({ selected, onChange, maxTags }: TagSelectorProps) {
       )}
 
       {/* Counter */}
-      <p className="text-sm text-gray-500 dark:text-gray-400">
+      <p className="text-sm text-neutral-500 dark:text-neutral-400">
         {selected.length} / {maxTags} selected
         {isAtLimit && (
           <span className="ml-2 text-amber-600 dark:text-amber-400">
@@ -92,7 +92,7 @@ export function TagSelector({ selected, onChange, maxTags }: TagSelectorProps) {
                     expandedCategory === cat.name ? null : cat.name
                   )
                 }
-                className="mb-2 flex w-full items-center justify-between text-sm font-semibold text-gray-700 dark:text-gray-300"
+                className="mb-2 flex w-full items-center justify-between text-sm font-semibold text-neutral-700 dark:text-neutral-300"
               >
                 {cat.name}
                 <svg
@@ -126,8 +126,8 @@ export function TagSelector({ selected, onChange, maxTags }: TagSelectorProps) {
                         className={cn(
                           "rounded-full border px-3 py-1.5 text-sm transition-colors",
                           isSelected
-                            ? "border-brand-500 bg-brand-50 text-brand-700 dark:border-brand-400 dark:bg-brand-900/20 dark:text-brand-300"
-                            : "border-gray-200 bg-white text-gray-600 hover:border-brand-300 hover:bg-brand-50 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-400 dark:hover:border-brand-600 dark:hover:bg-brand-900/10",
+                            ? "border-[#6C3CE1] bg-[#F5F1FF] text-[#6C3CE1] dark:border-[#B4A0F0] dark:bg-[#6C3CE1]/10 dark:text-[#B4A0F0]"
+                            : "border-neutral-200 bg-white text-neutral-600 hover:border-[#E8E0FF] hover:bg-[#F5F1FF] dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:hover:border-[#6C3CE1] dark:hover:bg-[#6C3CE1]/5",
                           isDisabled && "cursor-not-allowed opacity-40"
                         )}
                       >

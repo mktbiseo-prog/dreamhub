@@ -30,7 +30,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${plusJakarta.variable} ${inter.className}`}>
+    <html lang="en" data-service="place" className={`${inter.variable} ${plusJakarta.variable} ${inter.className}`}>
       <body className="min-h-screen pb-16 antialiased">
         <SessionProvider>
           <LanguageSelector />

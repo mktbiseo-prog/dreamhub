@@ -28,10 +28,10 @@ export const MatchCard = memo(function MatchCard({ match, onInterested, onSkip }
   const needsSummary = profile.skillsNeeded.slice(0, 2).join(", ");
 
   return (
-    <div className="overflow-hidden rounded-[16px] border border-gray-200 bg-white shadow-sm transition-shadow hover:shadow-md dark:border-gray-800 dark:bg-gray-950">
+    <div className="overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-sm transition-shadow hover:shadow-md dark:border-neutral-800 dark:bg-neutral-950">
       {/* Header: Avatar + Name + Verification */}
       <div className="flex items-start gap-4 p-5">
-        <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-400 to-blue-600 text-xl font-bold text-white">
+        <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-[#6C3CE1] text-xl font-bold text-white">
           {profile.avatarUrl ? (
             <Image src={profile.avatarUrl} alt={profile.name} width={56} height={56} className="rounded-full object-cover" />
           ) : (
@@ -41,16 +41,16 @@ export const MatchCard = memo(function MatchCard({ match, onInterested, onSkip }
 
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-1.5">
-            <h3 className="font-semibold text-gray-900 dark:text-gray-100">
+            <h3 className="font-semibold text-neutral-900 dark:text-neutral-100">
               {profile.name}
             </h3>
             {verificationTier && <VerificationBadge level={verificationTier} />}
           </div>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
+          <p className="text-sm text-neutral-500 dark:text-neutral-400">
             {profile.city}, {profile.country}
           </p>
           {profile.dreamHeadline && (
-            <p className="mt-1 text-sm font-medium text-blue-600 dark:text-blue-400">
+            <p className="mt-1 text-sm font-medium text-[#6C3CE1]">
               Building: {profile.dreamHeadline}
             </p>
           )}
@@ -77,17 +77,17 @@ export const MatchCard = memo(function MatchCard({ match, onInterested, onSkip }
               <span
                 key={skill}
                 className={cn(
-                  "rounded-full px-2.5 py-0.5 text-xs font-medium",
+                  "rounded-full px-3 py-1 text-xs font-medium",
                   complementarySkills.includes(skill)
                     ? "bg-green-50 text-green-700 dark:bg-green-900/20 dark:text-green-400"
-                    : "bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400"
+                    : "bg-[#E8E0FF] text-[#6C3CE1]"
                 )}
               >
                 {skill}
               </span>
             ))}
             {extraSkillCount > 0 && (
-              <span className="rounded-full bg-gray-100 px-2.5 py-0.5 text-xs text-gray-500 dark:bg-gray-800 dark:text-gray-400">
+              <span className="rounded-full bg-neutral-100 px-3 py-1 text-xs text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400">
                 +{extraSkillCount} more
               </span>
             )}
@@ -97,7 +97,7 @@ export const MatchCard = memo(function MatchCard({ match, onInterested, onSkip }
 
       {/* Looking for */}
       {needsSummary && (
-        <p className="mt-2 px-5 text-xs text-gray-500 dark:text-gray-400">
+        <p className="mt-2 px-5 text-xs text-neutral-500 dark:text-neutral-400">
           Looking for: {needsSummary}
           {profile.skillsNeeded.length > 2 && ` +${profile.skillsNeeded.length - 2} more`}
         </p>
@@ -105,13 +105,13 @@ export const MatchCard = memo(function MatchCard({ match, onInterested, onSkip }
 
       {/* Bio snippet */}
       {profile.bio && (
-        <p className="mt-2 line-clamp-2 px-5 text-sm leading-relaxed text-gray-600 dark:text-gray-300">
+        <p className="mt-2 line-clamp-2 px-5 text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">
           {profile.bio}
         </p>
       )}
 
       {/* Actions */}
-      <div className="mt-4 flex items-center gap-3 border-t border-gray-100 p-4 dark:border-gray-800">
+      <div className="mt-4 flex items-center gap-3 border-t border-neutral-100 p-4 dark:border-neutral-800">
         <Button
           variant="outline"
           size="sm"
@@ -121,7 +121,7 @@ export const MatchCard = memo(function MatchCard({ match, onInterested, onSkip }
           Pass
         </Button>
         <Link href={`/matches/${match.id}`} className="flex-1">
-          <Button variant="ghost" size="sm" className="w-full text-blue-600 dark:text-blue-400">
+          <Button variant="ghost" size="sm" className="w-full text-neutral-600 dark:text-neutral-400">
             View Profile
           </Button>
         </Link>
@@ -148,10 +148,10 @@ function MiniGauge({ label, score }: { label: string; score: number }) {
   return (
     <div className="flex-1">
       <div className="flex items-center justify-between">
-        <span className="text-[10px] text-gray-400">{label}</span>
+        <span className="text-[10px] text-neutral-400">{label}</span>
         <span className="text-[10px] font-bold" style={{ color }}>{score}%</span>
       </div>
-      <div className="mt-0.5 h-1.5 overflow-hidden rounded-full bg-gray-100 dark:bg-gray-800">
+      <div className="mt-0.5 h-1.5 overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-800">
         <div
           className="h-full rounded-full transition-all"
           style={{ width: `${score}%`, backgroundColor: color }}

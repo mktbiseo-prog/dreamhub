@@ -6,10 +6,10 @@ import type { DreamProject, ProjectStage } from "@/types";
 
 const STAGE_CONFIG: Record<ProjectStage, { label: string; color: string }> = {
   IDEATION: { label: "Ideation", color: "bg-purple-100 text-purple-700 dark:bg-purple-900/20 dark:text-purple-400" },
-  TEAM_FORMATION: { label: "Team Building", color: "bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400" },
+  TEAM_FORMATION: { label: "Team Building", color: "bg-[#E8E0FF] text-[#5429C7] dark:bg-[#6C3CE1]/10 dark:text-[#B4A0F0]" },
   ACTIVE_DEVELOPMENT: { label: "Active", color: "bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400" },
   LAUNCH: { label: "Launching", color: "bg-amber-100 text-amber-700 dark:bg-amber-900/20 dark:text-amber-400" },
-  COMPLETE: { label: "Complete", color: "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400" },
+  COMPLETE: { label: "Complete", color: "bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400" },
 };
 
 interface ProjectCardProps {
@@ -28,12 +28,12 @@ export function ProjectCard({ project, matchPercentage, onUpvote, isUpvoted }: P
   return (
     <Link
       href={`/projects/${project.id}`}
-      className="block rounded-[12px] border border-gray-200 bg-white p-5 transition-shadow hover:shadow-md dark:border-gray-800 dark:bg-gray-950"
+      className="block rounded-2xl border border-neutral-200 bg-white p-5 transition-shadow hover:shadow-md dark:border-neutral-800 dark:bg-neutral-950"
     >
       {/* Top badges row */}
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-2">
-          <h3 className="font-semibold text-gray-900 dark:text-gray-100">
+          <h3 className="font-semibold text-neutral-900 dark:text-neutral-100">
             {project.name}
           </h3>
           {project.isFeatured && (
@@ -42,7 +42,7 @@ export function ProjectCard({ project, matchPercentage, onUpvote, isUpvoted }: P
             </span>
           )}
           {project.isTrial && (
-            <span className="rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-medium text-blue-700 dark:bg-blue-900/20 dark:text-blue-400">
+            <span className="rounded-full bg-[#E8E0FF] px-2 py-0.5 text-[10px] font-medium text-[#5429C7] dark:bg-[#6C3CE1]/10 dark:text-[#B4A0F0]">
               Trial
             </span>
           )}
@@ -55,7 +55,7 @@ export function ProjectCard({ project, matchPercentage, onUpvote, isUpvoted }: P
                 ? "bg-green-50 text-green-700 dark:bg-green-900/20 dark:text-green-400"
                 : matchPercentage >= 50
                   ? "bg-amber-50 text-amber-700 dark:bg-amber-900/20 dark:text-amber-400"
-                  : "bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400"
+                  : "bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400"
             )}>
               {matchPercentage}% match
             </span>
@@ -66,7 +66,7 @@ export function ProjectCard({ project, matchPercentage, onUpvote, isUpvoted }: P
         </div>
       </div>
 
-      <p className="mt-2 line-clamp-2 text-sm text-gray-500 dark:text-gray-400">
+      <p className="mt-2 line-clamp-2 text-sm text-neutral-500 dark:text-neutral-400">
         {project.description}
       </p>
 
@@ -82,7 +82,7 @@ export function ProjectCard({ project, matchPercentage, onUpvote, isUpvoted }: P
             </span>
           ))}
           {project.skillsNeeded.length > 3 && (
-            <span className="text-xs text-gray-400">
+            <span className="text-xs text-neutral-400">
               +{project.skillsNeeded.length - 3}
             </span>
           )}
@@ -90,8 +90,8 @@ export function ProjectCard({ project, matchPercentage, onUpvote, isUpvoted }: P
       )}
 
       {/* Footer */}
-      <div className="mt-3 flex items-center justify-between border-t border-gray-100 pt-3 dark:border-gray-800">
-        <div className="flex items-center gap-3 text-xs text-gray-400">
+      <div className="mt-3 flex items-center justify-between border-t border-neutral-100 pt-3 dark:border-neutral-800">
+        <div className="flex items-center gap-3 text-xs text-neutral-400">
           {project.teamName && <span>{project.teamName}</span>}
           {project.memberCount !== undefined && (
             <span>&#8226; {project.memberCount} members</span>
@@ -114,8 +114,8 @@ export function ProjectCard({ project, matchPercentage, onUpvote, isUpvoted }: P
               className={cn(
                 "flex items-center gap-1 text-xs transition-colors",
                 isUpvoted
-                  ? "text-brand-600 dark:text-brand-400"
-                  : "text-gray-400 hover:text-brand-500"
+                  ? "text-[#6C3CE1] dark:text-[#B4A0F0]"
+                  : "text-neutral-400 hover:text-[#6C3CE1]"
               )}
             >
               <svg className="h-3.5 w-3.5" fill={isUpvoted ? "currentColor" : "none"} viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -125,7 +125,7 @@ export function ProjectCard({ project, matchPercentage, onUpvote, isUpvoted }: P
             </button>
           )}
           {tasksTotal > 0 && (
-            <span className="text-xs text-gray-500 dark:text-gray-400">
+            <span className="text-xs text-neutral-500 dark:text-neutral-400">
               {tasksDone}/{tasksTotal} tasks
             </span>
           )}

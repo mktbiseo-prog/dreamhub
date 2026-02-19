@@ -149,12 +149,12 @@ export function OnboardingWizard() {
                   <div
                     className={cn(
                       "flex h-8 w-8 items-center justify-center rounded-full text-xs font-semibold transition-colors",
-                      isCompleted && "bg-brand-600 text-white",
+                      isCompleted && "bg-[#6C3CE1] text-white",
                       isCurrent &&
-                        "border-2 border-brand-600 bg-brand-50 text-brand-700 dark:bg-brand-900/20 dark:text-brand-300",
+                        "border-2 border-[#6C3CE1] bg-[#F5F1FF] text-[#5429C7] dark:bg-[#6C3CE1]/10 dark:text-[#B4A0F0]",
                       !isCompleted &&
                         !isCurrent &&
-                        "border-2 border-gray-200 text-gray-400 dark:border-gray-700 dark:text-gray-500"
+                        "border-2 border-neutral-200 text-neutral-400 dark:border-neutral-700 dark:text-neutral-500"
                     )}
                   >
                     {isCompleted ? (
@@ -179,8 +179,8 @@ export function OnboardingWizard() {
                     className={cn(
                       "mt-1 hidden text-[10px] sm:block",
                       isCurrent
-                        ? "font-medium text-brand-700 dark:text-brand-300"
-                        : "text-gray-400 dark:text-gray-500"
+                        ? "font-medium text-[#5429C7] dark:text-[#B4A0F0]"
+                        : "text-neutral-400 dark:text-neutral-500"
                     )}
                   >
                     {STEP_LABELS[i]}
@@ -193,8 +193,8 @@ export function OnboardingWizard() {
                     className={cn(
                       "mx-1 h-0.5 flex-1",
                       step < currentStep
-                        ? "bg-brand-600"
-                        : "bg-gray-200 dark:bg-gray-700"
+                        ? "bg-[#6C3CE1]"
+                        : "bg-neutral-200 dark:bg-neutral-700"
                     )}
                   />
                 )}
@@ -204,7 +204,7 @@ export function OnboardingWizard() {
         </div>
 
         {/* Mobile step indicator */}
-        <p className="mt-4 text-center text-sm text-gray-500 sm:hidden dark:text-gray-400">
+        <p className="mt-4 text-center text-sm text-neutral-500 sm:hidden dark:text-neutral-400">
           Step {currentStep} of {TOTAL_STEPS} — {STEP_LABELS[currentStep - 1]}
         </p>
       </div>
@@ -213,7 +213,7 @@ export function OnboardingWizard() {
       <div className="min-h-[400px]">{renderStep()}</div>
 
       {/* Navigation buttons */}
-      <div className="mt-8 flex items-center justify-between border-t border-gray-100 pt-6 dark:border-gray-800">
+      <div className="mt-8 flex items-center justify-between border-t border-neutral-100 pt-6 dark:border-neutral-800">
         <Button
           variant="ghost"
           onClick={handleBack}
@@ -240,23 +240,23 @@ function CompleteSummary({ data }: { data: DreamProfileFormData }) {
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+        <h2 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
           Review Your Dream Profile
         </h2>
-        <p className="mt-2 text-gray-500 dark:text-gray-400">
+        <p className="mt-2 text-neutral-500 dark:text-neutral-400">
           Everything looks good? Let&apos;s find your dream team!
         </p>
       </div>
 
       <div className="mx-auto max-w-lg space-y-4">
         <SummarySection title="Dream Statement">
-          <p className="text-sm text-gray-700 dark:text-gray-300">
+          <p className="text-sm text-neutral-700 dark:text-neutral-300">
             &ldquo;{data.dreamStatement}&rdquo;
           </p>
         </SummarySection>
 
         <SummarySection title="Intent">
-          <p className="text-sm capitalize text-gray-700 dark:text-gray-300">
+          <p className="text-sm capitalize text-neutral-700 dark:text-neutral-300">
             {data.intent === "lead"
               ? "I have a dream seeking a team"
               : data.intent === "join"
@@ -272,7 +272,7 @@ function CompleteSummary({ data }: { data: DreamProfileFormData }) {
             {data.skillsOffered.map((s) => (
               <span
                 key={s}
-                className="rounded-full bg-brand-50 px-2.5 py-0.5 text-xs text-brand-700 dark:bg-brand-900/20 dark:text-brand-300"
+                className="rounded-full bg-[#F5F1FF] px-2.5 py-0.5 text-xs text-[#6C3CE1] dark:bg-[#6C3CE1]/10 dark:text-[#B4A0F0]"
               >
                 {s}
               </span>
@@ -305,21 +305,21 @@ function CompleteSummary({ data }: { data: DreamProfileFormData }) {
               ] as const
             ).map(([label, val]) => (
               <div key={label} className="flex-1">
-                <div className="text-lg font-bold text-brand-600 dark:text-brand-400">
+                <div className="text-lg font-bold text-[#6C3CE1] dark:text-[#B4A0F0]">
                   {val}
                 </div>
-                <div className="text-[10px] text-gray-400">{label}</div>
+                <div className="text-[10px] text-neutral-400">{label}</div>
               </div>
             ))}
           </div>
         </SummarySection>
 
         <SummarySection title="Location">
-          <p className="text-sm text-gray-700 dark:text-gray-300">
+          <p className="text-sm text-neutral-700 dark:text-neutral-300">
             {data.location.city}, {data.location.country}
             {data.preferences.timezone && ` (${data.preferences.timezone})`}
           </p>
-          <p className="mt-1 text-xs capitalize text-gray-500">
+          <p className="mt-1 text-xs capitalize text-neutral-500">
             {data.preferences.remotePreference} collaboration
           </p>
         </SummarySection>
@@ -336,8 +336,8 @@ function SummarySection({
   children: React.ReactNode;
 }) {
   return (
-    <div className="rounded-[8px] border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-900">
-      <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+    <div className="rounded-2xl border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-900">
+      <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-neutral-400">
         {title}
       </p>
       {children}

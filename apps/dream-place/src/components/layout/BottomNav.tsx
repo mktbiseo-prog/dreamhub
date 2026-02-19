@@ -73,8 +73,8 @@ export function BottomNav() {
   if (pathname.startsWith("/doorbell-display")) return null;
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-gray-200 bg-white/80 backdrop-blur-lg dark:border-gray-800 dark:bg-gray-950/80">
-      <div className="mx-auto flex max-w-lg items-center justify-around">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 h-14 border-t border-neutral-200 bg-white/80 backdrop-blur-lg dark:border-neutral-800 dark:bg-neutral-950/80">
+      <div className="mx-auto flex h-full max-w-lg items-center justify-around">
         {NAV_ITEMS.map((item) => {
           const isActive =
             pathname === item.href || pathname.startsWith(item.href + "/");
@@ -85,8 +85,8 @@ export function BottomNav() {
               className={cn(
                 "flex flex-1 flex-col items-center gap-1 py-2 text-xs transition-colors",
                 isActive
-                  ? "text-blue-600 dark:text-blue-400"
-                  : "text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
+                  ? "text-[#6C3CE1]"
+                  : "text-neutral-400 hover:text-neutral-600 dark:text-neutral-500 dark:hover:text-neutral-300"
               )}
             >
               {item.icon(isActive)}

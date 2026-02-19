@@ -19,7 +19,7 @@ const STATUS_STYLES: Record<
   active: {
     label: "Active",
     classes:
-      "bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-300",
+      "bg-[#E8E0FF] text-[#6C3CE1]",
   },
   completed: {
     label: "Completed",
@@ -65,12 +65,12 @@ export function TrialProjectCard({
   );
 
   return (
-    <div className="rounded-[12px] border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-gray-950">
+    <div className="rounded-2xl border border-neutral-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-950">
       {/* Header */}
       <div className="mb-4 flex items-start justify-between">
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
-            <h3 className="truncate text-lg font-semibold text-gray-900 dark:text-gray-100">
+            <h3 className="truncate text-lg font-semibold text-neutral-900 dark:text-neutral-100">
               {project.title}
             </h3>
             <span
@@ -82,7 +82,7 @@ export function TrialProjectCard({
               {statusStyle.label}
             </span>
           </div>
-          <p className="mt-1 line-clamp-2 text-sm text-gray-500 dark:text-gray-400">
+          <p className="mt-1 line-clamp-2 text-sm text-neutral-500 dark:text-neutral-400">
             {project.description}
           </p>
         </div>
@@ -94,14 +94,14 @@ export function TrialProjectCard({
           {project.participants.map((p) => (
             <div
               key={p.id}
-              className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-white bg-gradient-to-br from-blue-400 to-blue-600 text-xs font-bold text-white dark:border-gray-950"
+              className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-white bg-[#6C3CE1] text-xs font-bold text-white dark:border-neutral-950"
               title={p.name}
             >
               {p.name[0]}
             </div>
           ))}
         </div>
-        <span className="text-xs text-gray-500 dark:text-gray-400">
+        <span className="text-xs text-neutral-500 dark:text-neutral-400">
           {project.participants.map((p) => p.name).join(", ")}
         </span>
       </div>
@@ -109,14 +109,14 @@ export function TrialProjectCard({
       {/* Progress Bar */}
       <div className="mb-4">
         <div className="mb-1 flex items-center justify-between">
-          <span className="text-xs font-medium text-gray-500 dark:text-gray-400">
+          <span className="text-xs font-medium text-neutral-500 dark:text-neutral-400">
             Progress
           </span>
-          <span className="text-xs text-gray-500 dark:text-gray-400">
+          <span className="text-xs text-neutral-500 dark:text-neutral-400">
             Week {Math.floor(progress.weeksElapsed)} of {project.durationWeeks}
           </span>
         </div>
-        <div className="h-2 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-800">
+        <div className="h-2 overflow-hidden rounded-full bg-neutral-200 dark:bg-neutral-800">
           <div
             className={cn(
               "h-full rounded-full transition-all duration-500",
@@ -124,7 +124,7 @@ export function TrialProjectCard({
                 ? "bg-green-500"
                 : project.status === "extended"
                   ? "bg-amber-500"
-                  : "bg-blue-500",
+                  : "bg-[#6C3CE1]",
             )}
             style={{ width: `${Math.min(100, progress.percentage)}%` }}
           />
@@ -135,7 +135,7 @@ export function TrialProjectCard({
       {project.goals.length > 0 && (
         <div className="mb-4">
           <div className="mb-2 flex items-center justify-between">
-            <span className="text-xs font-medium text-gray-500 dark:text-gray-400">
+            <span className="text-xs font-medium text-neutral-500 dark:text-neutral-400">
               Goals ({goalsCompleted}/{project.goals.length})
             </span>
           </div>
@@ -145,14 +145,14 @@ export function TrialProjectCard({
                 key={goal.id}
                 type="button"
                 onClick={() => handleToggleGoal(goal.id)}
-                className="flex w-full items-center gap-2 rounded-[6px] px-2 py-1.5 text-left transition-colors hover:bg-gray-50 dark:hover:bg-gray-900"
+                className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left transition-colors hover:bg-neutral-50 dark:hover:bg-neutral-900"
               >
                 <div
                   className={cn(
                     "flex h-5 w-5 shrink-0 items-center justify-center rounded border-2 transition-colors",
                     goal.completed
                       ? "border-green-500 bg-green-500"
-                      : "border-gray-300 dark:border-gray-600",
+                      : "border-neutral-300 dark:border-neutral-600",
                   )}
                 >
                   {goal.completed && (
@@ -175,8 +175,8 @@ export function TrialProjectCard({
                   className={cn(
                     "text-sm",
                     goal.completed
-                      ? "text-gray-400 line-through dark:text-gray-500"
-                      : "text-gray-700 dark:text-gray-300",
+                      ? "text-neutral-400 line-through dark:text-neutral-500"
+                      : "text-neutral-700 dark:text-neutral-300",
                   )}
                 >
                   {goal.text}
@@ -190,14 +190,14 @@ export function TrialProjectCard({
       {/* Deliverables */}
       {project.deliverables.length > 0 && (
         <div className="mb-4">
-          <span className="mb-1.5 block text-xs font-medium text-gray-500 dark:text-gray-400">
+          <span className="mb-1.5 block text-xs font-medium text-neutral-500 dark:text-neutral-400">
             Deliverables
           </span>
           <div className="flex flex-wrap gap-1.5">
             {project.deliverables.map((d, i) => (
               <span
                 key={i}
-                className="rounded-full bg-purple-50 px-2.5 py-0.5 text-xs font-medium text-purple-700 dark:bg-purple-900/20 dark:text-purple-300"
+                className="rounded-full bg-[#E8E0FF] px-2.5 py-0.5 text-xs font-medium text-[#6C3CE1]"
               >
                 {d}
               </span>

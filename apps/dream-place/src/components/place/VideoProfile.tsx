@@ -171,7 +171,7 @@ export function VideoProfile({
   // View mode
   if (mode === "view") {
     return (
-      <div className="relative overflow-hidden rounded-[12px] bg-black">
+      <div className="relative overflow-hidden rounded-2xl bg-black">
         <video
           ref={videoRef}
           src={videoUrl}
@@ -187,7 +187,7 @@ export function VideoProfile({
         >
           {!isPlaying && (
             <div className="flex h-14 w-14 items-center justify-center rounded-full bg-white/90 shadow-lg">
-              <svg className="ml-1 h-6 w-6 text-gray-900" fill="currentColor" viewBox="0 0 24 24">
+              <svg className="ml-1 h-6 w-6 text-neutral-900" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M8 5v14l11-7z" />
               </svg>
             </div>
@@ -201,12 +201,12 @@ export function VideoProfile({
   return (
     <div className="space-y-4">
       {/* Video frame */}
-      <div className="relative overflow-hidden rounded-[12px] bg-gray-900">
+      <div className="relative overflow-hidden rounded-2xl bg-neutral-900">
         {recordingState === "idle" && !cameraError && (
-          <div className="flex aspect-video items-center justify-center bg-gray-900">
+          <div className="flex aspect-video items-center justify-center bg-neutral-900">
             <div className="text-center">
               <svg
-                className="mx-auto mb-3 h-12 w-12 text-gray-600"
+                className="mx-auto mb-3 h-12 w-12 text-neutral-600"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -218,13 +218,13 @@ export function VideoProfile({
                   d="m15.75 10.5 4.72-4.72a.75.75 0 0 1 1.28.53v11.38a.75.75 0 0 1-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25h-9A2.25 2.25 0 0 0 2.25 7.5v9a2.25 2.25 0 0 0 2.25 2.25Z"
                 />
               </svg>
-              <p className="text-sm text-gray-400">Record a {maxDuration}-second video profile</p>
+              <p className="text-sm text-neutral-400">Record a {maxDuration}-second video profile</p>
             </div>
           </div>
         )}
 
         {cameraError && (
-          <div className="flex aspect-video items-center justify-center bg-gray-900 p-6">
+          <div className="flex aspect-video items-center justify-center bg-neutral-900 p-6">
             <div className="text-center">
               <svg
                 className="mx-auto mb-3 h-12 w-12 text-red-400"

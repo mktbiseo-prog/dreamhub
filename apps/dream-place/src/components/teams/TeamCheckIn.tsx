@@ -51,7 +51,7 @@ export function TeamCheckInSection({ teamId, checkIns, onSubmit }: TeamCheckInPr
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold uppercase tracking-wider text-gray-400">
+        <h3 className="text-sm font-semibold uppercase tracking-wider text-neutral-400">
           Weekly Check-in
         </h3>
         {!showForm && (
@@ -63,10 +63,10 @@ export function TeamCheckInSection({ teamId, checkIns, onSubmit }: TeamCheckInPr
 
       {/* New check-in form */}
       {showForm && (
-        <div className="rounded-[12px] border border-brand-200 bg-brand-50/30 p-4 dark:border-brand-900/30 dark:bg-brand-900/10">
+        <div className="rounded-2xl border border-[#E8E0FF] bg-[#F5F1FF]/30 p-4 dark:border-[#6C3CE1]/15 dark:bg-[#6C3CE1]/5">
           {/* Mood */}
           <div className="mb-3">
-            <p className="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+            <p className="mb-2 text-sm font-medium text-neutral-700 dark:text-neutral-300">
               How are you feeling this week?
             </p>
             <div className="flex gap-2">
@@ -76,15 +76,15 @@ export function TeamCheckInSection({ teamId, checkIns, onSubmit }: TeamCheckInPr
                   type="button"
                   onClick={() => setMood(m.value)}
                   className={cn(
-                    "flex flex-1 flex-col items-center gap-0.5 rounded-[8px] border py-2 text-lg transition-colors",
+                    "flex flex-1 flex-col items-center gap-0.5 rounded-lg border py-2 text-lg transition-colors",
                     mood === m.value
-                      ? "border-brand-500 bg-brand-50 dark:border-brand-400 dark:bg-brand-900/30"
-                      : "border-gray-200 hover:border-gray-300 dark:border-gray-700"
+                      ? "border-[#6C3CE1] bg-[#F5F1FF] dark:border-[#B4A0F0] dark:bg-[#6C3CE1]/15"
+                      : "border-neutral-200 hover:border-neutral-300 dark:border-neutral-700"
                   )}
                   title={m.label}
                 >
                   {m.emoji}
-                  <span className="text-[9px] text-gray-400">{m.label}</span>
+                  <span className="text-[9px] text-neutral-400">{m.label}</span>
                 </button>
               ))}
             </div>
@@ -92,7 +92,7 @@ export function TeamCheckInSection({ teamId, checkIns, onSubmit }: TeamCheckInPr
 
           {/* Progress */}
           <div className="mb-3">
-            <p className="mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">Progress</p>
+            <p className="mb-1 text-sm font-medium text-neutral-700 dark:text-neutral-300">Progress</p>
             <Textarea
               placeholder="What did you accomplish?"
               value={progress}
@@ -104,7 +104,7 @@ export function TeamCheckInSection({ teamId, checkIns, onSubmit }: TeamCheckInPr
 
           {/* Blockers */}
           <div className="mb-3">
-            <p className="mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">Blockers</p>
+            <p className="mb-1 text-sm font-medium text-neutral-700 dark:text-neutral-300">Blockers</p>
             <Textarea
               placeholder="Any obstacles? (optional)"
               value={blockers}
@@ -131,16 +131,16 @@ export function TeamCheckInSection({ teamId, checkIns, onSubmit }: TeamCheckInPr
           {teamCheckIns.map((c) => (
             <div
               key={c.id}
-              className="rounded-[8px] border border-gray-200 bg-white p-3 dark:border-gray-800 dark:bg-gray-950"
+              className="rounded-lg border border-neutral-200 bg-white p-3 dark:border-neutral-800 dark:bg-neutral-950"
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <span className="text-base">{MOOD_EMOJIS[c.mood - 1]?.emoji ?? "🙂"}</span>
-                  <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                  <span className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
                     {c.userName}
                   </span>
                 </div>
-                <span className="text-xs text-gray-400">
+                <span className="text-xs text-neutral-400">
                   {new Date(c.date).toLocaleDateString("en-US", {
                     month: "short",
                     day: "numeric",
@@ -148,7 +148,7 @@ export function TeamCheckInSection({ teamId, checkIns, onSubmit }: TeamCheckInPr
                 </span>
               </div>
               {c.progress && (
-                <p className="mt-1.5 text-sm text-gray-600 dark:text-gray-300">{c.progress}</p>
+                <p className="mt-1.5 text-sm text-neutral-600 dark:text-neutral-300">{c.progress}</p>
               )}
               {c.blockers && (
                 <p className="mt-1 text-sm text-red-600 dark:text-red-400">
@@ -159,7 +159,7 @@ export function TeamCheckInSection({ teamId, checkIns, onSubmit }: TeamCheckInPr
           ))}
         </div>
       ) : (
-        <p className="py-4 text-center text-sm text-gray-400">
+        <p className="py-4 text-center text-sm text-neutral-400">
           No check-ins yet — be the first!
         </p>
       )}

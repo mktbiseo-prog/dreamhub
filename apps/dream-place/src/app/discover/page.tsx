@@ -135,16 +135,16 @@ export default function DiscoverPage() {
       {/* Header */}
       <div className="mb-6">
         <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg" style={{ backgroundColor: "var(--dream-color-primary)" }}>
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#6C3CE1]">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
               <path d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
             </svg>
           </div>
           <div>
-            <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">
+            <h1 className="text-xl font-bold text-neutral-900 dark:text-neutral-100">
               Discover Dreamers
             </h1>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
+            <p className="text-sm text-neutral-500 dark:text-neutral-400">
               {remaining > 0
                 ? `${remaining} of ${DAILY_BATCH_SIZE} curated matches remaining today`
                 : "Today's batch complete"}
@@ -161,7 +161,7 @@ export default function DiscoverPage() {
               key={sf.id}
               type="button"
               onClick={() => setFilters(sf.filters)}
-              className="rounded-full border border-blue-200 bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-700 hover:bg-blue-100 dark:border-blue-800 dark:bg-blue-900/20 dark:text-blue-300"
+              className="rounded-full border border-[#E8E0FF] bg-[#F5F1FF] px-2.5 py-1 text-xs font-medium text-[#6C3CE1] hover:bg-[#E8E0FF]"
             >
               {sf.name}
             </button>
@@ -186,7 +186,7 @@ export default function DiscoverPage() {
             <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75" />
           </svg>
           {activeFilterCount > 0 && (
-            <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-blue-600 text-[10px] font-bold text-white">
+            <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#6C3CE1] text-[10px] font-bold text-white">
               {activeFilterCount}
             </span>
           )}
@@ -236,7 +236,7 @@ export default function DiscoverPage() {
       )}
 
       {/* Results count */}
-      <p className="mb-4 text-sm text-gray-500 dark:text-gray-400">
+      <p className="mb-4 text-sm text-neutral-500 dark:text-neutral-400">
         {filtered.length} dreamer{filtered.length !== 1 ? "s" : ""} found
       </p>
 
@@ -261,10 +261,10 @@ export default function DiscoverPage() {
 
       {!isBatchExhausted && filtered.length === 0 && (
         <div className="py-16 text-center">
-          <p className="text-lg font-medium text-gray-400 dark:text-gray-500">
+          <p className="text-lg font-medium text-neutral-400 dark:text-neutral-500">
             No dreamers match your filters
           </p>
-          <p className="mt-1 text-sm text-gray-400 dark:text-gray-500">
+          <p className="mt-1 text-sm text-neutral-400 dark:text-neutral-500">
             Try broadening your search criteria
           </p>
           {activeFilterCount > 0 && (
@@ -317,12 +317,12 @@ function FilterPill({
   onRemove: () => void;
 }) {
   return (
-    <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-700 dark:bg-blue-900/20 dark:text-blue-300">
+    <span className="inline-flex items-center gap-1 rounded-full bg-[#E8E0FF] px-2.5 py-0.5 text-xs font-medium text-[#6C3CE1]">
       {label}
       <button
         type="button"
         onClick={onRemove}
-        className="ml-0.5 inline-flex h-3.5 w-3.5 items-center justify-center rounded-full hover:bg-blue-200 dark:hover:bg-blue-800"
+        className="ml-0.5 inline-flex h-3.5 w-3.5 items-center justify-center rounded-full hover:bg-[#d5c9ff]"
       >
         &#215;
       </button>

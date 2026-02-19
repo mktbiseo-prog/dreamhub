@@ -11,26 +11,26 @@ interface DreamCardProps {
 }
 
 const CATEGORY_COLORS: Record<string, string> = {
-  tech: "bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400",
+  tech: "bg-[#F5F1FF] text-[#5429C7] dark:bg-[#6C3CE1]/10 dark:text-[#B4A0F0]",
   design: "bg-pink-50 text-pink-700 dark:bg-pink-900/20 dark:text-pink-400",
   business: "bg-amber-50 text-amber-700 dark:bg-amber-900/20 dark:text-amber-400",
   "social-impact": "bg-green-50 text-green-700 dark:bg-green-900/20 dark:text-green-400",
   creative: "bg-purple-50 text-purple-700 dark:bg-purple-900/20 dark:text-purple-400",
   education: "bg-cyan-50 text-cyan-700 dark:bg-cyan-900/20 dark:text-cyan-400",
-  other: "bg-gray-50 text-gray-600 dark:bg-gray-800 dark:text-gray-400",
+  other: "bg-neutral-50 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400",
 };
 
 export function DreamCard({ dream, onRingBell, isOwn }: DreamCardProps) {
   return (
-    <div className="rounded-[12px] border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-950">
+    <div className="rounded-2xl border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-950">
       {/* Header */}
       <div className="flex items-center gap-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-brand-400 to-blue-500 text-sm font-bold text-white">
+        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-[#B4A0F0] to-[#6C3CE1] text-sm font-bold text-white">
           {dream.userName.charAt(0)}
         </div>
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
-            <p className="truncate font-medium text-gray-900 dark:text-gray-100">
+            <p className="truncate font-medium text-neutral-900 dark:text-neutral-100">
               {dream.userName}
             </p>
             {dream.isHereNow && (
@@ -40,7 +40,7 @@ export function DreamCard({ dream, onRingBell, isOwn }: DreamCardProps) {
             )}
           </div>
         </div>
-        <div className="flex items-center gap-1 text-sm text-gray-400">
+        <div className="flex items-center gap-1 text-sm text-neutral-400">
           <svg
             className="h-4 w-4"
             fill="none"
@@ -59,7 +59,7 @@ export function DreamCard({ dream, onRingBell, isOwn }: DreamCardProps) {
       </div>
 
       {/* Dream statement */}
-      <p className="mt-3 text-sm leading-relaxed text-gray-600 dark:text-gray-300">
+      <p className="mt-3 text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">
         &ldquo;{dream.dreamStatement}&rdquo;
       </p>
 
@@ -81,14 +81,14 @@ export function DreamCard({ dream, onRingBell, isOwn }: DreamCardProps) {
       {/* Needed skills */}
       {dream.neededSkills.length > 0 && (
         <div className="mt-2">
-          <p className="mb-1 text-[10px] font-medium text-gray-400">
+          <p className="mb-1 text-[10px] font-medium text-neutral-400">
             Looking for:
           </p>
           <div className="flex flex-wrap gap-1.5">
             {dream.neededSkills.map((skill) => (
               <span
                 key={skill}
-                className="rounded-full bg-gray-100 px-2 py-0.5 text-[10px] text-gray-600 dark:bg-gray-800 dark:text-gray-400"
+                className="rounded-full bg-neutral-100 px-2 py-0.5 text-[10px] text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400"
               >
                 {skill}
               </span>
@@ -99,7 +99,7 @@ export function DreamCard({ dream, onRingBell, isOwn }: DreamCardProps) {
 
       {/* Ring button */}
       {!isOwn && (
-        <div className="mt-3 border-t border-gray-100 pt-3 dark:border-gray-800">
+        <div className="mt-3 border-t border-neutral-100 pt-3 dark:border-neutral-800">
           <Button
             size="sm"
             className="w-full"

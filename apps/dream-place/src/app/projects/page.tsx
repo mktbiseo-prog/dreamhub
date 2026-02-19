@@ -72,24 +72,24 @@ export default function ProjectsPage() {
     <div className="mx-auto max-w-5xl px-4 py-6">
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+          <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
             Dream Projects
           </h1>
-          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+          <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
             Explore projects and find one to contribute to
           </p>
         </div>
         <div className="flex items-center gap-2">
           {/* View toggle */}
-          <div className="hidden items-center rounded-[8px] border border-gray-200 p-0.5 md:flex dark:border-gray-700">
+          <div className="hidden items-center rounded-lg border border-neutral-200 p-0.5 md:flex dark:border-neutral-700">
             <button
               type="button"
               onClick={() => setViewMode("grid")}
               className={cn(
-                "rounded-[6px] p-1.5 transition-colors",
+                "rounded-md p-1.5 transition-colors",
                 viewMode === "grid"
-                  ? "bg-brand-50 text-brand-600 dark:bg-brand-900/20 dark:text-brand-400"
-                  : "text-gray-400 hover:text-gray-600"
+                  ? "bg-[#F5F1FF] text-[#6C3CE1] dark:bg-[#6C3CE1]/10 dark:text-[#B4A0F0]"
+                  : "text-neutral-400 hover:text-neutral-600"
               )}
             >
               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -100,10 +100,10 @@ export default function ProjectsPage() {
               type="button"
               onClick={() => setViewMode("list")}
               className={cn(
-                "rounded-[6px] p-1.5 transition-colors",
+                "rounded-md p-1.5 transition-colors",
                 viewMode === "list"
-                  ? "bg-brand-50 text-brand-600 dark:bg-brand-900/20 dark:text-brand-400"
-                  : "text-gray-400 hover:text-gray-600"
+                  ? "bg-[#F5F1FF] text-[#6C3CE1] dark:bg-[#6C3CE1]/10 dark:text-[#B4A0F0]"
+                  : "text-neutral-400 hover:text-neutral-600"
               )}
             >
               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -126,7 +126,7 @@ export default function ProjectsPage() {
       {/* Featured section */}
       {featured.length > 0 && (
         <div className="mb-6">
-          <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-gray-400">
+          <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-neutral-400">
             Featured This Week
           </h2>
           <div className="flex gap-4 overflow-x-auto pb-2">
@@ -165,7 +165,7 @@ export default function ProjectsPage() {
 
         {/* Results */}
         <div className="flex-1">
-          <p className="mb-3 text-sm text-gray-500 dark:text-gray-400">
+          <p className="mb-3 text-sm text-neutral-500 dark:text-neutral-400">
             {filtered.length} project{filtered.length !== 1 ? "s" : ""}
           </p>
 
@@ -197,8 +197,8 @@ export default function ProjectsPage() {
 
           {filtered.length === 0 && (
             <div className="py-16 text-center">
-              <p className="text-lg font-medium text-gray-400">No projects found</p>
-              <p className="mt-1 text-sm text-gray-400">Try adjusting your filters</p>
+              <p className="text-lg font-medium text-neutral-400">No projects found</p>
+              <p className="mt-1 text-sm text-neutral-400">Try adjusting your filters</p>
             </div>
           )}
         </div>

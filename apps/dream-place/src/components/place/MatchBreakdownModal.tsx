@@ -74,17 +74,17 @@ export function MatchBreakdownModal({
       />
 
       {/* Sheet */}
-      <div className="relative max-h-[90vh] w-full overflow-y-auto rounded-t-[20px] bg-white dark:bg-gray-950 sm:max-w-lg sm:rounded-[20px]">
+      <div className="relative max-h-[90vh] w-full overflow-y-auto rounded-t-2xl bg-white dark:bg-neutral-950 sm:max-w-lg sm:rounded-2xl">
         {/* Drag handle */}
-        <div className="sticky top-0 z-10 flex justify-center bg-white/80 pb-2 pt-3 backdrop-blur-sm dark:bg-gray-950/80 sm:hidden">
-          <div className="h-1 w-10 rounded-full bg-gray-300 dark:bg-gray-700" />
+        <div className="sticky top-0 z-10 flex justify-center bg-white/80 pb-2 pt-3 backdrop-blur-sm dark:bg-neutral-950/80 sm:hidden">
+          <div className="h-1 w-10 rounded-full bg-neutral-300 dark:bg-neutral-700" />
         </div>
 
         {/* Close button (desktop) */}
         <button
           type="button"
           onClick={onClose}
-          className="absolute right-4 top-4 hidden h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 sm:flex"
+          className="absolute right-4 top-4 hidden h-8 w-8 items-center justify-center rounded-full bg-neutral-100 text-neutral-500 hover:bg-neutral-200 dark:bg-neutral-800 dark:hover:bg-neutral-700 sm:flex"
         >
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -95,17 +95,17 @@ export function MatchBreakdownModal({
           {/* Header: Score ring + name */}
           <div className="flex flex-col items-center text-center">
             <MatchScoreRing score={matchScore} size={96} strokeWidth={6} />
-            <h2 className="mt-3 text-xl font-bold text-gray-900 dark:text-gray-100">
+            <h2 className="mt-3 text-xl font-bold text-neutral-900 dark:text-neutral-100">
               Match with {profile.name}
             </h2>
-            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+            <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
               {profile.city}, {profile.country}
             </p>
           </div>
 
           {/* 6 Dimension scores */}
           <div className="mt-6 space-y-4">
-            <h3 className="text-sm font-semibold uppercase tracking-wider text-gray-400">
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-neutral-400">
               Match Dimensions
             </h3>
             {dimensions.map((dim) => (
@@ -115,11 +115,11 @@ export function MatchBreakdownModal({
 
           {/* AI Explanation */}
           {explanation && (
-            <div className="mt-6 rounded-[12px] border border-blue-100 bg-blue-50/50 p-4 dark:border-blue-900/30 dark:bg-blue-950/20">
-              <h3 className="mb-1 text-xs font-semibold uppercase tracking-wider text-blue-500">
+            <div className="mt-6 rounded-2xl border border-[#E8E0FF] bg-[#F5F1FF] p-4">
+              <h3 className="mb-1 text-xs font-semibold uppercase tracking-wider text-[#6C3CE1]">
                 What you&apos;d build together
               </h3>
-              <p className="text-sm leading-relaxed text-gray-700 dark:text-gray-300">
+              <p className="text-sm leading-relaxed text-neutral-700 dark:text-neutral-300">
                 {explanation}
               </p>
             </div>
@@ -128,7 +128,7 @@ export function MatchBreakdownModal({
           {/* Complementary skills */}
           {complementarySkills.length > 0 && (
             <div className="mt-6">
-              <h3 className="mb-2 text-sm font-semibold uppercase tracking-wider text-gray-400">
+              <h3 className="mb-2 text-sm font-semibold uppercase tracking-wider text-neutral-400">
                 Complementary Skills
               </h3>
               <div className="flex flex-wrap gap-2">
@@ -186,22 +186,22 @@ function DimensionBar({ label, score, weight, description }: DimensionScore) {
     <div>
       <div className="mb-1 flex items-center justify-between">
         <div>
-          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+          <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
             {label}
           </span>
-          <span className="ml-2 text-xs text-gray-400">({weight})</span>
+          <span className="ml-2 text-xs text-neutral-400">({weight})</span>
         </div>
         <span className="text-sm font-semibold" style={{ color }}>
           {score}%
         </span>
       </div>
-      <div className="h-2 overflow-hidden rounded-full bg-gray-100 dark:bg-gray-800">
+      <div className="h-2 overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-800">
         <div
           className="h-full rounded-full transition-all duration-500"
           style={{ width: `${score}%`, backgroundColor: color }}
         />
       </div>
-      <p className="mt-0.5 text-xs text-gray-400">{description}</p>
+      <p className="mt-0.5 text-xs text-neutral-400">{description}</p>
     </div>
   );
 }

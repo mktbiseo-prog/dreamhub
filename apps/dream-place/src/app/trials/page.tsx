@@ -127,7 +127,7 @@ export default function TrialsPage() {
       {/* Header */}
       <div className="mb-6">
         <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-600">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#6C3CE1]">
             <svg
               className="h-5 w-5 text-white"
               fill="none"
@@ -143,10 +143,10 @@ export default function TrialsPage() {
             </svg>
           </div>
           <div>
-            <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">
+            <h1 className="text-xl font-bold text-neutral-900 dark:text-neutral-100">
               Trial Projects
             </h1>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
+            <p className="text-sm text-neutral-500 dark:text-neutral-400">
               Test your team chemistry before committing
             </p>
           </div>
@@ -156,7 +156,7 @@ export default function TrialsPage() {
       {/* Active Trials */}
       {activeTrials.length > 0 && (
         <div className="mb-8">
-          <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-gray-400">
+          <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-neutral-400">
             Active Trials ({activeTrials.length})
           </h2>
           <div className="space-y-4">
@@ -176,7 +176,7 @@ export default function TrialsPage() {
       {/* Completed Trials */}
       {completedTrials.length > 0 && (
         <div className="mb-8">
-          <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-gray-400">
+          <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-neutral-400">
             Completed ({completedTrials.length})
           </h2>
           <div className="space-y-4">
@@ -195,7 +195,7 @@ export default function TrialsPage() {
       {projects.length === 0 && (
         <div className="py-16 text-center">
           <svg
-            className="mx-auto mb-4 h-16 w-16 text-gray-300 dark:text-gray-600"
+            className="mx-auto mb-4 h-16 w-16 text-neutral-300 dark:text-neutral-600"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -207,10 +207,10 @@ export default function TrialsPage() {
               d="M15.59 14.37a6 6 0 01-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 006.16-12.12A14.98 14.98 0 009.631 8.41m5.96 5.96a14.926 14.926 0 01-5.841 2.58m-.119-8.54a6 6 0 00-7.381 5.84h4.8m2.581-5.84a14.927 14.927 0 00-2.58 5.84m2.699 2.7c-.103.021-.207.041-.311.06a15.09 15.09 0 01-2.448-2.448 14.9 14.9 0 01.06-.312m-2.24 2.39a4.493 4.493 0 00-1.757 4.306 4.493 4.493 0 004.306-1.758M16.5 9a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z"
             />
           </svg>
-          <p className="text-lg font-medium text-gray-400 dark:text-gray-500">
+          <p className="text-lg font-medium text-neutral-400 dark:text-neutral-500">
             No trial projects yet
           </p>
-          <p className="mt-1 text-sm text-gray-400 dark:text-gray-500">
+          <p className="mt-1 text-sm text-neutral-400 dark:text-neutral-500">
             Start one from Teams!
           </p>
           <Link href="/teams">

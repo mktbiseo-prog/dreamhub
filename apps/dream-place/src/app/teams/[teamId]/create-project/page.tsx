@@ -58,7 +58,7 @@ export default function CreateProjectPage({
 
   return (
     <div className="mx-auto max-w-lg px-4 py-6">
-      <h1 className="mb-6 text-2xl font-bold text-gray-900 dark:text-gray-100">
+      <h1 className="mb-6 text-2xl font-bold text-neutral-900 dark:text-neutral-100">
         Create Project
       </h1>
 
@@ -95,7 +95,7 @@ export default function CreateProjectPage({
         </div>
 
         {/* Trial project toggle */}
-        <div className="rounded-[12px] border border-gray-200 bg-gray-50 p-4 dark:border-gray-800 dark:bg-gray-900">
+        <div className="rounded-2xl border border-neutral-200 bg-neutral-50 p-4 dark:border-neutral-800 dark:bg-neutral-900">
           <label className="flex cursor-pointer items-center gap-3">
             <div className="relative">
               <input
@@ -104,14 +104,14 @@ export default function CreateProjectPage({
                 onChange={(e) => setIsTrial(e.target.checked)}
                 className="peer sr-only"
               />
-              <div className="h-5 w-9 rounded-full bg-gray-200 transition-colors peer-checked:bg-brand-500 dark:bg-gray-700" />
+              <div className="h-5 w-9 rounded-full bg-neutral-200 transition-colors peer-checked:bg-[#6C3CE1] dark:bg-neutral-700" />
               <div className="absolute left-0.5 top-0.5 h-4 w-4 rounded-full bg-white transition-transform peer-checked:translate-x-4" />
             </div>
             <div>
-              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
                 Start as trial project
               </span>
-              <p className="text-xs text-gray-500 dark:text-gray-400">
+              <p className="text-xs text-neutral-500 dark:text-neutral-400">
                 Run a 2-4 week trial before full commitment
               </p>
             </div>
@@ -129,10 +129,10 @@ export default function CreateProjectPage({
                       type="button"
                       onClick={() => setTrialDuration(d.value)}
                       className={cn(
-                        "flex-1 rounded-[8px] border px-3 py-2 text-sm font-medium transition-colors",
+                        "flex-1 rounded-lg border px-3 py-2 text-sm font-medium transition-colors",
                         trialDuration === d.value
-                          ? "border-brand-500 bg-brand-50 text-brand-700 dark:border-brand-400 dark:bg-brand-900/20 dark:text-brand-300"
-                          : "border-gray-200 text-gray-500 dark:border-gray-700 dark:text-gray-400"
+                          ? "border-[#6C3CE1] bg-[#F5F1FF] text-[#5429C7] dark:border-[#B4A0F0] dark:bg-[#6C3CE1]/10 dark:text-[#B4A0F0]"
+                          : "border-neutral-200 text-neutral-500 dark:border-neutral-700 dark:text-neutral-400"
                       )}
                     >
                       {d.label}
@@ -156,7 +156,7 @@ export default function CreateProjectPage({
                   <button
                     type="button"
                     onClick={addCriteria}
-                    className="text-sm text-brand-600 hover:text-brand-700 dark:text-brand-400"
+                    className="text-sm text-[#6C3CE1] hover:text-[#5429C7] dark:text-[#B4A0F0]"
                   >
                     + Add criterion
                   </button>

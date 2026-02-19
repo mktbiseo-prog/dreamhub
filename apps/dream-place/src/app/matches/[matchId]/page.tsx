@@ -43,7 +43,7 @@ export default function MatchDetailPage({
   if (!match) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <p className="text-gray-500">Match not found</p>
+        <p className="text-neutral-500">Match not found</p>
       </div>
     );
   }
@@ -67,7 +67,7 @@ export default function MatchDetailPage({
       {/* Back button */}
       <Link
         href="/discover"
-        className="mb-4 inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+        className="mb-4 inline-flex items-center gap-1 text-sm text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200"
       >
         <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
@@ -76,10 +76,10 @@ export default function MatchDetailPage({
       </Link>
 
       {/* Hero section */}
-      <div className="rounded-[16px] border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-950">
+      <div className="rounded-2xl border border-neutral-200 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-950">
         <div className="flex items-start gap-5">
           {/* Large avatar */}
-          <div className="flex h-24 w-24 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-400 to-blue-600 text-4xl font-bold text-white sm:h-28 sm:w-28">
+          <div className="flex h-24 w-24 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#B4A0F0] to-[#6C3CE1] text-4xl font-bold text-white sm:h-28 sm:w-28">
             {profile.avatarUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={profile.avatarUrl} alt={profile.name} className="h-full w-full rounded-full object-cover" />
@@ -90,19 +90,19 @@ export default function MatchDetailPage({
 
           <div className="flex-1">
             <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+              <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
                 {profile.name}
               </h1>
               {verificationTier && <VerificationBadge level={verificationTier} size="md" />}
             </div>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
+            <p className="text-sm text-neutral-500 dark:text-neutral-400">
               {profile.city}, {profile.country}
             </p>
 
             {/* Tags */}
             <div className="mt-2 flex flex-wrap gap-2">
               {profile.intent && (
-                <span className="rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-600 dark:bg-blue-900/20 dark:text-blue-400">
+                <span className="rounded-full bg-[#F5F1FF] px-2.5 py-0.5 text-xs font-medium text-[#6C3CE1] dark:bg-[#6C3CE1]/10 dark:text-[#B4A0F0]">
                   {profile.intent === "lead"
                     ? "Dream Leader"
                     : profile.intent === "join"
@@ -112,10 +112,10 @@ export default function MatchDetailPage({
                         : "Exploring"}
                 </span>
               )}
-              <span className="rounded-full bg-gray-100 px-2.5 py-0.5 text-xs text-gray-600 dark:bg-gray-800 dark:text-gray-400">
+              <span className="rounded-full bg-neutral-100 px-2.5 py-0.5 text-xs text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400">
                 {profile.commitmentLevel}
               </span>
-              <span className="rounded-full bg-gray-100 px-2.5 py-0.5 text-xs text-gray-600 dark:bg-gray-800 dark:text-gray-400">
+              <span className="rounded-full bg-neutral-100 px-2.5 py-0.5 text-xs text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400">
                 {profile.experienceLevel}
               </span>
             </div>
@@ -129,25 +129,25 @@ export default function MatchDetailPage({
 
         {/* Dream headline */}
         {profile.dreamHeadline && (
-          <p className="mt-4 text-lg font-semibold text-blue-600 dark:text-blue-400">
+          <p className="mt-4 text-lg font-semibold text-[#6C3CE1] dark:text-[#B4A0F0]">
             Building: {profile.dreamHeadline}
           </p>
         )}
 
         {/* Bio */}
         {profile.bio && (
-          <p className="mt-2 text-sm leading-relaxed text-gray-600 dark:text-gray-300">
+          <p className="mt-2 text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">
             {profile.bio}
           </p>
         )}
       </div>
 
       {/* Dream statement */}
-      <div className="mt-6 rounded-[16px] border-2 border-blue-100 bg-blue-50/30 p-6 dark:border-blue-900/30 dark:bg-blue-950/10">
-        <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-blue-500">
+      <div className="mt-6 rounded-2xl border-2 border-[#E8E0FF] bg-[#F5F1FF]/30 p-6 dark:border-[#6C3CE1]/15 dark:bg-[#6C3CE1]/5">
+        <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-[#6C3CE1]">
           Dream Statement
         </p>
-        <p className="text-lg font-medium leading-relaxed text-gray-800 dark:text-gray-200">
+        <p className="text-lg font-medium leading-relaxed text-neutral-800 dark:text-neutral-200">
           &ldquo;{profile.dreamStatement}&rdquo;
         </p>
       </div>
@@ -193,7 +193,7 @@ export default function MatchDetailPage({
                   "rounded-full px-3 py-1 text-sm font-medium",
                   complementarySkills.includes(skill)
                     ? "bg-green-50 text-green-700 dark:bg-green-900/20 dark:text-green-400"
-                    : "bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400"
+                    : "bg-[#F5F1FF] text-[#5429C7] dark:bg-[#6C3CE1]/10 dark:text-[#B4A0F0]"
                 )}
               >
                 {skill}
@@ -267,7 +267,7 @@ export default function MatchDetailPage({
         <Section title="Shared Interests">
           <div className="flex flex-wrap gap-2">
             {sharedInterests.map((interest) => (
-              <span key={interest} className="rounded-full bg-blue-50 px-3 py-1 text-sm font-medium text-blue-700 dark:bg-blue-900/20 dark:text-blue-300">
+              <span key={interest} className="rounded-full bg-[#F5F1FF] px-3 py-1 text-sm font-medium text-[#5429C7] dark:bg-[#6C3CE1]/10 dark:text-[#B4A0F0]">
                 {interest}
               </span>
             ))}
@@ -279,7 +279,7 @@ export default function MatchDetailPage({
       <div className="mt-6">
         <Button
           variant="outline"
-          className="w-full text-blue-600 dark:text-blue-400"
+          className="w-full text-[#6C3CE1] dark:text-[#B4A0F0]"
           onClick={() => setShowBreakdown(true)}
         >
           View Full Match Breakdown
@@ -287,7 +287,7 @@ export default function MatchDetailPage({
       </div>
 
       {/* Sticky CTA bar */}
-      <div className="fixed bottom-16 left-0 right-0 z-40 border-t border-gray-200 bg-white/90 px-4 py-3 backdrop-blur-sm dark:border-gray-800 dark:bg-gray-950/90">
+      <div className="fixed bottom-16 left-0 right-0 z-40 border-t border-neutral-200 bg-white/90 px-4 py-3 backdrop-blur-sm dark:border-neutral-800 dark:bg-neutral-950/90">
         <div className="mx-auto flex max-w-2xl gap-3">
           {isConnected ? (
             <>
@@ -312,7 +312,7 @@ export default function MatchDetailPage({
               <p className="font-medium text-amber-600 dark:text-amber-400">
                 Connection Request Pending
               </p>
-              <p className="mt-0.5 text-sm text-gray-500">
+              <p className="mt-0.5 text-sm text-neutral-500">
                 Waiting for {profile.name} to respond
               </p>
             </div>
@@ -359,12 +359,12 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <div className="mt-6 rounded-[16px] border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-950">
-      <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+    <div className="mt-6 rounded-2xl border border-neutral-200 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-950">
+      <h2 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100">
         {title}
       </h2>
       {subtitle && (
-        <p className="mb-4 mt-1 text-xs text-gray-400">{subtitle}</p>
+        <p className="mb-4 mt-1 text-xs text-neutral-400">{subtitle}</p>
       )}
       {!subtitle && <div className="mb-4" />}
       {children}
@@ -375,8 +375,8 @@ function Section({
 function DetailItem({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <p className="text-xs text-gray-400 dark:text-gray-500">{label}</p>
-      <p className="text-sm font-medium capitalize text-gray-700 dark:text-gray-300">
+      <p className="text-xs text-neutral-400 dark:text-neutral-500">{label}</p>
+      <p className="text-sm font-medium capitalize text-neutral-700 dark:text-neutral-300">
         {value}
       </p>
     </div>
@@ -390,14 +390,14 @@ function PortfolioCard({ label, url, icon }: { label: string; url: string; icon:
       href={url}
       target="_blank"
       rel="noopener noreferrer"
-      className="flex items-center gap-2 rounded-[8px] border border-gray-200 bg-gray-50 p-3 transition-colors hover:bg-gray-100 dark:border-gray-800 dark:bg-gray-900 dark:hover:bg-gray-800"
+      className="flex items-center gap-2 rounded-lg border border-neutral-200 bg-neutral-50 p-3 transition-colors hover:bg-neutral-100 dark:border-neutral-800 dark:bg-neutral-900 dark:hover:bg-neutral-800"
     >
-      <span className="text-xs font-medium text-gray-400">{icon}</span>
+      <span className="text-xs font-medium text-neutral-400">{icon}</span>
       <div className="min-w-0 flex-1">
-        <p className="text-sm font-medium text-gray-700 dark:text-gray-300">{label}</p>
-        <p className="truncate text-xs text-gray-400">{displayUrl}</p>
+        <p className="text-sm font-medium text-neutral-700 dark:text-neutral-300">{label}</p>
+        <p className="truncate text-xs text-neutral-400">{displayUrl}</p>
       </div>
-      <svg className="h-3 w-3 shrink-0 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <svg className="h-3 w-3 shrink-0 text-neutral-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
       </svg>
     </a>

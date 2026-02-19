@@ -42,7 +42,7 @@ export default function CafePage() {
   if (isLoadingCafe || !currentCafe) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-brand-500 border-t-transparent" />
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#6C3CE1] border-t-transparent" />
       </div>
     );
   }
@@ -65,12 +65,12 @@ export default function CafePage() {
       {/* Quick access to doorbell */}
       <Link
         href="/cafe/doorbell"
-        className="flex items-center justify-between rounded-[12px] border border-gray-200 bg-white p-4 transition-shadow hover:shadow-md dark:border-gray-800 dark:bg-gray-950"
+        className="flex items-center justify-between rounded-2xl border border-neutral-200 bg-white p-4 transition-shadow hover:shadow-md dark:border-neutral-800 dark:bg-neutral-950"
       >
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-50 dark:bg-brand-900/20">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#F5F1FF] dark:bg-[#6C3CE1]/10">
             <svg
-              className="h-5 w-5 text-brand-600 dark:text-brand-400"
+              className="h-5 w-5 text-[#6C3CE1] dark:text-[#B4A0F0]"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -84,10 +84,10 @@ export default function CafePage() {
             </svg>
           </div>
           <div>
-            <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+            <p className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
               Dream Doorbell
             </p>
-            <p className="text-xs text-gray-500 dark:text-gray-400">
+            <p className="text-xs text-neutral-500 dark:text-neutral-400">
               Share your dream &amp; ring others
             </p>
           </div>
@@ -99,7 +99,7 @@ export default function CafePage() {
             </span>
           )}
           <svg
-            className="h-5 w-5 text-gray-400"
+            className="h-5 w-5 text-neutral-400"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"

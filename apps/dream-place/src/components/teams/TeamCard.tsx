@@ -8,22 +8,22 @@ interface TeamCardProps {
 }
 
 const ROLE_COLORS: Record<string, string> = {
-  LEADER: "bg-brand-100 text-brand-700 dark:bg-brand-900/20 dark:text-brand-300",
-  CORE_DREAMER: "bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400",
+  LEADER: "bg-[#E8E0FF] text-[#6C3CE1]",
+  CORE_DREAMER: "bg-[#E8E0FF] text-[#6C3CE1]",
   CONTRIBUTOR: "bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400",
-  SUPPORTER: "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400",
+  SUPPORTER: "bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400",
 };
 
 export function TeamCard({ team }: TeamCardProps) {
   return (
     <Link
       href={`/teams/${team.id}`}
-      className="block rounded-[12px] border border-gray-200 bg-white p-5 transition-shadow hover:shadow-md dark:border-gray-800 dark:bg-gray-950"
+      className="block rounded-2xl border border-neutral-200 bg-white p-5 transition-shadow hover:shadow-md dark:border-neutral-800 dark:bg-neutral-950"
     >
-      <h3 className="font-semibold text-gray-900 dark:text-gray-100">
+      <h3 className="font-semibold text-neutral-900 dark:text-neutral-100">
         {team.name}
       </h3>
-      <p className="mt-1.5 line-clamp-2 text-sm text-gray-500 dark:text-gray-400">
+      <p className="mt-1.5 line-clamp-2 text-sm text-neutral-500 dark:text-neutral-400">
         {team.dreamStatement}
       </p>
 
@@ -33,19 +33,19 @@ export function TeamCard({ team }: TeamCardProps) {
           {team.members.slice(0, 4).map((m) => (
             <div
               key={m.id}
-              className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-white bg-gradient-to-br from-brand-400 to-blue-500 text-xs font-bold text-white dark:border-gray-950"
+              className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-white bg-[#6C3CE1] text-xs font-bold text-white dark:border-neutral-950"
               title={m.name}
             >
               {m.name?.[0] ?? "?"}
             </div>
           ))}
           {team.members.length > 4 && (
-            <div className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-white bg-gray-100 text-xs font-medium text-gray-600 dark:border-gray-950 dark:bg-gray-800 dark:text-gray-400">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-white bg-neutral-100 text-xs font-medium text-neutral-600 dark:border-neutral-950 dark:bg-neutral-800 dark:text-neutral-400">
               +{team.members.length - 4}
             </div>
           )}
         </div>
-        <span className="text-xs text-gray-400">
+        <span className="text-xs text-neutral-400">
           {team.members.length} member{team.members.length !== 1 ? "s" : ""}
         </span>
       </div>

@@ -27,20 +27,20 @@ export function RingBellModal({ dream, onRing, onClose }: RingBellModalProps) {
       />
 
       {/* Modal content */}
-      <div className="relative w-full max-w-lg rounded-t-[16px] bg-white p-5 sm:rounded-[16px] dark:bg-gray-900">
+      <div className="relative w-full max-w-lg rounded-t-2xl bg-white p-5 sm:rounded-2xl dark:bg-neutral-900">
         {/* Handle bar (mobile) */}
-        <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-gray-300 sm:hidden dark:bg-gray-700" />
+        <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-neutral-300 sm:hidden dark:bg-neutral-700" />
 
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+        <h3 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100">
           Ring {dream.userName}&apos;s Doorbell
         </h3>
-        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+        <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
           Let them know you&apos;re interested in their dream.
         </p>
 
         {/* Dream preview */}
-        <div className="mt-3 rounded-[8px] bg-gray-50 p-3 dark:bg-gray-800">
-          <p className="text-sm text-gray-600 dark:text-gray-300">
+        <div className="mt-3 rounded-lg bg-neutral-50 p-3 dark:bg-neutral-800">
+          <p className="text-sm text-neutral-600 dark:text-neutral-300">
             &ldquo;{dream.dreamStatement}&rdquo;
           </p>
         </div>
@@ -49,7 +49,7 @@ export function RingBellModal({ dream, onRing, onClose }: RingBellModalProps) {
         <div className="mt-4">
           <label
             htmlFor="ring-message"
-            className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300"
+            className="mb-1.5 block text-sm font-medium text-neutral-700 dark:text-neutral-300"
           >
             Add a message (optional)
           </label>
@@ -60,9 +60,9 @@ export function RingBellModal({ dream, onRing, onClose }: RingBellModalProps) {
             placeholder="Tell them why their dream caught your eye..."
             maxLength={300}
             rows={3}
-            className="w-full resize-none rounded-[8px] border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-500"
+            className="w-full resize-none rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-[#6C3CE1] focus:outline-none focus:ring-1 focus:ring-[#6C3CE1] dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
           />
-          <p className="mt-1 text-right text-xs text-gray-400">
+          <p className="mt-1 text-right text-xs text-neutral-400">
             {message.length}/300
           </p>
         </div>

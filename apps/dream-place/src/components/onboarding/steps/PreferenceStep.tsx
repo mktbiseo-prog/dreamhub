@@ -55,10 +55,10 @@ export function PreferenceStep({ data, onChange }: PreferenceStepProps) {
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+        <h2 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
           Location & Preferences
         </h2>
-        <p className="mt-2 text-gray-500 dark:text-gray-400">
+        <p className="mt-2 text-neutral-500 dark:text-neutral-400">
           Help us find the best matches for your situation.
         </p>
       </div>
@@ -96,10 +96,10 @@ export function PreferenceStep({ data, onChange }: PreferenceStepProps) {
                 type="button"
                 onClick={() => handlePrefChange({ remotePreference: opt.value })}
                 className={cn(
-                  "flex-1 rounded-[8px] border-2 px-3 py-2 text-sm font-medium transition-colors",
+                  "flex-1 rounded-lg border-2 px-3 py-2 text-sm font-medium transition-colors",
                   data.preferences.remotePreference === opt.value
-                    ? "border-brand-500 bg-brand-50 text-brand-700 dark:border-brand-400 dark:bg-brand-900/20 dark:text-brand-300"
-                    : "border-gray-200 text-gray-600 hover:border-brand-200 dark:border-gray-700 dark:text-gray-400"
+                    ? "border-[#6C3CE1] bg-[#F5F1FF] text-[#6C3CE1] dark:border-[#B4A0F0] dark:bg-[#6C3CE1]/10 dark:text-[#B4A0F0]"
+                    : "border-neutral-200 text-neutral-600 hover:border-[#E8E0FF] dark:border-neutral-700 dark:text-neutral-400"
                 )}
               >
                 {opt.label}
@@ -129,10 +129,10 @@ export function PreferenceStep({ data, onChange }: PreferenceStepProps) {
                 type="button"
                 onClick={() => handlePrefChange({ techPreference: opt.value })}
                 className={cn(
-                  "flex-1 rounded-[8px] border-2 px-3 py-2 text-sm font-medium transition-colors",
+                  "flex-1 rounded-lg border-2 px-3 py-2 text-sm font-medium transition-colors",
                   data.preferences.techPreference === opt.value
-                    ? "border-brand-500 bg-brand-50 text-brand-700 dark:border-brand-400 dark:bg-brand-900/20 dark:text-brand-300"
-                    : "border-gray-200 text-gray-600 hover:border-brand-200 dark:border-gray-700 dark:text-gray-400"
+                    ? "border-[#6C3CE1] bg-[#F5F1FF] text-[#6C3CE1] dark:border-[#B4A0F0] dark:bg-[#6C3CE1]/10 dark:text-[#B4A0F0]"
+                    : "border-neutral-200 text-neutral-600 hover:border-[#E8E0FF] dark:border-neutral-700 dark:text-neutral-400"
                 )}
               >
                 {opt.label}
@@ -145,7 +145,7 @@ export function PreferenceStep({ data, onChange }: PreferenceStepProps) {
         <div className="space-y-2">
           <Label>
             Industry Interests{" "}
-            <span className="font-normal text-gray-400">
+            <span className="font-normal text-neutral-400">
               ({data.preferences.industryInterests.length} / 5)
             </span>
           </Label>
@@ -163,8 +163,8 @@ export function PreferenceStep({ data, onChange }: PreferenceStepProps) {
                   className={cn(
                     "rounded-full border px-3 py-1.5 text-xs transition-colors",
                     isSelected
-                      ? "border-brand-500 bg-brand-50 text-brand-700 dark:border-brand-400 dark:bg-brand-900/20 dark:text-brand-300"
-                      : "border-gray-200 text-gray-500 hover:border-brand-300 dark:border-gray-700 dark:text-gray-400",
+                      ? "border-[#6C3CE1] bg-[#F5F1FF] text-[#6C3CE1] dark:border-[#B4A0F0] dark:bg-[#6C3CE1]/10 dark:text-[#B4A0F0]"
+                      : "border-neutral-200 text-neutral-500 hover:border-[#E8E0FF] dark:border-neutral-700 dark:text-neutral-400",
                     isDisabled && "cursor-not-allowed opacity-40"
                   )}
                 >

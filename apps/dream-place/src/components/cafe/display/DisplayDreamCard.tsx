@@ -9,20 +9,20 @@ interface DisplayDreamCardProps {
 }
 
 const CATEGORY_COLORS: Record<string, string> = {
-  tech: "bg-blue-500/20 text-blue-300",
+  tech: "bg-[#6C3CE1]/20 text-[#B4A0F0]",
   design: "bg-pink-500/20 text-pink-300",
   business: "bg-amber-500/20 text-amber-300",
   "social-impact": "bg-green-500/20 text-green-300",
   creative: "bg-purple-500/20 text-purple-300",
   education: "bg-cyan-500/20 text-cyan-300",
-  other: "bg-gray-500/20 text-gray-300",
+  other: "bg-neutral-500/20 text-neutral-300",
 };
 
 export function DisplayDreamCard({ dream, isActive }: DisplayDreamCardProps) {
   return (
     <div
       className={cn(
-        "rounded-[16px] border border-gray-700 bg-gray-900 p-6 transition-all duration-700",
+        "rounded-2xl border border-neutral-700 bg-neutral-900 p-6 transition-all duration-700",
         isActive
           ? "scale-100 opacity-100"
           : "scale-95 opacity-0"
@@ -30,7 +30,7 @@ export function DisplayDreamCard({ dream, isActive }: DisplayDreamCardProps) {
     >
       {/* Header */}
       <div className="flex items-center gap-4">
-        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-brand-400 to-blue-500 text-xl font-bold text-white">
+        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-[#B4A0F0] to-[#6C3CE1] text-xl font-bold text-white">
           {dream.userName.charAt(0)}
         </div>
         <div className="min-w-0 flex-1">
@@ -44,7 +44,7 @@ export function DisplayDreamCard({ dream, isActive }: DisplayDreamCardProps) {
             </span>
           )}
         </div>
-        <div className="flex items-center gap-2 text-lg text-gray-400">
+        <div className="flex items-center gap-2 text-lg text-neutral-400">
           <svg
             className="h-6 w-6"
             fill="none"
@@ -63,7 +63,7 @@ export function DisplayDreamCard({ dream, isActive }: DisplayDreamCardProps) {
       </div>
 
       {/* Dream statement */}
-      <p className="mt-4 text-lg leading-relaxed text-gray-200">
+      <p className="mt-4 text-lg leading-relaxed text-neutral-200">
         &ldquo;{dream.dreamStatement}&rdquo;
       </p>
 
@@ -84,14 +84,14 @@ export function DisplayDreamCard({ dream, isActive }: DisplayDreamCardProps) {
 
       {dream.neededSkills.length > 0 && (
         <div className="mt-3">
-          <p className="mb-1.5 text-xs font-medium uppercase tracking-wider text-gray-500">
+          <p className="mb-1.5 text-xs font-medium uppercase tracking-wider text-neutral-500">
             Looking for
           </p>
           <div className="flex flex-wrap gap-2">
             {dream.neededSkills.map((skill) => (
               <span
                 key={skill}
-                className="rounded-full border border-gray-600 px-3 py-1 text-sm text-gray-300"
+                className="rounded-full border border-neutral-600 px-3 py-1 text-sm text-neutral-300"
               >
                 {skill}
               </span>

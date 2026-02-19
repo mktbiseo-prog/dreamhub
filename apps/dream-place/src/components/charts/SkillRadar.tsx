@@ -52,25 +52,25 @@ export function SkillRadar({
   return (
     <ResponsiveContainer width="100%" height={size}>
       <RadarChart data={data}>
-        <PolarGrid stroke="#e5e7eb" />
+        <PolarGrid stroke="#d4d4d4" />
         <PolarAngleAxis
           dataKey="domain"
-          tick={{ fill: "#9ca3af", fontSize: 11 }}
+          tick={{ fill: "#a3a3a3", fontSize: 11 }}
         />
         <PolarRadiusAxis tick={false} />
         <Radar
           name={nameA}
           dataKey={nameA}
-          stroke="#8b5cf6"
-          fill="#8b5cf6"
+          stroke="#6C3CE1"
+          fill="#6C3CE1"
           fillOpacity={0.3}
           strokeWidth={2}
         />
         <Radar
           name={nameB}
           dataKey={nameB}
-          stroke="#3b82f6"
-          fill="#3b82f6"
+          stroke="#B4A0F0"
+          fill="#B4A0F0"
           fillOpacity={0.2}
           strokeWidth={2}
         />

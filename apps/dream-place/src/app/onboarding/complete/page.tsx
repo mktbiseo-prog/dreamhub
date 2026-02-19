@@ -31,10 +31,10 @@ export default function OnboardingCompletePage() {
             />
           </svg>
         </div>
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+        <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
           Dream Profile Created!
         </h1>
-        <p className="mt-2 text-gray-500 dark:text-gray-400">
+        <p className="mt-2 text-neutral-500 dark:text-neutral-400">
           We already found dreamers who match your vision. Take a look!
         </p>
       </div>
@@ -44,17 +44,17 @@ export default function OnboardingCompletePage() {
         {topMatches.map((match) => (
           <div
             key={match.id}
-            className="flex items-center gap-4 rounded-card border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-950"
+            className="flex items-center gap-4 rounded-card border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-950"
           >
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand-400 to-blue-500 text-lg font-bold text-white">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#B4A0F0] to-[#6C3CE1] text-lg font-bold text-white">
               {match.profile.name?.[0] ?? "?"}
             </div>
 
             <div className="min-w-0 flex-1">
-              <h3 className="font-medium text-gray-900 dark:text-gray-100">
+              <h3 className="font-medium text-neutral-900 dark:text-neutral-100">
                 {match.profile.name}
               </h3>
-              <p className="truncate text-sm text-gray-500 dark:text-gray-400">
+              <p className="truncate text-sm text-neutral-500 dark:text-neutral-400">
                 {match.profile.dreamHeadline}
               </p>
               {match.complementarySkills.length > 0 && (
@@ -75,7 +75,7 @@ export default function OnboardingCompletePage() {
               <MatchScoreRing score={match.matchScore} size={48} strokeWidth={3} />
               <button
                 onClick={() => expressInterest(match.id)}
-                className="text-xs font-medium text-brand-600 hover:text-brand-700 dark:text-brand-400"
+                className="text-xs font-medium text-[#6C3CE1] hover:text-[#5429C7] dark:text-[#B4A0F0]"
               >
                 Interested
               </button>

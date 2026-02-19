@@ -5,13 +5,13 @@ export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center gap-8 p-8">
       <div className="text-center">
-        <h1 className="bg-gradient-to-r from-brand-500 to-blue-500 bg-clip-text text-5xl font-bold tracking-tight text-transparent">
+        <h1 className="font-display text-5xl font-bold tracking-tight text-[#6C3CE1]">
           Dream Place
         </h1>
-        <p className="mt-4 text-xl font-medium text-gray-700 dark:text-gray-300">
+        <p className="mt-4 text-xl font-medium text-neutral-700 dark:text-neutral-300">
           Find your dream team
         </p>
-        <p className="mt-2 max-w-md text-gray-500 dark:text-gray-400">
+        <p className="mt-2 max-w-md text-neutral-500 dark:text-neutral-400">
           Share your dream, discover complementary dreamers, and build something
           extraordinary together.
         </p>
@@ -72,14 +72,14 @@ function FeatureCard({
   description: string;
 }) {
   return (
-    <div className="rounded-card border border-gray-200 bg-white p-5 text-center dark:border-gray-800 dark:bg-gray-950">
-      <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center text-brand-600 dark:text-brand-400">
+    <div className="rounded-2xl border border-neutral-200 bg-white p-5 text-center shadow-sm dark:border-neutral-800 dark:bg-neutral-950">
+      <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center text-[#6C3CE1]">
         {icon}
       </div>
-      <h3 className="font-semibold text-gray-900 dark:text-gray-100">
+      <h3 className="font-semibold text-neutral-900 dark:text-neutral-100">
         {title}
       </h3>
-      <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+      <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
         {description}
       </p>
     </div>

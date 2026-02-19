@@ -89,26 +89,26 @@ export function MyDreamEditor() {
   if (myDream && !isEditing) {
     return (
       <div className="space-y-3">
-        <div className="rounded-[12px] border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-950">
+        <div className="rounded-2xl border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-950">
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
               Your Dream Doorbell
             </h3>
-            <div className="flex items-center gap-1 text-sm text-gray-400">
+            <div className="flex items-center gap-1 text-sm text-neutral-400">
               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
               </svg>
               {myDream.ringCount} rings
             </div>
           </div>
-          <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
+          <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-300">
             &ldquo;{myDream.dreamStatement}&rdquo;
           </p>
           <div className="mt-2 flex flex-wrap gap-1.5">
             {myDream.categories.map((cat) => (
               <span
                 key={cat}
-                className="rounded-full bg-brand-50 px-2 py-0.5 text-[10px] font-medium text-brand-700 dark:bg-brand-900/20 dark:text-brand-400"
+                className="rounded-full bg-[#F5F1FF] px-2 py-0.5 text-[10px] font-medium text-[#5429C7] dark:bg-[#6C3CE1]/10 dark:text-[#B4A0F0]"
               >
                 {cat}
               </span>
@@ -140,11 +140,11 @@ export function MyDreamEditor() {
   // Edit / Create mode
   return (
     <div className="space-y-4">
-      <div className="rounded-[12px] border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-950">
-        <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+      <div className="rounded-2xl border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-950">
+        <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
           {myDream ? "Edit Your Dream" : "Share Your Dream"}
         </h3>
-        <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+        <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">
           Tell the cafe what you&apos;re dreaming of building. Others can ring your bell to connect!
         </p>
 
@@ -155,15 +155,15 @@ export function MyDreamEditor() {
           placeholder="I'm looking for someone to help me build..."
           maxLength={500}
           rows={3}
-          className="mt-3 w-full resize-none rounded-[8px] border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-500"
+          className="mt-3 w-full resize-none rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-[#6C3CE1] focus:outline-none focus:ring-1 focus:ring-[#6C3CE1] dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
         />
-        <p className="mt-1 text-right text-xs text-gray-400">
+        <p className="mt-1 text-right text-xs text-neutral-400">
           {dreamStatement.length}/500
         </p>
 
         {/* Categories */}
         <div className="mt-3">
-          <p className="mb-2 text-xs font-medium text-gray-700 dark:text-gray-300">
+          <p className="mb-2 text-xs font-medium text-neutral-700 dark:text-neutral-300">
             Categories (up to 3)
           </p>
           <div className="flex flex-wrap gap-1.5">
@@ -175,8 +175,8 @@ export function MyDreamEditor() {
                 className={cn(
                   "rounded-full border px-3 py-1 text-xs font-medium transition-colors",
                   categories.includes(cat.id)
-                    ? "border-brand-500 bg-brand-50 text-brand-700 dark:bg-brand-900/20 dark:text-brand-400"
-                    : "border-gray-200 text-gray-500 hover:border-gray-300 dark:border-gray-700 dark:text-gray-400"
+                    ? "border-[#6C3CE1] bg-[#F5F1FF] text-[#5429C7] dark:bg-[#6C3CE1]/10 dark:text-[#B4A0F0]"
+                    : "border-neutral-200 text-neutral-500 hover:border-neutral-300 dark:border-neutral-700 dark:text-neutral-400"
                 )}
               >
                 {cat.label}
@@ -187,7 +187,7 @@ export function MyDreamEditor() {
 
         {/* Needed skills */}
         <div className="mt-3">
-          <p className="mb-2 text-xs font-medium text-gray-700 dark:text-gray-300">
+          <p className="mb-2 text-xs font-medium text-neutral-700 dark:text-neutral-300">
             Skills you need (up to 5)
           </p>
           <div className="flex flex-wrap gap-1.5">
@@ -199,8 +199,8 @@ export function MyDreamEditor() {
                 className={cn(
                   "rounded-full border px-3 py-1 text-xs font-medium transition-colors",
                   neededSkills.includes(skill)
-                    ? "border-brand-500 bg-brand-50 text-brand-700 dark:bg-brand-900/20 dark:text-brand-400"
-                    : "border-gray-200 text-gray-500 hover:border-gray-300 dark:border-gray-700 dark:text-gray-400"
+                    ? "border-[#6C3CE1] bg-[#F5F1FF] text-[#5429C7] dark:bg-[#6C3CE1]/10 dark:text-[#B4A0F0]"
+                    : "border-neutral-200 text-neutral-500 hover:border-neutral-300 dark:border-neutral-700 dark:text-neutral-400"
                 )}
               >
                 {skill}

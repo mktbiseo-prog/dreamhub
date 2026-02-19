@@ -44,10 +44,10 @@ export function IntentStep({ data, onChange }: IntentStepProps) {
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+        <h2 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
           What brings you here?
         </h2>
-        <p className="mt-2 text-gray-500 dark:text-gray-400">
+        <p className="mt-2 text-neutral-500 dark:text-neutral-400">
           This helps us tailor your experience and find the right matches.
         </p>
       </div>
@@ -61,18 +61,18 @@ export function IntentStep({ data, onChange }: IntentStepProps) {
               type="button"
               onClick={() => onChange({ intent: opt.value })}
               className={cn(
-                "flex items-start gap-4 rounded-[12px] border-2 p-4 text-left transition-all",
+                "flex items-start gap-4 rounded-2xl border-2 p-4 text-left transition-all",
                 isSelected
-                  ? "border-brand-500 bg-brand-50 shadow-sm dark:border-brand-400 dark:bg-brand-900/20"
-                  : "border-gray-200 bg-white hover:border-brand-200 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:hover:border-brand-700"
+                  ? "border-[#6C3CE1] bg-[#F5F1FF] shadow-sm dark:border-[#B4A0F0] dark:bg-[#6C3CE1]/10"
+                  : "border-neutral-200 bg-white hover:border-[#E8E0FF] hover:bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-900 dark:hover:border-[#5429C7]"
               )}
             >
               <div
                 className={cn(
-                  "mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-[8px]",
+                  "mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg",
                   isSelected
-                    ? "bg-brand-600 text-white"
-                    : "bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400"
+                    ? "bg-[#6C3CE1] text-white"
+                    : "bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400"
                 )}
               >
                 <svg
@@ -94,19 +94,19 @@ export function IntentStep({ data, onChange }: IntentStepProps) {
                   className={cn(
                     "font-semibold",
                     isSelected
-                      ? "text-brand-700 dark:text-brand-300"
-                      : "text-gray-900 dark:text-gray-100"
+                      ? "text-[#5429C7] dark:text-[#B4A0F0]"
+                      : "text-neutral-900 dark:text-neutral-100"
                   )}
                 >
                   {opt.title}
                 </p>
-                <p className="mt-0.5 text-sm text-gray-500 dark:text-gray-400">
+                <p className="mt-0.5 text-sm text-neutral-500 dark:text-neutral-400">
                   {opt.description}
                 </p>
               </div>
               {isSelected && (
                 <svg
-                  className="mt-1 h-5 w-5 shrink-0 text-brand-600 dark:text-brand-400"
+                  className="mt-1 h-5 w-5 shrink-0 text-[#6C3CE1] dark:text-[#B4A0F0]"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"

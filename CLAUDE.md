@@ -1,6 +1,17 @@
 # Dream Hub — Global Rules (Shared CLAUDE.md)
 
-- docs/Dream_Hub_Platform__Complete_UIUX_and_Brand_Identity_Specification.md: 전체 UI/UX + 브랜드 아이덴티티 (디자인 토큰, 컬러, 타이포, 컴포넌트, 화면별 레이아웃, 인터랙션, 다크모드, 반응형, 접근성)
+## UI/UX Design Guidelines (TOP PRIORITY)
+
+Each service has its own design guideline file — **these are the single source of truth for all UI/UX decisions**:
+- `apps/dream-planner/DREAM_PLANNER_DESIGN_GUIDELINES.md`
+- `apps/dream-store/DREAM_STORE_DESIGN_GUIDELINES.md`
+- `apps/dream-brain/DREAM_BRAIN_DESIGN_GUIDELINES.md`
+- `apps/dream-place/DREAM_PLACE_DESIGN_GUIDELINES.md`
+
+**Rules:**
+1. When doing any UI/UX work on a service, read its `DREAM_*_DESIGN_GUIDELINES.md` first.
+2. If existing code conflicts with the design guidelines, update the code to match the guidelines.
+3. If any other file (including this CLAUDE.md) conflicts with a design guideline, the **design guideline takes precedence**.
 
 
 ## 교차 서비스 통합 알고리즘 (Cross-Service Integration)
@@ -83,10 +94,8 @@ dreamhub/
 - Never install unnecessary dependencies without checking existing ones first
 
 ## Design System
-- Primary color: Brand gradient (purple → blue)
-- Font: Inter (Google Fonts)
-- Border radius: 8px default, 12px for cards, 16px for modals
-- Spacing: Use Tailwind's spacing scale (4px base)
+- **See each service's `DREAM_*_DESIGN_GUIDELINES.md` for authoritative design tokens (colors, fonts, spacing, components, etc.)**
+- The per-service design guideline files override any general defaults listed here.
 - Dark mode: Support from Day 1 using Tailwind dark: prefix
 - Mobile-first responsive design
 

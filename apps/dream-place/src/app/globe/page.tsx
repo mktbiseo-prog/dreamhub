@@ -73,12 +73,12 @@ export default function GlobePage() {
   const sortedRegions = Object.entries(regions).sort((a, b) => b[1] - a[1]);
 
   return (
-    <div className="relative h-[calc(100vh-4rem)] overflow-hidden bg-gray-950">
+    <div className="relative h-[calc(100vh-4rem)] overflow-hidden bg-neutral-950">
       {/* Back button */}
       <div className="absolute left-4 top-4 z-10">
         <Link
           href="/explore"
-          className="flex items-center gap-1 rounded-full bg-gray-900/80 px-3 py-1.5 text-sm text-gray-300 backdrop-blur-sm hover:bg-gray-800"
+          className="flex items-center gap-1 rounded-full bg-neutral-900/80 px-3 py-1.5 text-sm text-neutral-300 backdrop-blur-sm hover:bg-neutral-800"
         >
           <svg
             className="h-4 w-4"
@@ -101,22 +101,22 @@ export default function GlobePage() {
       <DreamGlobe points={points} arcs={arcs} />
 
       {/* Sidebar stats */}
-      <div className="absolute right-4 top-4 z-10 w-56 rounded-[12px] bg-gray-900/80 p-4 backdrop-blur-sm">
-        <h3 className="mb-3 text-sm font-semibold text-gray-200">
+      <div className="absolute right-4 top-4 z-10 w-56 rounded-2xl bg-neutral-900/80 p-4 backdrop-blur-sm">
+        <h3 className="mb-3 text-sm font-semibold text-neutral-200">
           Dreamers by Region
         </h3>
         <div className="space-y-2">
           {sortedRegions.slice(0, 8).map(([country, count]) => (
             <div key={country} className="flex items-center justify-between">
-              <span className="text-xs text-gray-400">{country}</span>
-              <span className="text-xs font-medium text-brand-400">
+              <span className="text-xs text-neutral-400">{country}</span>
+              <span className="text-xs font-medium text-[#B4A0F0]">
                 {count}
               </span>
             </div>
           ))}
         </div>
-        <div className="mt-3 border-t border-gray-700 pt-3">
-          <p className="text-xs text-gray-500">
+        <div className="mt-3 border-t border-neutral-700 pt-3">
+          <p className="text-xs text-neutral-500">
             {allProfiles.length} dreamers worldwide
           </p>
         </div>

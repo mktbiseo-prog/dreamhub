@@ -10,10 +10,10 @@ import type { ProjectStage, ProjectTask } from "@/types";
 
 const STAGE_CONFIG: Record<ProjectStage, { label: string; color: string }> = {
   IDEATION: { label: "Ideation", color: "bg-purple-100 text-purple-700 dark:bg-purple-900/20 dark:text-purple-400" },
-  TEAM_FORMATION: { label: "Team Building", color: "bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400" },
+  TEAM_FORMATION: { label: "Team Building", color: "bg-[#E8E0FF] text-[#5429C7] dark:bg-[#6C3CE1]/10 dark:text-[#B4A0F0]" },
   ACTIVE_DEVELOPMENT: { label: "Active", color: "bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400" },
   LAUNCH: { label: "Launching", color: "bg-amber-100 text-amber-700 dark:bg-amber-900/20 dark:text-amber-400" },
-  COMPLETE: { label: "Complete", color: "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400" },
+  COMPLETE: { label: "Complete", color: "bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400" },
 };
 
 export default function ProjectDetailPage({
@@ -32,7 +32,7 @@ export default function ProjectDetailPage({
   if (!project) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <p className="text-gray-500">Project not found</p>
+        <p className="text-neutral-500">Project not found</p>
       </div>
     );
   }
@@ -55,7 +55,7 @@ export default function ProjectDetailPage({
       {/* Back */}
       <Link
         href="/projects"
-        className="mb-4 inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+        className="mb-4 inline-flex items-center gap-1 text-sm text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200"
       >
         <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
@@ -64,14 +64,14 @@ export default function ProjectDetailPage({
       </Link>
 
       {/* Header */}
-      <div className="rounded-[12px] border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-950">
+      <div className="rounded-2xl border border-neutral-200 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-950">
         <div className="flex items-start justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+            <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
               {project.name}
             </h1>
             {project.teamName && (
-              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+              <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
                 by {project.teamName}
               </p>
             )}
@@ -81,21 +81,21 @@ export default function ProjectDetailPage({
           </span>
         </div>
 
-        <p className="mt-3 text-sm leading-relaxed text-gray-600 dark:text-gray-300">
+        <p className="mt-3 text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">
           {project.description}
         </p>
 
         {/* Progress */}
         <div className="mt-4">
           <div className="flex items-center justify-between text-sm">
-            <span className="text-gray-500 dark:text-gray-400">Progress</span>
-            <span className="font-medium text-gray-700 dark:text-gray-300">
+            <span className="text-neutral-500 dark:text-neutral-400">Progress</span>
+            <span className="font-medium text-neutral-700 dark:text-neutral-300">
               {progress}%
             </span>
           </div>
-          <div className="mt-1 h-2 overflow-hidden rounded-full bg-gray-100 dark:bg-gray-800">
+          <div className="mt-1 h-2 overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-800">
             <div
-              className="h-full rounded-full bg-brand-500 transition-all"
+              className="h-full rounded-full bg-[#6C3CE1] transition-all"
               style={{ width: `${progress}%` }}
             />
           </div>
@@ -104,7 +104,7 @@ export default function ProjectDetailPage({
         {/* Skills needed */}
         {project.skillsNeeded.length > 0 && (
           <div className="mt-4">
-            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-neutral-400">
               Skills Needed
             </p>
             <div className="flex flex-wrap gap-1.5">
@@ -120,7 +120,7 @@ export default function ProjectDetailPage({
 
       {/* Kanban Board */}
       <div className="mt-6">
-        <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
+        <h2 className="mb-4 text-lg font-semibold text-neutral-900 dark:text-neutral-100">
           Tasks
         </h2>
         <KanbanBoard
