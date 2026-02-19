@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --port 3001",
-    "build": "npx prisma generate --schema=../../packages/database/prisma/schema.prisma && next build",
+    "build": "pnpm -C ../../packages/database exec prisma generate && next build",
     "start": "next start --port 3001",
     "lint": "next lint"
   },
@@ -13,13 +13,15 @@
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
     "@dreamhub/auth": "workspace:*",
-    "@dreamhub/design-system": "workspace:*",
     "@dreamhub/database": "workspace:*",
+    "@dreamhub/design-system": "workspace:*",
     "@dreamhub/event-bus": "workspace:*",
     "@dreamhub/i18n": "workspace:*",
     "@dreamhub/shared-types": "workspace:*",
     "@dreamhub/ui": "workspace:*",
     "@react-pdf/renderer": "^4.3.2",
+    "@react-three/drei": "^10.7.7",
+    "@react-three/fiber": "^9.5.0",
     "@xyflow/react": "^12.10.0",
     "next": "^15.0.0",
     "next-auth": "5.0.0-beta.30",
@@ -27,6 +29,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "recharts": "^3.7.0",
+    "three": "^0.182.0",
     "zod": "^3.23.0"
   },
   "devDependencies": {
