@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { cn } from "@dreamhub/ui";
 import { LifeCalendarCanvas } from "./LifeCalendarCanvas";
@@ -43,14 +43,10 @@ export function HeroSection() {
     if (age === null) return;
     // Text fades in after a short delay
     const t1 = setTimeout(() => setTextVisible(true), 200);
-    return () => clearTimeout(t1);
+    // Stats count-up starts after calendar fades in
+    const t2 = setTimeout(() => setStatsReady(true), 800);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
   }, [age]);
-
-  const handleRevealProgress = useCallback((progress: number) => {
-    if (progress >= 0.85 && !statsReady) {
-      setStatsReady(true);
-    }
-  }, [statsReady]);
 
   const handleSubmitAge = (e: React.FormEvent) => {
     e.preventDefault();
@@ -265,7 +261,6 @@ export function HeroSection() {
             <LifeCalendarCanvas
               age={age}
               className="h-[55vh] w-full lg:h-[85vh]"
-              onRevealProgress={handleRevealProgress}
             />
           </div>
         </div>
