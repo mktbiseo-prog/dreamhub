@@ -22,6 +22,7 @@
     "@dreamhub/trust-engine": "workspace:*",
     "@dreamhub/ui": "workspace:*",
     "@dreamhub/zkp-matching": "workspace:*",
+    "lucide-react": "^0.563.0",
     "next": "^15.0.0",
     "next-auth": "5.0.0-beta.30",
     "react": "^19.0.0",

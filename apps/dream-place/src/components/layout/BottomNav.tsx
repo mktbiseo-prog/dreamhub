@@ -65,6 +65,8 @@ const NAV_ITEMS = [
 export function BottomNav() {
   const pathname = usePathname();
 
+  // Hide on landing page
+  if (pathname === "/") return null;
   // Hide nav on onboarding pages
   if (pathname.startsWith("/onboarding")) return null;
   // Hide on globe (fullscreen)

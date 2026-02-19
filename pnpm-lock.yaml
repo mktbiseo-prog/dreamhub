@@ -212,6 +212,9 @@ importers:
       '@dreamhub/zkp-matching':
         specifier: workspace:*
         version: link:../../packages/zkp-matching
+      lucide-react:
+        specifier: ^0.563.0
+        version: 0.563.0(react@19.2.4)
       next:
         specifier: ^15.0.0
         version: 15.5.12(@opentelemetry/api@1.9.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
