@@ -27,6 +27,14 @@ const OrbitControls = dynamic(
   { ssr: false },
 );
 
+const ContactShadows = dynamic(
+  () =>
+    import("@react-three/drei").then((mod) => ({
+      default: mod.ContactShadows,
+    })),
+  { ssr: false },
+);
+
 /* ── Types ────────────────────────────────────────────────────────────────── */
 
 interface LifeCalendarCanvasProps {
@@ -87,10 +95,19 @@ export function LifeCalendarCanvas({
         }
       >
         <Canvas
-          camera={{ position: [0, 0, 140], fov: 35, near: 0.1, far: 500 }}
+          camera={{
+            position: [25, -30, 120],
+            fov: 32,
+            near: 0.1,
+            far: 500,
+          }}
           dpr={[1, 2]}
-          gl={{ antialias: true, alpha: true }}
+          gl={{ antialias: true, alpha: true, toneMapping: THREE.ACESFilmicToneMapping }}
+          shadows
           style={{ background: "transparent" }}
+          onCreated={({ gl: renderer }) => {
+            renderer.toneMappingExposure = 1.2;
+          }}
         >
           <LifeCalendar3D
             age={age}
@@ -98,21 +115,36 @@ export function LifeCalendarCanvas({
             darkMode={darkMode}
             onHoverCell={handleHoverCell}
           />
-          <OrbitControls
-            enablePan={false}
-            enableZoom={true}
-            minDistance={60}
-            maxDistance={250}
-            enableDamping={true}
-            dampingFactor={0.08}
+
+          {/* Contact shadow beneath the grid */}
+          <ContactShadows
+            position={[0, -65, -1]}
+            opacity={0.15}
+            scale={120}
+            blur={2}
+            far={10}
           />
+
+          <OrbitControls
+            enablePan={true}
+            enableZoom={true}
+            minDistance={40}
+            maxDistance={300}
+            enableDamping={true}
+            dampingFactor={0.06}
+            rotateSpeed={0.5}
+            zoomSpeed={0.8}
+          />
+
+          {/* Subtle fog for depth */}
+          <fog attach="fog" args={[darkMode ? "#111111" : "#FAFAFA", 200, 400]} />
         </Canvas>
       </Suspense>
 
       {/* HTML tooltip overlay */}
       {tooltip && (
         <div
-          className="pointer-events-none absolute z-10 whitespace-nowrap rounded-lg border border-neutral-200 bg-white px-3 py-1.5 text-xs font-medium text-neutral-700 shadow-md dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-200"
+          className="pointer-events-none absolute z-10 whitespace-nowrap rounded-xl border border-neutral-200/60 bg-white/90 px-4 py-2 text-xs font-semibold text-neutral-800 shadow-lg backdrop-blur-md dark:border-neutral-700/60 dark:bg-neutral-900/90 dark:text-neutral-100"
           style={{ left: tooltip.x, top: tooltip.y }}
         >
           {tooltip.label}
@@ -121,3 +153,6 @@ export function LifeCalendarCanvas({
     </div>
   );
 }
+
+// THREE is used for tone mapping enum
+import * as THREE from "three";
