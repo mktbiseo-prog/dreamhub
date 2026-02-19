@@ -19,6 +19,14 @@ const LifeCalendar3D = dynamic(
   { ssr: false },
 );
 
+const OrbitControls = dynamic(
+  () =>
+    import("@react-three/drei").then((mod) => ({
+      default: mod.OrbitControls,
+    })),
+  { ssr: false },
+);
+
 /* ── Types ────────────────────────────────────────────────────────────────── */
 
 interface LifeCalendarCanvasProps {
@@ -79,7 +87,7 @@ export function LifeCalendarCanvas({
         }
       >
         <Canvas
-          camera={{ position: [0, -10, 90], fov: 35, near: 0.1, far: 300 }}
+          camera={{ position: [0, 0, 140], fov: 35, near: 0.1, far: 500 }}
           dpr={[1, 2]}
           gl={{ antialias: true, alpha: true }}
           style={{ background: "transparent" }}
@@ -89,6 +97,14 @@ export function LifeCalendarCanvas({
             reducedMotion={reducedMotion}
             darkMode={darkMode}
             onHoverCell={handleHoverCell}
+          />
+          <OrbitControls
+            enablePan={false}
+            enableZoom={true}
+            minDistance={60}
+            maxDistance={250}
+            enableDamping={true}
+            dampingFactor={0.08}
           />
         </Canvas>
       </Suspense>

@@ -18,12 +18,10 @@ import {
 const COLOR_LIVED = new THREE.Color("#FF6B35");
 const COLOR_REMAINING = new THREE.Color("#E5E5E5");
 const COLOR_REMAINING_DARK = new THREE.Color("#404040");
-const COLOR_GLOW = new THREE.Color("#FF8C5A");
 
 const CELL_SIZE = 1;
 const GAP = 0.2;
 const DECADE_GAP = 0.8;
-const MAX_TILT = 0.087; // ~5 degrees
 
 /* ── Types ────────────────────────────────────────────────────────────────── */
 
@@ -44,8 +42,6 @@ export function LifeCalendar3D({
 }: LifeCalendar3DProps) {
   const meshRef = useRef<THREE.InstancedMesh>(null);
   const glowRef = useRef<THREE.Mesh>(null);
-  const groupRef = useRef<THREE.Group>(null);
-  const targetRotation = useRef({ x: 0, y: 0 });
   const visibleCount = useRef(reducedMotion ? TOTAL_CELLS : 0);
   const animComplete = useRef(reducedMotion);
   const dummy = useMemo(() => new THREE.Object3D(), []);
@@ -96,11 +92,8 @@ export function LifeCalendar3D({
     for (let i = 0; i < TOTAL_CELLS; i++) {
       const cell = cellData[i];
       dummy.position.set(cell.x + centerOffset.x, cell.y + centerOffset.y, 0);
-      dummy.scale.set(
-        reducedMotion || i < visibleCount.current ? 1 : 0,
-        reducedMotion || i < visibleCount.current ? 1 : 0,
-        reducedMotion || i < visibleCount.current ? 1 : 0,
-      );
+      const visible = reducedMotion || i < visibleCount.current;
+      dummy.scale.set(visible ? 1 : 0, visible ? 1 : 0, visible ? 1 : 0);
       dummy.updateMatrix();
       mesh.setMatrixAt(i, dummy.matrix);
 
@@ -120,8 +113,7 @@ export function LifeCalendar3D({
   // Animation loop
   useFrame((_state, delta) => {
     const mesh = meshRef.current;
-    const group = groupRef.current;
-    if (!mesh || !group) return;
+    if (!mesh) return;
 
     // Fill animation (~2 s)
     if (!animComplete.current) {
@@ -141,20 +133,6 @@ export function LifeCalendar3D({
       mesh.instanceMatrix.needsUpdate = true;
     }
 
-    // Mouse-follow tilt
-    if (!reducedMotion) {
-      group.rotation.x = THREE.MathUtils.lerp(
-        group.rotation.x,
-        targetRotation.current.x,
-        0.05,
-      );
-      group.rotation.y = THREE.MathUtils.lerp(
-        group.rotation.y,
-        targetRotation.current.y,
-        0.05,
-      );
-    }
-
     // Glow pulse
     if (glowRef.current) {
       const t = _state.clock.getElapsedTime();
@@ -162,20 +140,6 @@ export function LifeCalendar3D({
       glowRef.current.scale.set(s, s, s);
     }
   });
-
-  // Tilt on pointer move
-  const handlePointerMove = useCallback(
-    (e: THREE.Event & { pointer?: THREE.Vector2 }) => {
-      if (reducedMotion) return;
-      const pointer = (e as unknown as { pointer: THREE.Vector2 }).pointer;
-      if (!pointer) return;
-      targetRotation.current = {
-        x: -pointer.y * MAX_TILT,
-        y: pointer.x * MAX_TILT,
-      };
-    },
-    [reducedMotion],
-  );
 
   // Hover handlers
   const handlePointerOver = useCallback(
@@ -232,12 +196,11 @@ export function LifeCalendar3D({
   );
 
   return (
-    <group ref={groupRef}>
+    <>
       {/* 5,200 cells — single draw call */}
       <instancedMesh
         ref={meshRef}
         args={[undefined, undefined, TOTAL_CELLS]}
-        onPointerMove={handlePointerMove}
         onPointerOver={handlePointerOver}
         onPointerOut={handlePointerOut}
       >
@@ -272,6 +235,6 @@ export function LifeCalendar3D({
       {/* Scene lighting */}
       <ambientLight intensity={0.7} />
       <directionalLight position={[20, 20, 30]} intensity={0.6} />
-    </group>
+    </>
   );
 }
