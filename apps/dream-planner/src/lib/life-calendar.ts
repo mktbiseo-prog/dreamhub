@@ -65,5 +65,12 @@ export function getCellState(index: number, age: number): CellState {
 
 export function cellLabel(index: number): string {
   const { row, col } = cellToGrid(index);
-  return `Age ${row}, Week ${col + 1}`;
+  return `Age ${row} · Week ${col + 1}`;
+}
+
+export function cellSubtext(index: number, age: number): string {
+  const state = getCellState(index, age);
+  if (state === "current") return "You are here.";
+  if (state === "lived") return "You were here.";
+  return "Not yet written.";
 }
