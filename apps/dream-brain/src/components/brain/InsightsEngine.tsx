@@ -71,7 +71,7 @@ function CustomTooltip({
   if (!active || !payload || !payload[0]) return null;
   const data = payload[0].payload;
   return (
-    <div className="rounded-lg border border-white/10 bg-gray-900 px-3 py-2 shadow-xl">
+    <div className="rounded-lg border border-white/10 bg-[#132039] px-3 py-2 shadow-xl">
       <p className="text-xs font-medium text-gray-200 capitalize">
         {data.category}
       </p>
@@ -205,8 +205,8 @@ export function InsightsEngine({ thoughts, className }: InsightsEngineProps) {
         <div className="grid grid-cols-2 gap-3">
           {/* Total Thoughts */}
           <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-violet-500/10">
-              <Zap className="h-4 w-4 text-violet-400" />
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#00D4AA]/10">
+              <Zap className="h-4 w-4 text-[#00D4AA]" />
             </div>
             <div>
               <p className="text-lg font-bold text-gray-100">

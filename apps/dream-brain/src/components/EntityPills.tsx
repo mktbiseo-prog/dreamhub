@@ -17,7 +17,7 @@ export function EntityPills({ people, places }: EntityPillsProps) {
         {people.map((name) => (
           <span
             key={`person-${name}`}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-violet-500/10 border border-violet-500/20 px-3 py-1.5 text-xs font-medium text-violet-300"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-[#00D4AA]/10 border border-[#00D4AA]/20 px-3 py-1.5 text-xs font-medium text-[#00D4AA]"
           >
             <User className="h-3 w-3" />
             {name}

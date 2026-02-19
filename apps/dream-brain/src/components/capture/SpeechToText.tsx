@@ -88,8 +88,8 @@ export function SpeechToText({ onTranscribe, className }: SpeechToTextProps) {
       const y = (height - barHeight) / 2;
 
       const gradient = ctx.createLinearGradient(0, y, 0, y + barHeight);
-      gradient.addColorStop(0, "rgba(139, 92, 246, 0.9)");
-      gradient.addColorStop(1, "rgba(59, 130, 246, 0.9)");
+      gradient.addColorStop(0, "rgba(0, 212, 170, 0.9)");
+      gradient.addColorStop(1, "rgba(6, 182, 212, 0.9)");
       ctx.fillStyle = gradient;
       ctx.beginPath();
       ctx.roundRect(x, y, barWidth, barHeight, 2);
@@ -227,7 +227,7 @@ export function SpeechToText({ onTranscribe, className }: SpeechToTextProps) {
         </button>
 
         {showLangPicker && (
-          <div className="absolute top-full mt-1 left-1/2 -translate-x-1/2 z-10 w-36 rounded-xl border border-white/10 bg-gray-900 py-1 shadow-xl">
+          <div className="absolute top-full mt-1 left-1/2 -translate-x-1/2 z-10 w-36 rounded-xl border border-white/10 bg-[#132039] py-1 shadow-xl">
             {LANGUAGES.map((lang) => (
               <button
                 key={lang.code}
@@ -238,7 +238,7 @@ export function SpeechToText({ onTranscribe, className }: SpeechToTextProps) {
                 }}
                 className={`w-full px-3 py-2 text-left text-xs transition-colors hover:bg-white/5 ${
                   language === lang.code
-                    ? "text-violet-400 font-medium"
+                    ? "text-[#00D4AA] font-medium"
                     : "text-gray-400"
                 }`}
               >
@@ -266,7 +266,7 @@ export function SpeechToText({ onTranscribe, className }: SpeechToTextProps) {
         className={`relative flex h-16 w-16 items-center justify-center rounded-full transition-all ${
           isRecording
             ? "bg-red-500 shadow-lg shadow-red-500/30"
-            : "bg-gradient-to-br from-violet-500 to-blue-500 shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40"
+            : "bg-gradient-to-br from-[#00D4AA] to-[#06B6D4] shadow-lg shadow-[#00D4AA]/25 hover:shadow-[#00D4AA]/40"
         }`}
       >
         {/* Pulsing ring when recording */}
@@ -297,9 +297,9 @@ export function SpeechToText({ onTranscribe, className }: SpeechToTextProps) {
               <span className="text-gray-500 italic">
                 {interimText}
                 <span className="inline-flex gap-0.5 ml-1">
-                  <span className="h-1 w-1 animate-bounce rounded-full bg-violet-400" style={{ animationDelay: "0ms" }} />
-                  <span className="h-1 w-1 animate-bounce rounded-full bg-violet-400" style={{ animationDelay: "150ms" }} />
-                  <span className="h-1 w-1 animate-bounce rounded-full bg-violet-400" style={{ animationDelay: "300ms" }} />
+                  <span className="h-1 w-1 animate-bounce rounded-full bg-[#00D4AA]" style={{ animationDelay: "0ms" }} />
+                  <span className="h-1 w-1 animate-bounce rounded-full bg-[#00D4AA]" style={{ animationDelay: "150ms" }} />
+                  <span className="h-1 w-1 animate-bounce rounded-full bg-[#00D4AA]" style={{ animationDelay: "300ms" }} />
                 </span>
               </span>
             )}

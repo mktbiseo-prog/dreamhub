@@ -1,7 +1,7 @@
 export default function InsightsLoading() {
   return (
     <div className="flex min-h-screen flex-col pb-20">
-      <div className="sticky top-0 z-30 flex items-center justify-between px-5 py-4 backdrop-blur-xl bg-gray-950/80 border-b border-white/5">
+      <div className="sticky top-0 z-30 flex items-center justify-between px-5 py-4 backdrop-blur-xl bg-[#0A1628]/80 border-b border-white/5">
         <div className="h-6 w-32 rounded bg-white/[0.08] animate-pulse" />
         <div className="h-9 w-9 rounded-full bg-white/[0.08] animate-pulse" />
       </div>

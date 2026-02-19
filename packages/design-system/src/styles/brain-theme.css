@@ -1,46 +1,42 @@
 /* ---------------------------------------------------------------------------
  * Dream Brain — Service Theme
  *
- * Calm intelligence. Deep Violet (#7C3AED).
- * Spec reference: PART 1, Section 1.1
+ * Neon Mint (#00D4AA). Dark-first. Quiet intelligence.
+ * Reference: DREAM_BRAIN_DESIGN_GUIDELINES.md
  * --------------------------------------------------------------------------- */
 
 :root {
   /* ── Primary ───────────────────────────────────────────────────────────── */
-  --dream-color-primary: #7C3AED;
-  --dream-color-primary-light: #EDE9FE;
-  --dream-color-primary-lighter: #F5F3FF;
-  --dream-color-primary-dark: #6D28D9;
-  --dream-color-primary-darker: #5B21B6;
+  --dream-color-primary: #00D4AA;
+  --dream-color-primary-light: #CCFBF1;
+  --dream-color-primary-lighter: #F0FDFA;
+  --dream-color-primary-dark: #00B894;
+  --dream-color-primary-darker: #009B7D;
   --dream-color-on-primary: #FFFFFF;
 
-  /* ── Secondary ─────────────────────────────────────────────────────────── */
-  --dream-color-secondary: #06B6D4;
-  --dream-color-secondary-light: #CFFAFE;
+  /* ── Surfaces (Dark-first) ───────────────────────────────────────────── */
+  --dream-color-surface: #132039;
+  --dream-color-surface-alt: #1A2B4A;
+  --dream-color-background: #0A1628;
 
-  /* ── Accent ────────────────────────────────────────────────────────────── */
-  --dream-color-accent: #F59E0B;
-  --dream-color-accent-light: #FEF3C7;
+  /* ── Text (for dark theme) ───────────────────────────────────────────── */
+  --dream-color-text-primary: #FAFAFA;
+  --dream-color-text-secondary: #94A3B8;
+  --dream-color-text-tertiary: #64748B;
 
-  /* ── Surfaces ──────────────────────────────────────────────────────────── */
-  --dream-color-surface: #FFFFFF;
-  --dream-color-surface-alt: #F5F3FF;
-  --dream-color-background: #FAFAFA;
+  /* ── Borders ──────────────────────────────────────────────────────────── */
+  --dream-color-border: #1E3355;
 
-  /* ── Text ───────────────────────────────────────────────────────────────── */
-  --dream-color-text-primary: #171717;
-  --dream-color-text-secondary: #525252;
-  --dream-color-text-tertiary: #A3A3A3;
-
-  /* ── Recording State ───────────────────────────────────────────────────── */
+  /* ── Recording State ──────────────────────────────────────────────────── */
   --dream-recording-active: #EF4444;
-  --dream-recording-bg: #7C3AED;
+  --dream-recording-bg: #00D4AA;
+  --dream-recording-glow: rgba(239, 68, 68, 0.15);
 
-  /* ── Knowledge Graph Nodes ─────────────────────────────────────────────── */
-  --dream-node-idea: #7C3AED;
+  /* ── Knowledge Graph Nodes ────────────────────────────────────────────── */
+  --dream-node-idea: #00D4AA;
   --dream-node-task: #22C55E;
   --dream-node-person: #3B82F6;
   --dream-node-project: #F59E0B;
-  --dream-edge-strong: rgba(124, 58, 237, 0.6);
-  --dream-edge-weak: rgba(124, 58, 237, 0.15);
+  --dream-edge-strong: rgba(0, 212, 170, 0.6);
+  --dream-edge-weak: rgba(0, 212, 170, 0.15);
 }

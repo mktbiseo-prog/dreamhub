@@ -69,7 +69,7 @@ function ThoughtNode({ data }: { data: ThoughtNodeData }) {
           {data.shortTitle}
         </span>
       </div>
-      <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md bg-gray-800 px-2 py-1 text-[10px] text-gray-300 opacity-0 transition-opacity group-hover:opacity-100 pointer-events-none border border-white/10 z-10">
+      <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md bg-[#1A2B4A] px-2 py-1 text-[10px] text-gray-300 opacity-0 transition-opacity group-hover:opacity-100 pointer-events-none border border-white/10 z-10">
         {data.label}
       </div>
       <Handle type="source" position={Position.Bottom} className="!bg-transparent !border-0 !w-0 !h-0" />
@@ -173,11 +173,11 @@ export function BrainGraph({ thoughts, connections }: BrainGraphProps) {
         fitView
         fitViewOptions={{ padding: 0.3 }}
         proOptions={{ hideAttribution: true }}
-        className="bg-gray-950"
+        className="bg-[#0A1628]"
       >
         <Background color="#ffffff08" gap={30} size={1} />
         <Controls
-          className="!bg-gray-900 !border-white/10 !rounded-xl !shadow-xl [&>button]:!bg-gray-800 [&>button]:!border-white/10 [&>button]:!text-gray-400 [&>button:hover]:!bg-gray-700"
+          className="!bg-[#132039] !border-white/10 !rounded-xl !shadow-xl [&>button]:!bg-[#1A2B4A] [&>button]:!border-white/10 [&>button]:!text-gray-400 [&>button:hover]:!bg-gray-700"
         />
       </ReactFlow>
     </div>

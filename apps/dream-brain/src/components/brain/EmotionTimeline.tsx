@@ -59,7 +59,7 @@ function CustomTooltip({
 
   const data = payload[0].payload;
   return (
-    <div className="rounded-xl border border-white/10 bg-gray-900 p-3 shadow-xl">
+    <div className="rounded-xl border border-white/10 bg-[#132039] p-3 shadow-xl">
       <p className="text-xs font-medium text-gray-200 mb-1">{data.title}</p>
       <p className="text-xs text-gray-500">{data.dateLabel}</p>
       <div className="mt-2 flex items-center gap-2">
@@ -225,8 +225,8 @@ export function EmotionTimeline({ thoughts, className }: EmotionTimelineProps) {
                 x2="1"
                 y2="0"
               >
-                <stop offset="0%" stopColor="#8b5cf6" />
-                <stop offset="100%" stopColor="#3b82f6" />
+                <stop offset="0%" stopColor="#00D4AA" />
+                <stop offset="100%" stopColor="#06B6D4" />
               </linearGradient>
             </defs>
           </LineChart>

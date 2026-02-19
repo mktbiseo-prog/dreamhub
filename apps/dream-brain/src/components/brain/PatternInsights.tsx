@@ -31,10 +31,10 @@ const PATTERN_CONFIG: Record<
 > = {
   recurring_theme: {
     icon: RefreshCw,
-    accentColor: "text-violet-400",
-    bgColor: "bg-violet-500/5",
-    borderColor: "border-violet-500/20",
-    badgeColor: "bg-violet-500/15 text-violet-300",
+    accentColor: "text-[#00D4AA]",
+    bgColor: "bg-[#00D4AA]/5",
+    borderColor: "border-[#00D4AA]/20",
+    badgeColor: "bg-[#00D4AA]/15 text-[#00D4AA]",
   },
   temporal: {
     icon: Clock,
@@ -132,7 +132,7 @@ function PatternCard({
       {/* Actionable suggestion */}
       {pattern.actionable && (
         <div className="flex items-start gap-2 rounded-lg bg-white/[0.03] p-2 mb-3">
-          <Sparkles className="mt-0.5 h-3 w-3 shrink-0 text-violet-400" />
+          <Sparkles className="mt-0.5 h-3 w-3 shrink-0 text-[#00D4AA]" />
           <p className="text-[11px] text-gray-500 leading-relaxed">
             {pattern.actionable}
           </p>

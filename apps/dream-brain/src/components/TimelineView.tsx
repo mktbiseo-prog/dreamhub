@@ -159,7 +159,7 @@ export function TimelineView({ initialThoughts }: TimelineViewProps) {
                     >
                       {/* Timeline dot */}
                       <div
-                        className={`absolute -left-[27px] top-1 h-3 w-3 rounded-full border-2 border-gray-950 ${cat.bgColor} ring-2 ring-gray-950`}
+                        className={`absolute -left-[27px] top-1 h-3 w-3 rounded-full border-2 border-[#0A1628] ${cat.bgColor} ring-2 ring-[#0A1628]`}
                         style={{
                           background: `var(--tw-gradient-stops, ${cat.color})`,
                         }}

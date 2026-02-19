@@ -194,7 +194,7 @@ export function getToneColor(tone: ToneName): string {
     confident: "#60a5fa",   // blue-400
     anxious: "#f87171",     // red-400
     excited: "#fbbf24",     // amber-400
-    reflective: "#a78bfa",  // violet-400
+    reflective: "#00D4AA",  // mint/teal
     determined: "#34d399",  // emerald-400
   };
   return colors[tone];
@@ -205,7 +205,7 @@ export function getToneTailwindColor(tone: ToneName): string {
     confident: "text-blue-400",
     anxious: "text-red-400",
     excited: "text-amber-400",
-    reflective: "text-violet-400",
+    reflective: "text-[#00D4AA]",
     determined: "text-emerald-400",
   };
   return colors[tone];
@@ -216,7 +216,7 @@ export function getToneBgColor(tone: ToneName): string {
     confident: "bg-blue-400/15",
     anxious: "bg-red-400/15",
     excited: "bg-amber-400/15",
-    reflective: "bg-violet-400/15",
+    reflective: "bg-[#00D4AA]/15",
     determined: "bg-emerald-400/15",
   };
   return colors[tone];

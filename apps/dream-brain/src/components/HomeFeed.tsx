@@ -36,8 +36,8 @@ export function HomeFeed({ initialThoughts, todayInsight }: HomeFeedProps) {
     <div className="flex flex-col">
       {/* Today's insight (optional) */}
       {todayInsight && (
-        <div className="mx-4 mt-3 mb-2 rounded-[var(--dream-radius-lg)] bg-violet-500/10 border border-violet-500/20 p-4">
-          <p className="text-xs font-medium text-violet-300 mb-1">
+        <div className="mx-4 mt-3 mb-2 rounded-[var(--dream-radius-lg)] bg-[#00D4AA]/10 border border-[#00D4AA]/20 p-4">
+          <p className="text-xs font-medium text-[#00D4AA] mb-1">
             Today&apos;s insight
           </p>
           <p className="text-sm text-gray-300 leading-relaxed">
@@ -79,7 +79,7 @@ export function HomeFeed({ initialThoughts, todayInsight }: HomeFeedProps) {
         </div>
       ) : (
         <div className="flex flex-col items-center justify-center py-24 px-8 text-center">
-          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-violet-500/10">
+          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[#00D4AA]/10">
             <Brain className="h-8 w-8 text-[var(--dream-color-primary)]" />
           </div>
           <p className="text-base font-medium text-gray-300">

@@ -18,7 +18,7 @@ interface TopicClustersProps {
 }
 
 const BUBBLE_COLORS = [
-  { bg: "from-violet-500/30 to-violet-600/10", border: "border-violet-500/30", text: "text-violet-300" },
+  { bg: "from-[#00D4AA]/30 to-[#00B894]/10", border: "border-[#00D4AA]/30", text: "text-[#00D4AA]" },
   { bg: "from-blue-500/30 to-blue-600/10", border: "border-blue-500/30", text: "text-blue-300" },
   { bg: "from-emerald-500/30 to-emerald-600/10", border: "border-emerald-500/30", text: "text-emerald-300" },
   { bg: "from-amber-500/30 to-amber-600/10", border: "border-amber-500/30", text: "text-amber-300" },

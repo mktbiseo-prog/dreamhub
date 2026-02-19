@@ -40,14 +40,14 @@ export function BottomNav() {
         header={
           <Brain className="h-6 w-6 text-[var(--dream-color-primary)]" />
         }
-        className="!bg-gray-950/90 !backdrop-blur-xl !border-white/[0.06]"
+        className="!bg-[#0A1628]/90 !backdrop-blur-xl !border-white/[0.06]"
       />
       {/* Mobile bottom nav */}
       <MobileNav
         items={navItems}
         activeHref={activeHref}
         onNavigate={(href) => router.push(href)}
-        className="!bg-gray-950/90 !backdrop-blur-xl !border-white/[0.06]"
+        className="!bg-[#0A1628]/90 !backdrop-blur-xl !border-white/[0.06]"
       />
     </>
   );

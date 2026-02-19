@@ -30,7 +30,7 @@ export function HeaderAvatarMenu({ name }: HeaderAvatarMenuProps) {
       {open && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-          <div className="absolute right-0 top-full z-50 mt-2 w-48 rounded-xl border border-white/10 bg-gray-900 py-1 shadow-xl">
+          <div className="absolute right-0 top-full z-50 mt-2 w-48 rounded-xl border border-white/10 bg-[#132039] py-1 shadow-xl">
             <button
               type="button"
               onClick={() => navigate("/profile")}

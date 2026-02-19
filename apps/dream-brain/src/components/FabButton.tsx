@@ -157,9 +157,9 @@ export function FabButton() {
 
         {/* Transcribing indicator */}
         {isTranscribing && (
-          <div className="mb-4 flex items-center gap-2 rounded-full bg-gray-900/90 border border-violet-500/30 px-4 py-2 backdrop-blur-sm">
+          <div className="mb-4 flex items-center gap-2 rounded-full bg-[#132039]/90 border border-[#00D4AA]/30 px-4 py-2 backdrop-blur-sm">
             <Sparkles className="h-4 w-4 animate-spin text-[var(--dream-color-primary)]" />
-            <span className="text-xs text-violet-300">Processing...</span>
+            <span className="text-xs text-[#00D4AA]">Processing...</span>
           </div>
         )}
 

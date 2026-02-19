@@ -85,8 +85,8 @@ export const categories: Record<CategoryId, Category> = {
     id: "relationships",
     label: "Relationships",
     icon: Users,
-    color: "text-violet-400",
-    bgColor: "bg-violet-400/15",
+    color: "text-[#00D4AA]",
+    bgColor: "bg-[#00D4AA]/15",
     subcategories: ["Family", "Friends", "Professional Network", "Community", "Mentorship"],
   },
   health: {

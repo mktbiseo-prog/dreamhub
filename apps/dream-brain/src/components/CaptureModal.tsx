@@ -57,7 +57,7 @@ export function CaptureModal({ open, onClose }: CaptureModalProps) {
       />
 
       {/* Modal — bottom sheet on mobile, centered on desktop */}
-      <div className="relative w-full max-w-lg rounded-t-2xl sm:rounded-2xl border border-white/10 bg-gray-900 p-6 shadow-2xl">
+      <div className="relative w-full max-w-lg rounded-t-2xl sm:rounded-2xl border border-white/10 bg-[#132039] p-6 shadow-2xl">
         {/* Header */}
         <div className="mb-5 flex items-center justify-between">
           <div className="flex items-center gap-2">

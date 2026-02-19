@@ -5,22 +5,26 @@ import { Header } from "@/components/Header";
 import { HomeFeed } from "@/components/HomeFeed";
 import { FabButton } from "@/components/FabButton";
 import { BottomNav } from "@/components/BottomNav";
+import { LandingPage } from "@/components/landing/LandingPage";
 import { fetchThoughts, fetchTodayInsight, fetchOnboardingStatus } from "@/lib/queries";
 import { getCurrentUserId } from "@/lib/auth";
 
 export default async function Home() {
+  const userId = await getCurrentUserId();
+
+  // Unauthenticated users see the landing page
+  if (userId === "demo-user") {
+    return <LandingPage />;
+  }
+
   let thoughts: Awaited<ReturnType<typeof fetchThoughts>> = [];
   let todayInsight: string | null = null;
 
   try {
-    const userId = await getCurrentUserId();
-
-    // Redirect non-demo users to onboarding if not completed
-    if (userId !== "demo-user") {
-      const onboarded = await fetchOnboardingStatus();
-      if (!onboarded) {
-        redirect("/onboarding");
-      }
+    // Redirect to onboarding if not completed
+    const onboarded = await fetchOnboardingStatus();
+    if (!onboarded) {
+      redirect("/onboarding");
     }
 
     [thoughts, todayInsight] = await Promise.all([

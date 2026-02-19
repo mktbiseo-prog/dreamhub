@@ -128,7 +128,7 @@ export function ThoughtDetailView({
   return (
     <div className="flex flex-col min-h-screen">
       {/* Top bar: back + overflow */}
-      <header className="sticky top-0 z-30 flex items-center justify-between px-4 py-3 backdrop-blur-xl bg-gray-950/80 border-b border-white/5">
+      <header className="sticky top-0 z-30 flex items-center justify-between px-4 py-3 backdrop-blur-xl bg-[#0A1628]/80 border-b border-white/5">
         <button
           type="button"
           onClick={() => router.back()}
@@ -152,7 +152,7 @@ export function ThoughtDetailView({
                 className="fixed inset-0 z-40"
                 onClick={() => setMenuOpen(false)}
               />
-              <div className="absolute right-0 top-full mt-1 z-50 w-44 rounded-[var(--dream-radius-lg)] border border-white/10 bg-gray-900 py-1 shadow-xl">
+              <div className="absolute right-0 top-full mt-1 z-50 w-44 rounded-[var(--dream-radius-lg)] border border-white/10 bg-[#132039] py-1 shadow-xl">
                 <button
                   type="button"
                   onClick={handleToggleFavorite}
@@ -385,7 +385,7 @@ export function ThoughtDetailView({
                       >
                         <RelIcon className={cn("h-3.5 w-3.5", relCat.color)} />
                       </div>
-                      <span className="rounded-md bg-violet-500/15 px-1.5 py-0.5 text-[10px] font-medium text-violet-300">
+                      <span className="rounded-md bg-[#00D4AA]/15 px-1.5 py-0.5 text-[10px] font-medium text-[#00D4AA]">
                         {Math.round(score * 100)}%
                       </span>
                     </div>

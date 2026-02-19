@@ -24,7 +24,7 @@ export async function Header() {
   const { name, isDemo } = await getUserInfo(userId);
 
   return (
-    <header className="sticky top-0 z-30 flex h-14 items-center justify-between px-4 backdrop-blur-xl bg-gray-950/80 border-b border-white/5">
+    <header className="sticky top-0 z-30 flex h-14 items-center justify-between px-4 backdrop-blur-xl bg-[#0A1628]/80 border-b border-white/5">
       {/* Left: Logo */}
       <div className="flex items-center gap-2">
         <Brain className="h-6 w-6 text-[var(--dream-color-primary)]" />

@@ -74,7 +74,7 @@ export function PrivacyControls({
       <div className="flex flex-col gap-4 mb-5">
         <div className="flex items-center justify-between">
           <div className="flex items-start gap-2">
-            <Brain className="mt-0.5 h-4 w-4 text-violet-400" />
+            <Brain className="mt-0.5 h-4 w-4 text-[#00D4AA]" />
             <div>
               <p className="text-sm text-gray-300">
                 Allow AI processing of my thoughts
@@ -140,7 +140,7 @@ export function PrivacyControls({
             className="absolute inset-0 bg-black/60 backdrop-blur-sm"
             onClick={() => setShowDeleteDialog(false)}
           />
-          <div className="relative w-full max-w-sm rounded-2xl border border-red-500/20 bg-gray-900 p-6 shadow-2xl mx-4">
+          <div className="relative w-full max-w-sm rounded-2xl border border-red-500/20 bg-[#132039] p-6 shadow-2xl mx-4">
             {/* Header */}
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-center gap-2">

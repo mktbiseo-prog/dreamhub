@@ -14,7 +14,7 @@
   }
 
   body {
-    @apply bg-gray-950 text-gray-100;
+    @apply bg-[#0A1628] text-[#FAFAFA];
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
@@ -27,4 +27,14 @@
   .scrollbar-none::-webkit-scrollbar {
     display: none;
   }
+
+  .font-display {
+    font-family: var(--dream-font-display);
+  }
+}
+
+/* Landing page waveform bar animation */
+@keyframes waveBar {
+  0% { transform: scaleY(0.3); }
+  100% { transform: scaleY(1); }
 }

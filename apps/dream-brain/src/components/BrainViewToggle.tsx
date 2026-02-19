@@ -130,7 +130,7 @@ export function BrainViewToggle({
       <button
         type="button"
         onClick={() => setView(view === "2d" ? "3d" : "2d")}
-        className="absolute top-3 right-3 z-20 flex items-center gap-1.5 rounded-[var(--dream-radius-md)] bg-gray-900/90 border border-white/10 px-3 py-2 text-xs font-medium text-gray-300 backdrop-blur-sm transition-colors hover:bg-gray-800/90 hover:text-gray-100"
+        className="absolute top-3 right-3 z-20 flex items-center gap-1.5 rounded-[var(--dream-radius-md)] bg-[#132039]/90 border border-white/10 px-3 py-2 text-xs font-medium text-gray-300 backdrop-blur-sm transition-colors hover:bg-[#1A2B4A]/90 hover:text-gray-100"
       >
         {view === "2d" ? (
           <>
@@ -160,7 +160,7 @@ export function BrainViewToggle({
 
       {/* Time Slider */}
       {dateRange && sheet === "collapsed" && (
-        <div className="absolute bottom-20 left-4 right-4 z-20 rounded-[var(--dream-radius-lg)] bg-gray-900/80 border border-white/10 px-4 py-3 backdrop-blur-sm">
+        <div className="absolute bottom-20 left-4 right-4 z-20 rounded-[var(--dream-radius-lg)] bg-[#132039]/80 border border-white/10 px-4 py-3 backdrop-blur-sm">
           <TimeSlider
             minDate={dateRange.min}
             maxDate={dateRange.max}
@@ -174,7 +174,7 @@ export function BrainViewToggle({
       <div
         ref={sheetRef}
         className={cn(
-          "absolute bottom-0 left-0 right-0 z-30 rounded-t-[var(--dream-radius-xl)] bg-gray-950/95 border-t border-white/[0.08] backdrop-blur-xl transition-all duration-300 ease-out",
+          "absolute bottom-0 left-0 right-0 z-30 rounded-t-[var(--dream-radius-xl)] bg-[#0A1628]/95 border-t border-white/[0.08] backdrop-blur-xl transition-all duration-300 ease-out",
           sheetHeight,
         )}
         onTouchStart={handleTouchStart}

@@ -124,7 +124,7 @@ export function SemanticSearchView() {
               {results.map(({ thought, relevance }) => (
                 <div key={thought.id} className="relative">
                   <NoteCard thought={thought} />
-                  <span className="absolute right-3 top-3 rounded-md bg-violet-500/15 px-2 py-0.5 text-[10px] font-medium text-violet-300">
+                  <span className="absolute right-3 top-3 rounded-md bg-[#00D4AA]/15 px-2 py-0.5 text-[10px] font-medium text-[#00D4AA]">
                     {Math.round(relevance * 100)}%
                   </span>
                 </div>
@@ -147,7 +147,7 @@ export function SemanticSearchView() {
       {/* Empty state */}
       {!hasSearched && (
         <div className="flex flex-col items-center justify-center py-16 text-center">
-          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-violet-500/10">
+          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[#00D4AA]/10">
             <Search className="h-8 w-8 text-[var(--dream-color-primary)]" />
           </div>
           <p className="text-sm text-gray-400">

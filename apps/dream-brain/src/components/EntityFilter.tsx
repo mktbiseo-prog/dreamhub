@@ -63,7 +63,7 @@ export function EntityFilter({
               className={cn(
                 "flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors",
                 selectedPeople.includes(name)
-                  ? "bg-violet-500/15 text-violet-300 ring-1 ring-violet-500/30"
+                  ? "bg-[#00D4AA]/15 text-[#00D4AA] ring-1 ring-[#00D4AA]/30"
                   : "bg-white/[0.04] text-gray-400 hover:bg-white/[0.08]"
               )}
             >
